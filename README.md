@@ -4,7 +4,7 @@ A UART example for gapuino. Send the corresponding byte received.
 
 ### Build
 
-**First `cd` into gap_sdk and source sourceme.sh**. And then back to the baremetel directory.
+**First `cd` into gap_sdk and source sourceme.sh**. And then back to the baremetal directory.
 
     ./build.sh
 
@@ -17,4 +17,4 @@ Use `plpbridge` from `gap_sdk`
     --binary=test \
     load ioloop reqloop start wait
 
-The uart is usually `/dev/ttyUSB1`, while 1/dev/ttyUSB0` is occupied by JTAG.
+The uart is usually `/dev/ttyUSB1`, while `/dev/ttyUSB0` is occupied by JTAG.
