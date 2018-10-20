@@ -59,7 +59,7 @@ int main(void)
 {
     uint32_t baudrate = 115200;
     uint8_t get = 'a';
-    const char *buf = "abcd";
+    const char *buf = "hello world\r\n";
 
     /* Serial pins init */
     serial_init();
@@ -70,7 +70,7 @@ int main(void)
     /* Serial baudrate 115200 configuration */
     UART_SetBaudRate( uart_addrs[0], baudrate, SystemCoreClock );
 
-    UART_TransferSendBlocking(uart_addrs[0], buf, 4);
+    UART_TransferSendBlocking(uart_addrs[0], buf, strlen(buf));
     while(1) {
         get = UART_ReadByte(uart_addrs[0]);
         UART_WriteByte(uart_addrs[0], get);
