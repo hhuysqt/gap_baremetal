@@ -4,6 +4,7 @@
 
 
 /* Demo utlities includes. */
+#include "GAP8.h"
 #include "gap_common.h"
 #include "gap_uart.h"
 //#include "pinmap.h"
@@ -36,10 +37,8 @@ static void serial_init(void)
 
     UART_Init( uart_addrs[0], &config, SystemCoreClock );
 
-    //pinmap_pinout(tx, PinMap_UART_TX);
-    //pinmap_pinout(rx, PinMap_UART_RX);
-    gap8_configpin(GAP8_PIN_A7_UART_TX | GAP8_PIN_PULL_UP);
-    gap8_configpin(GAP8_PIN_B6_UART_RX | GAP8_PIN_PULL_UP);
+    gap8_configpin(GAP8_PIN_A7_UART_TX | GAP8_PIN_PULL_UP | GAP8_PIN_SPEED_HIGH);
+    gap8_configpin(GAP8_PIN_B6_UART_RX | GAP8_PIN_PULL_UP | GAP8_PIN_SPEED_HIGH);
 
     UART_EnableTx( uart_addrs[0], true );
     UART_EnableRx( uart_addrs[0], true );
@@ -73,7 +72,6 @@ int main(void)
 
     UART_TransferSendBlocking(uart_addrs[0], buf, 4);
     while(1) {
-        //UART_TransferSendBlocking(uart_addrs[0], buf, 4);
         get = UART_ReadByte(uart_addrs[0]);
         UART_WriteByte(uart_addrs[0], get);
     }
