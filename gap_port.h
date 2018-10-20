@@ -90,7 +90,7 @@ extern "C" {
 /*! @name Configuration */
 /*@{*/
 
-static inline void PORT_SetPinMux(PORT_Type *base, uint32_t pin, port_mux_t mux);
+static inline void PORT_SetPinMux(PORT_reg_t *base, uint32_t pin, port_mux_t mux);
 
 /*!
  * @brief Sets the port PADCFG and PADFUN register.
@@ -109,7 +109,7 @@ static inline void PORT_SetPinMux(PORT_Type *base, uint32_t pin, port_mux_t mux)
  * @param pin    PORT pin number.
  * @param config PORT PADCFG and PADFUN register configuration structure.
  */
-static inline void PORT_SetPinConfig(PORT_Type *base, uint32_t pin, const port_pin_config_t *config)
+static inline void PORT_SetPinConfig(PORT_reg_t *base, uint32_t pin, const port_pin_config_t *config)
 {
     assert(config);
     /* Set pin pull-up and drive strength*/
@@ -139,7 +139,7 @@ static inline void PORT_SetPinConfig(PORT_Type *base, uint32_t pin, const port_p
  * @param mask   PORT pin number macro.
  * @param config PORT PADCFG and PADFUN register configuration structure.
  */
-static inline void PORT_SetMultiplePinsConfig(PORT_Type *base, uint32_t mask, const port_pin_config_t *config)
+static inline void PORT_SetMultiplePinsConfig(PORT_reg_t *base, uint32_t mask, const port_pin_config_t *config)
 {
     for (int pin = 0; pin < 32; pin++) {
         if(mask & (1 << pin))
@@ -160,7 +160,7 @@ static inline void PORT_SetMultiplePinsConfig(PORT_Type *base, uint32_t mask, co
  *        This function is recommended to use to reset the pin mux
  *
  */
-static inline void PORT_SetPinMux(PORT_Type *base, uint32_t pin, port_mux_t mux)
+static inline void PORT_SetPinMux(PORT_reg_t *base, uint32_t pin, port_mux_t mux)
 {
     int reg_num = pin >> 4;
     /* Positon in the target register */
@@ -178,7 +178,7 @@ static inline void PORT_SetPinMux(PORT_Type *base, uint32_t pin, port_mux_t mux)
  *        This function is recommended to use to reset the group pin mux
  *
  */
-static inline void PORT_SetGroupPinMux(PORT_Type *base, uint32_t mux[])
+static inline void PORT_SetGroupPinMux(PORT_reg_t *base, uint32_t mux[])
 {
     base->PADFUN[0] = mux[0];
     base->PADFUN[1] = mux[1];

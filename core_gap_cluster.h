@@ -55,9 +55,9 @@
  */
 
 typedef struct {
-  EU_CORE_DEMUX_Type CORES[CLUSTER_CORES_NUM];          /*!< Offset: 0x000 (R/W)  Cluster Event Unit cores */
+  EU_CORE_DEMUX_reg_t CORES[CLUSTER_CORES_NUM];          /*!< Offset: 0x000 (R/W)  Cluster Event Unit cores */
 
-} CLUSTER_EU_CORES_Type;
+} CLUSTER_EU_CORES_reg_t;
 
 /*@} end of group CMSIS_CLUSTER_EU_CORE */
 
@@ -102,13 +102,13 @@ typedef struct {
 
 
 /* Cluster Core Structrue definitions */
-#define CLUSTER_EU_SW_EVENTS      ((EU_SW_EVENTS_DEMUX_Type   *)  CLUSTER_EU_SW_EVENTS_BASE)            /*!< EU_SW_EVENTS_DEMUX configuration struct */
-#define EU_CORES    ((CLUSTER_EU_CORES_Type   *)   CORE_EU_BASE)              /*!< CLUSTER_EU_CORES configuration struct */
-#define SCB         ((SCB_Type   *)    CLUSTER_SCB_BASE )                     /*!< CLUSTER SCB configuration struct */
+#define CLUSTER_EU_SW_EVENTS      ((EU_SW_EVENTS_DEMUX_reg_t   *)  CLUSTER_EU_SW_EVENTS_BASE)            /*!< EU_SW_EVENTS_DEMUX configuration struct */
+#define EU_CORES    ((CLUSTER_EU_CORES_reg_t   *)   CORE_EU_BASE)              /*!< CLUSTER_EU_CORES configuration struct */
+#define SCB         ((SCB_reg_t   *)    CLUSTER_SCB_BASE )                     /*!< CLUSTER SCB configuration struct */
 
-#define CLUSTER_SysTick             ((SysTick_Type   *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
-#define CLUSTER_TIMERL              ((TimerL_Type    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
-#define CLUSTER_TIMERH              ((TimerH_Type    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
+#define CLUSTER_SysTick             ((SysTick_reg_t   *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
+#define CLUSTER_TIMERL              ((TimerL_reg_t    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
+#define CLUSTER_TIMERH              ((TimerH_reg_t    *)     CLUSTER_SysTick_BASE  )   /*!< SysTick configuration struct */
 
 
      

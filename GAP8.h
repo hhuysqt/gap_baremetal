@@ -99,7 +99,7 @@ typedef enum IRQn {
   Rst_handler_IRQn             = 32,              /**< GAP8 Reset handler Interrupt */
   Ill_ins_IRQn                 = 33,              /**< GAP8 Usage Fault Interrupt */
   SVCall_IRQn                  = 34               /**< GAP8 SV Call Interrupt */
-} IRQn_Type;
+} IRQn_reg_t;
 
 /*!
  * @}
@@ -194,7 +194,7 @@ typedef struct {
   __IO  uint32_t CLUSTER_INTEGRATOR;        /**< FLL_CTRL INTEGRATOR register, offset: 0x1C */
   __IO  uint32_t FLL_CONVERGE;              /**< FLL_CTRL Fll Converge register, offset: 0x20 */
 
-} FLL_CTRL_Type;
+} FLL_CTRL_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- FLL_CTRL Register Masks
@@ -309,7 +309,7 @@ typedef struct {
 /** Peripheral FLL_CTRL base address */
 #define FLL_CTRL_BASE                                (SOC_PERI_BASE)
 /** Peripheral FLL_CTRL base pointer */
-#define FLL_CTRL                                     ((FLL_CTRL_Type *)FLL_CTRL_BASE)
+#define FLL_CTRL                                     ((FLL_CTRL_reg_t *)FLL_CTRL_BASE)
 /** Array initializer of FLL_CTRL base addresses */
 #define FLL_CTRL_BASE_ADDRS                          { FLL_CTRL_BASE }
 /** Array initializer of FLL_CTRL base pointers */
@@ -339,7 +339,7 @@ typedef struct {
   __IO  uint32_t INTSTATUS;                 /**< GPIO gpio int status register, offset: 0x18 */
   __IO  uint32_t EN;                        /**< GPIO gpio enable register, offset: 0x1C */
   __IO  uint32_t PADCFG[8];                 /**< GPIO pad configuration registers, offset: 0x020 */
-} GPIO_Type;
+} GPIO_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- GPIO Register Masks
@@ -365,7 +365,7 @@ typedef struct {
 /** Peripheral GPIOA base address */
 #define GPIOA_BASE                              (SOC_PERI_BASE + 0x1000u)
 /** Peripheral GPIOA base pointer */
-#define GPIOA                                   ((GPIO_Type *)GPIOA_BASE)
+#define GPIOA                                   ((GPIO_reg_t *)GPIOA_BASE)
 /** Array initializer of GPIO base addresses */
 #define GPIO_BASE_ADDRS                         { GPIOA_BASE }
 /** Array initializer of GPIO base pointers */
@@ -398,7 +398,7 @@ typedef struct {
   __IO uint32_t TX_CFG;                            /**< TX UDMA transfer configuration register, offset: 0x18 */
   __IO uint32_t TX_INITCFG;                        /**< Reserved, offset: 0x1C */
 
-} UDMA_Type;
+} UDMA_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- UDMA Register Masks
@@ -466,7 +466,7 @@ typedef struct {
 typedef struct {
   __IO uint32_t CG;                          /**< UDMA_GC clock gating register, offset: 0x0 */
   __IO uint32_t EVTIN;                       /**< UDMA_GC input event register, offset: 0x04 */
-} UDMA_GC_Type;
+} UDMA_GC_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- UDMA_GC Register Masks
@@ -501,7 +501,7 @@ typedef struct {
 /* UDMA Global configuration - instance base addresses */
 /** Global configuration UDMA base address */
 #define UDMA_GC_BASE                              (UDMA_BASE + 0x780u)
-#define UDMA_GC                            ((UDMA_GC_Type *)UDMA_GC_BASE)
+#define UDMA_GC                            ((UDMA_GC_reg_t *)UDMA_GC_BASE)
 
 /*!
  * @}
@@ -519,11 +519,11 @@ typedef struct {
 
 /** LVDS - Register Layout Typedef */
 typedef struct {
-  UDMA_Type    UDMA_LVDS;                           /**< LVDS UDMA general register, offset: 0x0 */
+  UDMA_reg_t    UDMA_LVDS;                           /**< LVDS UDMA general register, offset: 0x0 */
   __IO  uint32_t RF_CFG;                            /**< LVDS configuration register, offset: 0x20 */
   __IO  uint32_t RF_GPIO;                           /**< Reserved, offset: 0x24 */
   __IO  uint32_t RF_STATUS;                         /**< LVDS Status register, offset: 0x28 */
-} LVDS_Type;
+} LVDS_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- LVDS Register Masks
@@ -602,7 +602,7 @@ typedef struct {
 /** Peripheral LVDS base address */
 #define LVDS_BASE                                 (UDMA_BASE + 0 * 128U)
 /** Peripheral LVDS base pointer */
-#define LVDS                                      ((LVDS_Type *)LVDS_BASE)
+#define LVDS                                      ((LVDS_reg_t *)LVDS_BASE)
 /** Array initializer of LVDS peripheral base addresses */
 #define LVDS_BASE_ADDRS                           { LVDS_BASE }
 /** Array initializer of LVDS peripheral base pointers */
@@ -628,7 +628,7 @@ typedef struct {
 
 /** ORCA - Register Layout Typedef */
 typedef struct {
-  UDMA_Type    UDMA_ORCA;                           /**< ORCA UDMA general register, offset: 0x0 */
+  UDMA_reg_t    UDMA_ORCA;                           /**< ORCA UDMA general register, offset: 0x0 */
   __IO  uint32_t RF_CFG;                            /**< ORCA configuration register, offset: 0x20 */
   __IO  uint32_t RF_GPIO;                           /**< Reserved, offset: 0x24 */
   __IO  uint32_t RF_STATUS;                         /**< ORCA Status register, offset: 0x28 */
@@ -638,7 +638,7 @@ typedef struct {
   __IO  uint32_t CLKDIV_UPD;                        /**< ORCA uDMA clock divider data register, offset: 0x38 */
   __IO  uint32_t ORCA_CFG;                          /**< ORCA configuration register, offset: 0x3C */
   __IO  uint32_t CNT_EVENT;                         /**< ORCA Status register, offset: 0x40 */
-} ORCA_Type;
+} ORCA_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- ORCA Register Masks
@@ -745,7 +745,7 @@ typedef struct {
 /** Peripheral ORCA base address */
 #define ORCA_BASE                                 (UDMA_BASE + 0 * 128U)
 /** Peripheral ORCA base pointer */
-#define ORCA                                      ((ORCA_Type *)ORCA_BASE)
+#define ORCA                                      ((ORCA_reg_t *)ORCA_BASE)
 /** Array initializer of ORCA peripheral base addresses */
 #define ORCA_BASE_ADDRS                           { ORCA_BASE }
 /** Array initializer of ORCA peripheral base pointers */
@@ -771,8 +771,8 @@ typedef struct {
 
 /** SPIM - Register Layout Typedef */
 typedef struct {
-  UDMA_Type    UDMA_SPIM;                           /**< SPIM UDMA general register, offset: 0x0 */
-} SPIM_Type;
+  UDMA_reg_t    UDMA_SPIM;                           /**< SPIM UDMA general register, offset: 0x0 */
+} SPIM_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- SPIM Register Masks
@@ -988,11 +988,11 @@ typedef struct {
 /** Peripheral SPIM0 base address */
 #define SPIM0_BASE                                (UDMA_BASE + 1 * 128U)
 /** Peripheral SPIM0 base pointer */
-#define SPIM0                                     ((SPIM_Type *)SPIM0_BASE)
+#define SPIM0                                     ((SPIM_reg_t *)SPIM0_BASE)
 /** Peripheral SPIM1 base address */
 #define SPIM1_BASE                                (UDMA_BASE + 2 * 128U)
 /** Peripheral SPIM1 base pointer */
-#define SPIM1                                     ((SPIM_Type *)SPIM1_BASE)
+#define SPIM1                                     ((SPIM_reg_t *)SPIM1_BASE)
 /** Array initializer of SPIM peripheral base addresses */
 #define SPIM_BASE_ADDRS                           { SPIM0_BASE, SPIM1_BASE }
 /** Array initializer of SPIM peripheral base pointers */
@@ -1017,7 +1017,7 @@ typedef struct {
 
 /** HYPERBUS - Register Layout Typedef */
 typedef struct {
-  UDMA_Type    UDMA_HYPERBUS;                           /**< HYPERBUS UDMA general register, offset: 0x0 */
+  UDMA_reg_t    UDMA_HYPERBUS;                           /**< HYPERBUS UDMA general register, offset: 0x0 */
   __IO  uint32_t EXT_ADDR;                           /**< HYPERBUS Memory access address register, offset: 0x20 */
   __IO  uint32_t EXT_CFG;                            /**< Reserved, offset: 0x24 */
   __IO  uint32_t MEM_CFG0;                           /**< HYPERBUS Memory control Configuration register0, offset: 0x28 */
@@ -1028,7 +1028,7 @@ typedef struct {
   __IO  uint32_t MEM_CFG5;                           /**< HYPERBUS Memory control Configuration register5, offset: 0x3C */
   __IO  uint32_t MEM_CFG6;                           /**< HYPERBUS Memory control Configuration register6, offset: 0x40 */
   __IO  uint32_t MEM_CFG7;                           /**< HYPERBUS Memory control Configuration register7, offset: 0x44 */
-} HYPERBUS_Type;
+} HYPERBUS_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- HYPERBUS Register Masks
@@ -1172,7 +1172,7 @@ typedef struct {
 /** Peripheral HYPERBUS base address */
 #define HYPERBUS_BASE0                                 (UDMA_BASE + 3 * 128U)
 /** Peripheral HYPERBUS base pointer */
-#define HYPERBUS0                                      ((HYPERBUS_Type *)HYPERBUS_BASE0)
+#define HYPERBUS0                                      ((HYPERBUS_reg_t *)HYPERBUS_BASE0)
 /** Array initializer of HYPERBUS peripheral base addresses */
 #define HYPERBUS_BASE_ADDRS                           { HYPERBUS_BASE0 }
 /** Array initializer of HYPERBUS peripheral base pointers */
@@ -1197,10 +1197,10 @@ typedef struct {
 
 /** UART - Register Layout Typedef */
 typedef struct {
-  UDMA_Type    UDMA_UART;                           /**< UART UDMA general register, offset: 0x0 */
+  UDMA_reg_t    UDMA_UART;                           /**< UART UDMA general register, offset: 0x0 */
   __IO  uint32_t STATUS;                            /**< UART Status register, offset: 0x20 */
   __IO  uint32_t SETUP;                             /**< UART Configuration register, offset: 0x24 */
-} UART_Type;
+} UART_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- UART Register Masks
@@ -1255,7 +1255,7 @@ typedef struct {
 /** Peripheral UART base address */
 #define UART_BASE                                 (UDMA_BASE + 4 * 128U)
 /** Peripheral UART base pointer */
-#define UART                                      ((UART_Type *)UART_BASE)
+#define UART                                      ((UART_reg_t *)UART_BASE)
 /** Array initializer of UART peripheral base addresses */
 #define UART_BASE_ADDRS                           { UART_BASE }
 /** Array initializer of UART peripheral base pointers */
@@ -1281,11 +1281,11 @@ typedef struct {
 
 /** I2C - Register Layout Typedef */
 typedef struct {
-  UDMA_Type     UDMA_I2C;                           /**< I2C UDMA general register, offset: 0x0 */
+  UDMA_reg_t     UDMA_I2C;                           /**< I2C UDMA general register, offset: 0x0 */
   __IO  uint32_t STATUS;                            /**< I2C Status register, offset: 0x20 */
   __IO  uint32_t SETUP;                             /**< I2C Configuration register, offset: 0x24 */
 
-} I2C_Type;
+} I2C_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- I2C Register Masks
@@ -1331,11 +1331,11 @@ typedef struct {
 /** Peripheral I2C0 base address */
 #define I2C0_BASE                                (UDMA_BASE + 5 * 128U)
 /** Peripheral I2C0 base pointer */
-#define I2C0                                     ((I2C_Type *)I2C0_BASE)
+#define I2C0                                     ((I2C_reg_t *)I2C0_BASE)
 /** Peripheral I2C1 base address */
 #define I2C1_BASE                                (UDMA_BASE + 6 * 128U)
 /** Peripheral I2C1 base pointer */
-#define I2C1                                     ((I2C_Type *)I2C1_BASE)
+#define I2C1                                     ((I2C_reg_t *)I2C1_BASE)
 /** Array initializer of I2C peripheral base addresses */
 #define I2C_BASE_ADDRS                           { I2C0_BASE, I2C1_BASE }
 /** Array initializer of I2C peripheral base pointers */
@@ -1360,10 +1360,10 @@ typedef struct {
 
 /** TCDM - Register Layout Typedef */
 typedef struct {
-  UDMA_Type     UDMA_TCDM;                           /**< TCDM UDMA general register, offset: 0x0 */
+  UDMA_reg_t     UDMA_TCDM;                           /**< TCDM UDMA general register, offset: 0x0 */
   __IO  uint32_t DST_ADDR;                           /**< TCDM destination address register, offset: 0x20 */
   __IO  uint32_t SRC_ADDR;                           /**< TCDM source address register, offset: 0x24 */
-} TCDM_Type;
+} TCDM_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- TCDM Register Masks
@@ -1392,7 +1392,7 @@ typedef struct {
 /** Peripheral TCDM base address */
 #define TCDM_BASE                                 (UDMA_BASE + 7 * 128U)
 /** Peripheral TCDM base pointer */
-#define TCDM                                      ((TCDM_Type *)TCDM_BASE)
+#define TCDM                                      ((TCDM_reg_t *)TCDM_BASE)
 /** Array initializer of TCDM peripheral base addresses */
 #define TCDM_BASE_ADDRS                           { TCDM_BASE }
 /** Array initializer of TCDM peripheral base pointers */
@@ -1416,14 +1416,14 @@ typedef struct {
 
 /** I2S - Register Layout Typedef */
 typedef struct {
-  UDMA_Type      UDMA_I2S;                         /**< I2S UDMA general register, offset: 0x0 */
+  UDMA_reg_t      UDMA_I2S;                         /**< I2S UDMA general register, offset: 0x0 */
   __IO  uint32_t EXT;                              /**< I2S external clock configuration register, offset: 0x20 */
   __IO  uint32_t CFG_CLKGEN0;                      /**< I2S clock/WS generator 0 configuration register, offset: 0x24 */
   __IO  uint32_t CFG_CLKGEN1;                      /**< I2S clock/WS generator 1 configuration register, offset: 0x28 */
   __IO  uint32_t CHMODE;                           /**< I2S channels mode configuration register, offset: 0x2C */
   __IO  uint32_t FILT_CH0;                         /**< I2S channels 0 filtering configuration register, offset: 0x30 */
   __IO  uint32_t FILT_CH1;                         /**< I2S channels 0 filtering configuration register, offset: 0x34 */
-} I2S_Type;
+} I2S_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- I2S Register Masks
@@ -1524,7 +1524,7 @@ typedef struct {
 /** Peripheral I2S base address */
 #define I2S_BASE                                 (UDMA_BASE + 8 * 128U)
 /** Peripheral I2S base pointer */
-#define I2S                                      ((I2S_Type *)I2S_BASE)
+#define I2S                                      ((I2S_reg_t *)I2S_BASE)
 /** Array initializer of I2S peripheral base addresses */
 #define I2S_BASE_ADDRS                           { I2S_BASE }
 /** Array initializer of I2S peripheral base pointers */
@@ -1549,13 +1549,13 @@ typedef struct {
 
 /** CPI - Register Layout Typedef */
 typedef struct {
-  UDMA_Type     UDMA_CPI;                           /**< CPI UDMA general register, offset: 0x0 */
+  UDMA_reg_t     UDMA_CPI;                           /**< CPI UDMA general register, offset: 0x0 */
   __IO  uint32_t CFG_GLOB;                          /**< CPI global configuration register, offset: 0x20 */
   __IO  uint32_t CFG_LL;                            /**< CPI lower left comer configuration register, offset: 0x24 */
   __IO  uint32_t CFG_UR;                            /**< CPI upper right comer configuration register, offset: 0x28 */
   __IO  uint32_t CFG_SIZE;                          /**< CPI horizontal resolution configuration register, offset: 0x2C */
   __IO  uint32_t CFG_FILTER;                        /**< CPI RGB coefficients configuration register, offset: 0x30 */
-} CPI_Type;
+} CPI_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- CPI Register Masks
@@ -1626,7 +1626,7 @@ typedef struct {
 /** Peripheral CPI base address */
 #define CPI_BASE                                 (UDMA_BASE + 9 * 128U)
 /** Peripheral CPI base pointer */
-#define CPI                                      ((CPI_Type *)CPI_BASE)
+#define CPI                                      ((CPI_reg_t *)CPI_BASE)
 /** Array initializer of CPI peripheral base addresses */
 #define CPI_BASE_ADDRS                           { CPI_BASE }
 /** Array initializer of CPI peripheral base pointers */
@@ -1670,7 +1670,7 @@ typedef struct {
   __IO  uint32_t CORE_STATUS;         /**< SOC_CTRL Slepp control register, offset: 0xA0 */
   __IO  uint32_t CORE_STATUS_EOC;     /**< SOC_CTRL Slepp control register, offset: 0xC0 */
 
-} SOC_CTRL_Type;
+} SOC_CTRL_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- SOC_CTRL Register Masks
@@ -1745,7 +1745,7 @@ typedef struct {
 /** Peripheral SOC_CTRL base address */
 #define SOC_CTRL_BASE                                (SOC_PERI_BASE + 0x4000u)
 /** Peripheral SOC_CTRL base pointer */
-#define SOC_CTRL                                     ((SOC_CTRL_Type *)SOC_CTRL_BASE)
+#define SOC_CTRL                                     ((SOC_CTRL_reg_t *)SOC_CTRL_BASE)
 /** Array initializer of SOC_CTRL base addresses */
 #define SOC_CTRL_BASE_ADDRS                          { SOC_CTRL_BASE }
 /** Array initializer of SOC_CTRL base pointers */
@@ -1772,7 +1772,7 @@ typedef struct {
   __IO uint32_t SLEEP_CTRL;                   /**< PMU CTRL sleep control register, offset: 0x004 */
   __IO uint32_t FORCE;                        /**< PMU CTRL register, offset: 0x008 */
 
-} PMU_CTRL_Type;
+} PMU_CTRL_reg_t;
 
 
 /* ----------------------------------------------------------------------------
@@ -1878,7 +1878,7 @@ typedef struct {
 /** Peripheral PMU CTRL base address */
 #define PMU_CTRL_BASE                               (SOC_CTRL_BASE + 0x0100u)
 /** Peripheral PMU_CTRL0 base pointer */
-#define PMU_CTRL                                    ((PMU_CTRL_Type *)PMU_CTRL_BASE)
+#define PMU_CTRL                                    ((PMU_CTRL_reg_t *)PMU_CTRL_BASE)
 /** Array initializer of PMU_CTRL base addresses */
 #define PMU_CTRL_BASE_ADDRS                         { PMU_CTRL_BASE }
 /** Array initializer of PMU_CTRL base pointers */
@@ -1907,7 +1907,7 @@ typedef struct {
   __IO  uint32_t _reserved0[7];                   /**< reserved, offset: 0x010 */
   __IO  uint32_t PADCFG[16];                      /**< PORT pad configuration register 0, offset: 0x040 */
 
-} PORT_Type;
+} PORT_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- PORT Register Masks
@@ -1940,7 +1940,7 @@ typedef struct {
 /** Peripheral PORTA base address */
 #define PORTA_BASE                              (SOC_CTRL_BASE + 0x0140u)
 /** Peripheral PORTA base pointer */
-#define PORTA                                   ((PORT_Type *)PORTA_BASE)
+#define PORTA                                   ((PORT_reg_t *)PORTA_BASE)
 /** Array initializer of PORT base addresses */
 #define PORT_BASE_ADDRS                         { PORTA_BASE }
 /** Array initializer of PORT base pointers */
@@ -1967,7 +1967,7 @@ typedef struct {
   __IO  uint32_t CAM_ISO;                        /**< IO_ISO Cemera power domains isolation, offset: 0x004 */
   __IO  uint32_t LVDS_ISO;                       /**< IO_ISO LVDS power domains isolation, offset: 0x008 */
 
-} IO_ISO_Type;
+} IO_ISO_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- IO_ISO Register Masks
@@ -1999,7 +1999,7 @@ typedef struct {
 /** Peripheral IO_ISO base address */
 #define IO_ISO_BASE                               (SOC_CTRL_BASE + 0x01C0u)
 /** Peripheral IO_ISO base pointer */
-#define IO_ISO                                    ((IO_ISO_Type *)IO_ISO_BASE)
+#define IO_ISO                                    ((IO_ISO_reg_t *)IO_ISO_BASE)
 /** Array initializer of IO_ISO base addresses */
 #define IO_ISO_BASE_ADDRS                         { IO_ISO_BASE }
 /** Array initializer of IO_ISO base pointers */
@@ -2023,7 +2023,7 @@ typedef struct {
 typedef struct {
   __IO  uint32_t EVENT_CFG;       /**< PWM event configuration register, offset: 0x100 */
   __IO  uint32_t CH_EN;           /**< PWM channel enable register, offset: 0x104 */
-} PWM_CTRL_Type;
+} PWM_CTRL_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- PWM_CTRL Register Masks
@@ -2058,7 +2058,7 @@ typedef struct {
 /** Peripheral PWM_CTRL_CTRL base address */
 #define PWM_CTRL_BASE                                (SOC_PERI_BASE + 0x05100u)
 /** Peripheral PWM_CTRL_CTRL base pointer */
-#define PWM_CTRL                                     ((PWM_CTRL_Type *)PWM_CTRL_BASE)
+#define PWM_CTRL                                     ((PWM_CTRL_reg_t *)PWM_CTRL_BASE)
 /** Array initializer of PWM_CTRL_CTRL base addresses */
 #define PWM_CTRL_BASE_ADDRS                          { PWM_CTRL_BASE }
 /** Array initializer of PWM_CTRL_CTRL base pointers */
@@ -2086,7 +2086,7 @@ typedef struct {
   __IO  uint32_t CH_TH[4];         /**< TIMER Channles' threshold register, offset: 0x0c */
   __IO  uint32_t CH_LUT[4];        /**< TIMER Channles' LUT register, offset: 0x1c */
   __I   uint32_t COUNTER;          /**< TIMER Counter register, offset: 0x2c */
-} PWM_Type;
+} PWM_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- PWM Register Masks
@@ -2151,19 +2151,19 @@ typedef struct {
 /** Peripheral PWM base address */
 #define PWM0_BASE                               (SOC_PERI_BASE + 0x05000u)
 /** Peripheral PWM base pointer */
-#define PWM0                                    ((PWM_Type *)PWM0_BASE)
+#define PWM0                                    ((PWM_reg_t *)PWM0_BASE)
 /** Peripheral PWM base address */
 #define PWM1_BASE                               (PWM0_BASE + 0x40u)
 /** Peripheral PWM base pointer */
-#define PWM1                                    ((PWM_Type *)PWM1_BASE)
+#define PWM1                                    ((PWM_reg_t *)PWM1_BASE)
 /** Peripheral PWM base address */
 #define PWM2_BASE                               (PWM1_BASE + 0x40u)
 /** Peripheral PWM base pointer */
-#define PWM2                                    ((PWM_Type *)PWM2_BASE)
+#define PWM2                                    ((PWM_reg_t *)PWM2_BASE)
 /** Peripheral PWM base address */
 #define PWM3_BASE                               (PWM2_BASE + 0x40u)
 /** Peripheral PWM base pointer */
-#define PWM3                                    ((PWM_Type *)PWM3_BASE)
+#define PWM3                                    ((PWM_reg_t *)PWM3_BASE)
 /** Array initializer of PWM base addresses */
 #define PWM_BASE_ADDRS                          { PWM0_BASE, PWM1_BASE, PWM2_BASE, PWM3_BASE }
 /** Array initializer of PWM base pointers */
@@ -2197,7 +2197,7 @@ typedef struct {
   __IO  uint32_t ERR_MASK_LSB;                   /**< SOCEU error mask LSB register, offset: 0x20 */
   __IO  uint32_t TIMER_SEL_HI;                   /**< SOCEU timer high register, offset: 0x24 */
   __IO  uint32_t TIMER_SEL_LO;                   /**< SOCEU timer low register, offset: 0x28 */
-} SOCEU_Type;
+} SOCEU_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- SOCEU Register Masks
@@ -2218,7 +2218,7 @@ typedef struct {
 /** Peripheral SOCEU base address */
 #define SOCEU_BASE                               (SOC_PERI_BASE + 0x06000u)
 /** Peripheral SOCEU base pointer */
-#define SOCEU                                    ((SOCEU_Type *)SOCEU_BASE)
+#define SOCEU                                    ((SOCEU_reg_t *)SOCEU_BASE)
 /** Array initializer of SOCEU base addresses */
 #define SOCEU_BASE_ADDRS                         { SOCEU_BASE }
 /** Array initializer of SOCEU base pointers */
@@ -2259,7 +2259,7 @@ typedef struct {
   __IO uint32_t DLC_IDIFR;                      /**< PMU DLC register, offset: 0x18 */
   __IO uint32_t DLC_IMCIFR;                     /**< PMU DLC register, offset: 0x1C */
 
-} PMU_DLC_Type;
+} PMU_DLC_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- SOCEU Register Masks
@@ -2394,7 +2394,7 @@ typedef struct {
 /** Peripheral PMU DLC base address */
 #define PMU_DLC_BASE                                (SOC_PERI_BASE + 0x7000u)
 /** Peripheral PMU_DLC base pointer */
-#define PMU_DLC                                     ((PMU_DLC_Type *)PMU_DLC_BASE)
+#define PMU_DLC                                     ((PMU_DLC_reg_t *)PMU_DLC_BASE)
 /** Array initializer of PMU_DLC base addresses */
 #define PMU_DLC_BASE_ADDRS                          { PMU_DLC_BASE }
 /** Array initializer of PMU_DLC base pointers */
@@ -2423,7 +2423,7 @@ typedef struct {
   __IO  uint32_t IRQ_CTRL;                   /**< RTC_APB_IRQ_Control register, offset: 0x10 */
   __IO  uint32_t IRQ_MASK;                   /**< RTC_APB_IRQ_Mask register, offset: 0x14 */
   __IO  uint32_t IRQ_FLAG;                   /**< RTC_APB_IRQ_Flag register, offset: 0x18 */
-} RTC_APB_Type;
+} RTC_APB_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- RTC_APB Register Masks
@@ -2591,7 +2591,7 @@ typedef struct {
 /** Peripheral RTC_APB base address */
 #define RTC_APB_BASE                               (SOC_PERI_BASE + 0x08000u)
 /** Peripheral RTC_APB base pointer */
-#define RTC_APB                                    ((RTC_APB_Type *)RTC_APB_BASE)
+#define RTC_APB                                    ((RTC_APB_reg_t *)RTC_APB_BASE)
 /** Array initializer of RTC_APB base addresses */
 #define RTC_APB_BASE_ADDRS                         { RTC_APB_BASE }
 /** Array initializer of RTC_APB base pointers */
@@ -2615,7 +2615,7 @@ typedef struct {
 typedef struct {
   __IO  uint32_t CMD;                       /**< EFUSE_Control register, offset: 0x00 */
   __IO  uint32_t CFG;                       /**< EFUSE_Control register, offset: 0x04 */
-} EFUSE_CTRL_Type;
+} EFUSE_CTRL_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- EFUSE_CTRL Register Masks
@@ -2637,7 +2637,7 @@ typedef struct {
 /** Peripheral EFUSE_CTRL base address */
 #define EFUSE_CTRL_BASE                               (SOC_PERI_BASE + 0x09000u)
 /** Peripheral EFUSE_CTRL base pointer */
-#define EFUSE_CTRL                                    ((EFUSE_CTRL_Type *)EFUSE_CTRL_BASE)
+#define EFUSE_CTRL                                    ((EFUSE_CTRL_reg_t *)EFUSE_CTRL_BASE)
 /** Array initializer of EFUSE_CTRL base addresses */
 #define EFUSE_CTRL_BASE_ADDRS                         { EFUSE_CTRL_BASE }
 /** Array initializer of EFUSE_CTRL base pointers */
@@ -2668,7 +2668,7 @@ typedef struct {
   __IO  uint32_t WAIT_XTAL_DELTA_MSB;     /**< EFUSE_WAIT_XTAL_DELTA_MSB register, offset: 0x06C */
   __IO  uint32_t WAIT_XTAL_MIN;           /**< EFUSE_WAIT_XTAL_MIN registers, offset: 0x070 */
   __IO  uint32_t WAIT_XTAL_MAX;           /**< EFUSE_WAIT_XTAL_MAX registers, offset: 0x074 */
-} EFUSE_REGS_Type;
+} EFUSE_REGS_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- EFUSE_REGS Register Masks
@@ -2705,7 +2705,7 @@ typedef struct {
 /** Peripheral EFUSE_REGS base address */
 #define EFUSE_REGS_BASE                                (SOC_PERI_BASE + 0x09200u)
 /** Peripheral EFUSE_REGS base pointer */
-#define EFUSE_REGS                                     ((EFUSE_REGS_Type *)EFUSE_REGS_BASE)
+#define EFUSE_REGS                                     ((EFUSE_REGS_reg_t *)EFUSE_REGS_BASE)
 /** Array initializer of EFUSE_REGS base addresses */
 #define EFUSE_REGS_BASE_ADDRS                          { EFUSE_REGS_BASE }
 /** Array initializer of EFUSE_REGS base pointers */
@@ -2729,7 +2729,7 @@ typedef struct {
 /** FC_STDOUT - Registers Layout Typedef */
 typedef struct {
   __IO  uint32_t PUTC[16];                    /**< FC_STDOUT INFO register, offset: 0x000 */
-} FC_STDOUT_Type;
+} FC_STDOUT_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- FC_STDOUT Register Masks
@@ -2750,7 +2750,7 @@ typedef struct {
 /** Peripheral FC_STDOUT base address */
 #define FC_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u + (FC_CLUSTER_ID << 7))
 /** Peripheral FC_STDOUT base pointer */
-#define FC_STDOUT                                     ((FC_STDOUT_Type *)FC_STDOUT_BASE)
+#define FC_STDOUT                                     ((FC_STDOUT_reg_t *)FC_STDOUT_BASE)
 /** Array initializer of FC_STDOUT base addresses */
 #define FC_STDOUT_BASE_ADDRS                          { FC_STDOUT_BASE }
 /** Array initializer of FC_STDOUT base pointers */
@@ -2774,7 +2774,7 @@ typedef struct {
 /** CLUSTER_STDOUT - Registers Layout Typedef */
 typedef struct {
   __IO  uint32_t PUTC[16];                    /**< CLUSTER_STDOUT INFO register, offset: 0x000 */
-} CLUSTER_STDOUT_Type;
+} CLUSTER_STDOUT_reg_t;
 
 /* ----------------------------------------------------------------------------
    -- CLUSTER_STDOUT Register Masks
@@ -2795,7 +2795,7 @@ typedef struct {
 /** Peripheral CLUSTER_STDOUT base address */
 #define CLUSTER_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u)
 /** Peripheral CLUSTER_STDOUT base pointer */
-#define CLUSTER_STDOUT                                     ((CLUSTER_STDOUT_Type *)CLUSTER_STDOUT_BASE)
+#define CLUSTER_STDOUT                                     ((CLUSTER_STDOUT_reg_t *)CLUSTER_STDOUT_BASE)
 /** Array initializer of CLUSTER_STDOUT base addresses */
 #define CLUSTER_STDOUT_BASE_ADDRS                          { CLUSTER_STDOUT_BASE }
 /** Array initializer of CLUSTER_STDOUT base pointers */
@@ -2847,7 +2847,7 @@ typedef struct {
     __IO  uint32_t HWCE_W_REG;                    /**< HWCE W register, offset: 0x7C */
     __IO  uint32_t HWCE_JOB_CONFIG0_REG;          /**< HWCE Job_Config0 register, offset: 0x80 */
     __IO  uint32_t HWCE_JOB_CONFIG1_REG;          /**< HWCE Job_Config1 register, offset: 0x84 */
-} HWCE_Type;
+} HWCE_reg_t;
 
 
 /* ----------------------------------------------------------------------------
@@ -2937,7 +2937,7 @@ typedef struct {
 /** Peripheral HWCE base address */
 #define HWCE_BASE                                (CORE_PERI_BASE + 0x00001000)
 /** Peripheral HWCE base pointer */
-#define HWCE                                     ((HWCE_Type *) HWCE_BASE)
+#define HWCE                                     ((HWCE_reg_t *) HWCE_BASE)
 /** Array initializer of HWCE base addresses */
 #define HWCE_BASE_ADDRS                          { HWCE_BASE }
 /** Array initializer of HWCE base pointers */

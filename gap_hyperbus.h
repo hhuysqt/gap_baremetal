@@ -129,7 +129,7 @@ typedef struct _hyperbus_master_handle hyperbus_master_handle_t;
  * @param status Success or error code describing whether the transfer completed.
  * @param userData Arbitrary pointer-dataSized value passed from the application.
  */
-typedef void (*hyperbus_master_transfer_callback_t)(HYPERBUS_Type *base,
+typedef void (*hyperbus_master_transfer_callback_t)(HYPERBUS_reg_t *base,
                                                 hyperbus_master_handle_t *handle,
                                                 status_t status,
                                                 void *userData);
@@ -154,7 +154,7 @@ struct _hyperbus_master_handle
  ******************************************************************************/
 
 /*! @brief Pointers to hyperbus bases for each instance. */
-static HYPERBUS_Type *const s_hyperbusBases[] = HYPERBUS_BASE_PTRS;
+static HYPERBUS_reg_t *const s_hyperbusBases[] = HYPERBUS_BASE_PTRS;
 
 extern uint8_t hyperbus_is_init;
 
@@ -890,7 +890,7 @@ static inline void HYPERBUS_SetWrMaxLengthEN1(uint8_t value)
  * @param masterConfig Pointer to the structure hyperbus_master_config_t.
  * @param srcClock_Hz Module source input clock in Hertz.
  */
-void HYPERBUS_MasterInit(HYPERBUS_Type *base, hyperbus_master_config_t *masterConfig, uint32_t srcClock_Hz);
+void HYPERBUS_MasterInit(HYPERBUS_reg_t *base, hyperbus_master_config_t *masterConfig, uint32_t srcClock_Hz);
 
 /*!
  * @brief Sets the hyperbus_master_config_t structure to default values.
@@ -911,7 +911,7 @@ void HYPERBUS_MasterGetDefaultConfig(hyperbus_master_config_t *masterConfig);
  * @brief De-initializes the HYPERBUS peripheral, Clock Gating. Call this API to disable the HYPERBUS clock.
  * @param base HYPERBUS peripheral address.
  */
-void HYPERBUS_MasterDeInit(HYPERBUS_Type *base);
+void HYPERBUS_MasterDeInit(HYPERBUS_reg_t *base);
 
 /*!
  * @brief Configure the HYPERBUS memrory configuraton
@@ -922,7 +922,7 @@ void HYPERBUS_MasterDeInit(HYPERBUS_Type *base);
  * @param  rd_wr          The type of operation, read or write
  * @param  device         The type of hyperbus, ram or flash
  */
-static inline void HYPERBUS_SetMaxLength(HYPERBUS_Type *base, int max_length_en, int max_length, int rd_wr, char device)
+static inline void HYPERBUS_SetMaxLength(HYPERBUS_reg_t *base, int max_length_en, int max_length, int rd_wr, char device)
 {
     if (device == uHYPERBUS_Ram) {
         if (rd_wr == uHYPERBUS_Read) {
@@ -955,7 +955,7 @@ static inline void HYPERBUS_SetMaxLength(HYPERBUS_Type *base, int max_length_en,
  * @param  rd_wr    The type of operation, read or write
  * @param  device   The type of hyperbus, ram or flash
  */
-static inline void HYPERBUS_SetTiming(HYPERBUS_Type *base, int cshi, int css, int csh, int latency, int rd_wr, char device)
+static inline void HYPERBUS_SetTiming(HYPERBUS_reg_t *base, int cshi, int css, int csh, int latency, int rd_wr, char device)
 {
     if (device == uHYPERBUS_Ram) {
         if (rd_wr == uHYPERBUS_Read) {
@@ -987,10 +987,10 @@ static inline void HYPERBUS_SetTiming(HYPERBUS_Type *base, int cshi, int css, in
  * @param  base     HYPERBUS peripheral address.
  *
  */
-static inline void HYPERBUS_ClearAndStop(HYPERBUS_Type *base)
+static inline void HYPERBUS_ClearAndStop(HYPERBUS_reg_t *base)
 {
-    UDMA_RXClearAndStop((UDMA_Type*)base);
-    UDMA_TXClearAndStop((UDMA_Type*)base);
+    UDMA_RXClearAndStop((UDMA_reg_t*)base);
+    UDMA_TXClearAndStop((UDMA_reg_t*)base);
 }
 /*!
  *@}
@@ -1010,7 +1010,7 @@ static inline void HYPERBUS_ClearAndStop(HYPERBUS_Type *base)
  * @param base HYPERBUS peripheral address.
  * @param transfer The pointer to hyperbus_transfer_t structure.
  */
-void HYPERBUS_MasterTransferBlocking(HYPERBUS_Type *base, hyperbus_transfer_t *transfer);
+void HYPERBUS_MasterTransferBlocking(HYPERBUS_reg_t *base, hyperbus_transfer_t *transfer);
 
 
 /*!
@@ -1024,7 +1024,7 @@ void HYPERBUS_MasterTransferBlocking(HYPERBUS_Type *base, hyperbus_transfer_t *t
  * @param transfer Pointer to the hyperbus_transfer_t structure.
  * @return status of status_t.
  */
-status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_Type *base, hyperbus_master_handle_t *handle, hyperbus_transfer_t *transfer);
+status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_reg_t *base, hyperbus_master_handle_t *handle, hyperbus_transfer_t *transfer);
 
 /*!
  * @brief HYPERBUS Master IRQ handler function.
@@ -1034,7 +1034,7 @@ status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_Type *base, hyperbus_master
  * @param base HYPERBUS peripheral base address.
  * @param handle Pointer to the hyperbus_master_handle_t structure which stores the transfer state.
  */
-void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_Type *base, hyperbus_master_handle_t *handle);
+void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_reg_t *base, hyperbus_master_handle_t *handle);
 
 
 /*!
@@ -1048,7 +1048,7 @@ void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_Type *base, hyperbus_master_handl
  * @param callback HYPERBUS callback.
  * @param userData Callback function parameter.
  */
-void HYPERBUS_MasterTransferCreateHandle(HYPERBUS_Type *base,
+void HYPERBUS_MasterTransferCreateHandle(HYPERBUS_reg_t *base,
                                      hyperbus_master_handle_t *handle,
                                      hyperbus_master_transfer_callback_t callback,
                                      void *userData);

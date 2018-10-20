@@ -34,7 +34,7 @@
  * Definitions
  ******************************************************************************/
 /*! @brief Typedef for master interrupt handler. */
-typedef void (*hyperbus_master_isr_t)(HYPERBUS_Type *base, hyperbus_master_handle_t *handle);
+typedef void (*hyperbus_master_isr_t)(HYPERBUS_reg_t *base, hyperbus_master_handle_t *handle);
 
 /*******************************************************************************
  * Prototypes
@@ -44,7 +44,7 @@ typedef void (*hyperbus_master_isr_t)(HYPERBUS_Type *base, hyperbus_master_handl
  *
  * @param base HYPERBUS peripheral base address.
  */
-uint32_t HYPERBUS_GetInstance(HYPERBUS_Type *base);
+uint32_t HYPERBUS_GetInstance(HYPERBUS_reg_t *base);
 
 
 /*******************************************************************************
@@ -63,7 +63,7 @@ uint8_t hyperbus_is_init = 0;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-uint32_t HYPERBUS_GetInstance(HYPERBUS_Type *base)
+uint32_t HYPERBUS_GetInstance(HYPERBUS_reg_t *base)
 {
     uint32_t instance;
 
@@ -81,12 +81,12 @@ uint32_t HYPERBUS_GetInstance(HYPERBUS_Type *base)
     return instance;
 }
 
-void HYPERBUS_MasterInit(HYPERBUS_Type *base, hyperbus_master_config_t *masterConfig, uint32_t srcClock_Hz)
+void HYPERBUS_MasterInit(HYPERBUS_reg_t *base, hyperbus_master_config_t *masterConfig, uint32_t srcClock_Hz)
 {
     assert(masterConfig);
 
     /* Clock Gating */
-    UDMA_Init((UDMA_Type *)base);
+    UDMA_Init((UDMA_reg_t *)base);
 
     /* Set memory base address, RAM has volume of 8 Mbytes / 2 = 4M*/
     HYPERBUS_SetMBR0(masterConfig->mbr0);
@@ -117,13 +117,13 @@ void HYPERBUS_MasterGetDefaultConfig(hyperbus_master_config_t *masterConfig)
     masterConfig->dt1      = uHYPERBUS_Flash;
 }
 
-void HYPERBUS_MasterDeInit(HYPERBUS_Type *base)
+void HYPERBUS_MasterDeInit(HYPERBUS_reg_t *base)
 {
-    UDMA_Deinit((UDMA_Type *)base);
+    UDMA_Deinit((UDMA_reg_t *)base);
     hyperbus_is_init = 0;
 }
 
-static int HYPERBUS_MasterTransferTX(HYPERBUS_Type *base, int addr, const uint16_t *tx, size_t tx_length, char reg_access, char device, uint32_t hint)
+static int HYPERBUS_MasterTransferTX(HYPERBUS_reg_t *base, int addr, const uint16_t *tx, size_t tx_length, char reg_access, char device, uint32_t hint)
 {
     int32_t status;
 
@@ -155,12 +155,12 @@ static int HYPERBUS_MasterTransferTX(HYPERBUS_Type *base, int addr, const uint16
     }
 
     /* Send request */
-    status = UDMA_SendRequest((UDMA_Type*) base, TX, hint);
+    status = UDMA_SendRequest((UDMA_reg_t*) base, TX, hint);
 
     return status;
 }
 
-static int HYPERBUS_MasterTransferRX(HYPERBUS_Type *base, int addr, uint16_t *rx, size_t rx_length, char reg_access, char device, uint32_t hint)
+static int HYPERBUS_MasterTransferRX(HYPERBUS_reg_t *base, int addr, uint16_t *rx, size_t rx_length, char reg_access, char device, uint32_t hint)
 {
     int32_t status;
 
@@ -192,12 +192,12 @@ static int HYPERBUS_MasterTransferRX(HYPERBUS_Type *base, int addr, uint16_t *rx
     }
 
     /* Send request */
-    status = UDMA_SendRequest((UDMA_Type*) base, RX, hint);
+    status = UDMA_SendRequest((UDMA_reg_t*) base, RX, hint);
 
     return status;
 }
 
-void HYPERBUS_MasterTransferBlocking(HYPERBUS_Type *base, hyperbus_transfer_t *transfer)
+void HYPERBUS_MasterTransferBlocking(HYPERBUS_reg_t *base, hyperbus_transfer_t *transfer)
 {
     /*Start master transfer*/
     if(transfer->txDataSize) {
@@ -207,7 +207,7 @@ void HYPERBUS_MasterTransferBlocking(HYPERBUS_Type *base, hyperbus_transfer_t *t
     }
 }
 
-status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_Type *base, hyperbus_master_handle_t *handle, hyperbus_transfer_t *transfer)
+status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_reg_t *base, hyperbus_master_handle_t *handle, hyperbus_transfer_t *transfer)
 {
     assert(handle);
 
@@ -233,7 +233,7 @@ status_t HYPERBUS_MasterTransferNonBlocking(HYPERBUS_Type *base, hyperbus_master
 
 /*Transactional APIs -- Master*/
 
-void HYPERBUS_MasterTransferCreateHandle(HYPERBUS_Type *base,
+void HYPERBUS_MasterTransferCreateHandle(HYPERBUS_reg_t *base,
                                      hyperbus_master_handle_t *handle,
                                      hyperbus_master_transfer_callback_t callback,
                                      void *userData)
@@ -249,7 +249,7 @@ void HYPERBUS_MasterTransferCreateHandle(HYPERBUS_Type *base,
     handle->userData = userData;
 }
 
-void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_Type *base, hyperbus_master_handle_t *handle)
+void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_reg_t *base, hyperbus_master_handle_t *handle)
 {
     assert(handle);
 
@@ -271,7 +271,7 @@ void HYPERBUS_MasterTransferHandleIRQ(HYPERBUS_Type *base, hyperbus_master_handl
     }
 }
 
-static void HYPERBUS_CommonIRQHandler(HYPERBUS_Type *base, void *param)
+static void HYPERBUS_CommonIRQHandler(HYPERBUS_reg_t *base, void *param)
 {
     s_hyperbusMasterIsr(base, (hyperbus_master_handle_t *)param);
 }

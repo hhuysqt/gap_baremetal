@@ -123,7 +123,7 @@ typedef struct _uart_config
 typedef struct _uart_handle uart_handle_t;
 
 /*! @brief UART transfer callback function. */
-typedef void (*uart_transfer_callback_t)(UART_Type *base, uart_handle_t *handle, status_t status, void *userData);
+typedef void (*uart_transfer_callback_t)(UART_reg_t *base, uart_handle_t *handle, status_t status, void *userData);
 
 /*! @brief UART handle structure. */
 struct _uart_handle
@@ -148,7 +148,7 @@ struct _uart_handle
 };
 
 /* Typedef for interrupt handler. */
-typedef void (*uart_isr_t)(UART_Type *base, uart_handle_t *handle);
+typedef void (*uart_isr_t)(UART_reg_t *base, uart_handle_t *handle);
 
 /*******************************************************************************
  * Variables
@@ -188,7 +188,7 @@ extern "C" {
  * @retval uStatus_UART_BaudrateNotSupport Baudrate is not support in current clock source.
  * @retval uStatus_Success Status UART initialize succeed
  */
-status_t UART_Init(UART_Type *base, const uart_config_t *config, uint32_t srcClock_Hz);
+status_t UART_Init(UART_reg_t *base, const uart_config_t *config, uint32_t srcClock_Hz);
 
 /*!
  * @brief Deinitializes a UART instance.
@@ -197,7 +197,7 @@ status_t UART_Init(UART_Type *base, const uart_config_t *config, uint32_t srcClo
  *
  * @param base UART peripheral base address.
  */
-void UART_Deinit(UART_Type *base);
+void UART_Deinit(UART_reg_t *base);
 
 /*!
  * @brief Gets the default configuration structure.
@@ -232,7 +232,7 @@ void UART_GetDefaultConfig(uart_config_t *config);
  * @retval uStatus_UART_BaudrateNotSupport Baudrate is not support in the current clock source.
  * @retval uStatus_Success Set baudrate succeeded.
  */
-status_t UART_SetBaudRate(UART_Type *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz);
+status_t UART_SetBaudRate(UART_reg_t *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz);
 
 /* @} */
 
@@ -247,7 +247,7 @@ status_t UART_SetBaudRate(UART_Type *base, uint32_t baudRate_Bps, uint32_t srcCl
  * @param base UART peripheral base address.
  * @return UART status flags.
  */
-uint32_t UART_GetStatusFlags(UART_Type *base);
+uint32_t UART_GetStatusFlags(UART_reg_t *base);
 
 /* @} */
 
@@ -269,7 +269,7 @@ uint32_t UART_GetStatusFlags(UART_Type *base);
  * @param base UART peripheral base address.
  * @param mask The interrupts to enable. Logical OR of @ref _uart_interrupt_enable.
  */
-void UART_EnableInterrupts(UART_Type *base, uint32_t mask);
+void UART_EnableInterrupts(UART_reg_t *base, uint32_t mask);
 
 /*!
  * @brief Disables the UART interrupts according to the provided mask.
@@ -284,7 +284,7 @@ void UART_EnableInterrupts(UART_Type *base, uint32_t mask);
  * @param base UART peripheral base address.
  * @param mask The interrupts to disable. Logical OR of @ref _uart_interrupt_enable.
  */
-void UART_DisableInterrupts(UART_Type *base, uint32_t mask);
+void UART_DisableInterrupts(UART_reg_t *base, uint32_t mask);
 
 /*!
  * @brief Gets the enabled UART interrupts.
@@ -306,7 +306,7 @@ void UART_DisableInterrupts(UART_Type *base, uint32_t mask);
  * @param base UART peripheral base address.
  * @return UART interrupt flags which are logical OR of the enumerators in @ref _uart_interrupt_enable.
  */
-uint32_t UART_GetEnabledInterrupts(UART_Type *base);
+uint32_t UART_GetEnabledInterrupts(UART_reg_t *base);
 
 /* @} */
 
@@ -328,7 +328,7 @@ uint32_t UART_GetEnabledInterrupts(UART_Type *base);
  * @param callback The callback function.
  * @param userData The parameter of the callback function.
  */
-void UART_TransferCreateHandle(UART_Type *base,
+void UART_TransferCreateHandle(UART_reg_t *base,
                                uart_handle_t *handle,
                                uart_transfer_callback_t callback,
                                void *userData);
@@ -342,7 +342,7 @@ void UART_TransferCreateHandle(UART_Type *base,
  * @param base UART peripheral base address.
  * @param handle UART handle pointer.
  */
-void UART_TransferHandleIRQ(UART_Type *base, uart_handle_t *handle);
+void UART_TransferHandleIRQ(UART_reg_t *base, uart_handle_t *handle);
 
 
 /*!
@@ -354,7 +354,7 @@ void UART_TransferHandleIRQ(UART_Type *base, uart_handle_t *handle);
  * @param base UART peripheral base address.
  * @param handle UART handle pointer.
  */
-void UART_TransferAbortSend(UART_Type *base, uart_handle_t *handle);
+void UART_TransferAbortSend(UART_reg_t *base, uart_handle_t *handle);
 
 /*!
  * @brief Aborts the interrupt-driven data receiving.
@@ -365,7 +365,7 @@ void UART_TransferAbortSend(UART_Type *base, uart_handle_t *handle);
  * @param base UART peripheral base address.
  * @param handle UART handle pointer.
  */
-void UART_TransferAbortReceive(UART_Type *base, uart_handle_t *handle);
+void UART_TransferAbortReceive(UART_reg_t *base, uart_handle_t *handle);
 
 /* @} */
 
@@ -377,7 +377,7 @@ void UART_TransferAbortReceive(UART_Type *base, uart_handle_t *handle);
  * @param base UART peripheral base address.
  * @param enable True to enable, false to disable.
  */
-static inline void UART_EnableTx(UART_Type *base, bool enable)
+static inline void UART_EnableTx(UART_reg_t *base, bool enable)
 {
     if (enable)
     {
@@ -397,7 +397,7 @@ static inline void UART_EnableTx(UART_Type *base, bool enable)
  * @param base UART peripheral base address.
  * @param enable True to enable, false to disable.
  */
-static inline void UART_EnableRx(UART_Type *base, bool enable)
+static inline void UART_EnableRx(UART_reg_t *base, bool enable)
 {
     if (enable)
     {
@@ -418,7 +418,7 @@ static inline void UART_EnableRx(UART_Type *base, bool enable)
  * @param base UART peripheral base address.
  * @param data The byte to write.
  */
-void UART_WriteByte(UART_Type *base, uint8_t data);
+void UART_WriteByte(UART_reg_t *base, uint8_t data);
 
 
 /*!
@@ -430,7 +430,7 @@ void UART_WriteByte(UART_Type *base, uint8_t data);
  * @param base UART peripheral base address.
  * @return The byte read from UART data register.
  */
-uint8_t UART_ReadByte(UART_Type *base);
+uint8_t UART_ReadByte(UART_reg_t *base);
 
 
 /*!
@@ -447,7 +447,7 @@ uint8_t UART_ReadByte(UART_Type *base);
  * @retval uStatus_UART_TxBusy Previous transmission still not finished; data not all written to TX register yet.
  * @retval uStatus_InvalidArgument Invalid argument.
  */
-status_t UART_TransferSendBlocking(UART_Type *base, const uint8_t *tx, size_t tx_length);
+status_t UART_TransferSendBlocking(UART_reg_t *base, const uint8_t *tx, size_t tx_length);
 
 
 /*!
@@ -463,7 +463,7 @@ status_t UART_TransferSendBlocking(UART_Type *base, const uint8_t *tx, size_t tx
  * @retval uStatus_UART_RxBusy Previous receive request is not finished.
  * @retval uStatus_InvalidArgument Invalid argument.
  */
-status_t UART_TransferReceiveBlocking(UART_Type *base, const uint8_t *rx, size_t rx_length);
+status_t UART_TransferReceiveBlocking(UART_reg_t *base, const uint8_t *rx, size_t rx_length);
 
 /*!
  * @brief Transmits a buffer of data using the interrupt method.
@@ -484,7 +484,7 @@ status_t UART_TransferReceiveBlocking(UART_Type *base, const uint8_t *rx, size_t
  * @retval uStatus_UART_TxBusy Previous transmission still not finished; data not all written to TX register yet.
  * @retval uStatus_InvalidArgument Invalid argument.
  */
-status_t UART_TransferSendNonBlocking(UART_Type *base, uart_handle_t *handle, const uint8_t *tx, size_t tx_length);
+status_t UART_TransferSendNonBlocking(UART_reg_t *base, uart_handle_t *handle, const uint8_t *tx, size_t tx_length);
 
 
 /*!
@@ -502,7 +502,7 @@ status_t UART_TransferSendNonBlocking(UART_Type *base, uart_handle_t *handle, co
  * @retval uStatus_UART_RxBusy Previous receive request is not finished.
  * @retval uStatus_InvalidArgument Invalid argument.
  */
-status_t UART_TransferReceiveNonBlocking(UART_Type *base,
+status_t UART_TransferReceiveNonBlocking(UART_reg_t *base,
                                          uart_handle_t *handle,
                                          const uint8_t *rx,
                                          size_t rx_length,
@@ -516,7 +516,7 @@ status_t UART_TransferReceiveNonBlocking(UART_Type *base,
  *
  * @param base UART peripheral base address.
  */
-static inline  uint32_t UART_TXBusy(UART_Type *base) {
+static inline  uint32_t UART_TXBusy(UART_reg_t *base) {
     return (base->STATUS & UART_STATUS_TX_BUSY_MASK);
 }
 
@@ -528,9 +528,9 @@ static inline  uint32_t UART_TXBusy(UART_Type *base) {
  *
  * @param base UART peripheral base address.
  */
-static inline uint32_t UART_RXBusy(UART_Type *base) {
+static inline uint32_t UART_RXBusy(UART_reg_t *base) {
     /* Fix, Need to use UDMA register cfg_rx_en bit to determine busy or not */
-    UDMA_Type *udma_uart = (UDMA_Type *)base;
+    UDMA_reg_t *udma_uart = (UDMA_reg_t *)base;
     return ((udma_uart->RX_CFG & UDMA_CFG_EN_MASK) >> UDMA_CFG_EN_SHIFT);
 }
 
@@ -542,7 +542,7 @@ static inline uint32_t UART_RXBusy(UART_Type *base) {
  *
  * @param base UART peripheral base address.
  */
-static inline  uint32_t UART_RXParityError(UART_Type *base) {
+static inline  uint32_t UART_RXParityError(UART_reg_t *base) {
     return (base->STATUS & UART_STATUS_RX_PE_MASK);
 }
 

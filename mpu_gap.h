@@ -95,34 +95,34 @@ __STATIC_INLINE uint32_t GAP_MPU_GetNumberPages(uint32_t Region_Size)
 }
 
 /** Clear and disable the given MPU region.
- * \param Region_Type Region Type to be cleared.
+ * \param Region_reg_t Region Type to be cleared.
  * \param Region_Number Region number to be cleared.
  */
-__STATIC_INLINE void GAP_MPU_ClrRegion(uint32_t Region_Type, uint32_t Region_Number)
+__STATIC_INLINE void GAP_MPU_ClrRegion(uint32_t Region_reg_t, uint32_t Region_Number)
 {
     if(Region_Number < GAP_MPU_NB_RULES_EACH_REGION) {
-        if(Region_Type == GAP_MPU_FC_TCDM_RULE)
+        if(Region_reg_t == GAP_MPU_FC_TCDM_RULE)
             MPU->FC_TCDM_RULE[Region_Number] &= ~MPU_TYPE_RULE_STATE_Msk;
-        else if (Region_Type == GAP_MPU_L2_RULE)
+        else if (Region_reg_t == GAP_MPU_L2_RULE)
             MPU->L2_RULE[Region_Number]      &= ~MPU_TYPE_RULE_STATE_Msk;
-        else if(Region_Type == GAP_MPU_APB_RULE)
+        else if(Region_reg_t == GAP_MPU_APB_RULE)
             MPU->APB_RULE[Region_Number]     &= ~MPU_TYPE_RULE_STATE_Msk;
     }
 }
 
 /** Configure an MPU region.
- * \param Region_Type Region Type to be cleared.
+ * \param Region_reg_t Region Type to be cleared.
 * \param Region_Number  Rule number.
 * \param Rule Value for rule register.
 */
-__STATIC_INLINE void GAP_MPU_SetRegion(uint32_t Region_Type, uint32_t Region_Number, uint32_t Rule)
+__STATIC_INLINE void GAP_MPU_SetRegion(uint32_t Region_reg_t, uint32_t Region_Number, uint32_t Rule)
 {
     if(Region_Number < GAP_MPU_NB_RULES_EACH_REGION) {
-        if(Region_Type == GAP_MPU_FC_TCDM_RULE)
+        if(Region_reg_t == GAP_MPU_FC_TCDM_RULE)
             MPU->FC_TCDM_RULE[Region_Number] = Rule;
-        else if (Region_Type == GAP_MPU_L2_RULE)
+        else if (Region_reg_t == GAP_MPU_L2_RULE)
             MPU->L2_RULE[Region_Number]      = Rule;
-        else if(Region_Type == GAP_MPU_APB_RULE)
+        else if(Region_reg_t == GAP_MPU_APB_RULE)
             MPU->APB_RULE[Region_Number]     = Rule;
     }
 }

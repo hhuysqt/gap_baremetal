@@ -81,7 +81,7 @@ typedef struct _udma_channel
   struct _udma_req *previous;   /*!< Channel Transfer last request */
   uint8_t rx_depth;           /*!< RX Channel enqueue depth */
   uint8_t tx_depth;           /*!< TX Channel enqueue depth */
-  UDMA_Type *base;          /*!< Channel base pointer */
+  UDMA_reg_t *base;          /*!< Channel base pointer */
 } udma_channel_t;
 
 
@@ -144,7 +144,7 @@ extern "C" {
  * @param base The UDMA channel base pointer.
  * @note .
  */
-void UDMA_Init(UDMA_Type *base);
+void UDMA_Init(UDMA_reg_t *base);
 
 
 /*!
@@ -155,7 +155,7 @@ void UDMA_Init(UDMA_Type *base);
  * @param base The UDMA channel.
  * @note .
  */
-void UDMA_Deinit(UDMA_Type *base);
+void UDMA_Deinit(UDMA_reg_t *base);
 
 /* @} */
 
@@ -193,7 +193,7 @@ udma_req_t * UDMA_FindAvailableRequest();
  * @return status of status_t.
  * @note .
  */
-status_t UDMA_BlockTransfer(UDMA_Type *base, udma_req_info_t *info, UDMAHint hint);
+status_t UDMA_BlockTransfer(UDMA_reg_t *base, udma_req_info_t *info, UDMAHint hint);
 
 
 /*!
@@ -207,7 +207,7 @@ status_t UDMA_BlockTransfer(UDMA_Type *base, udma_req_info_t *info, UDMAHint hin
  * @return status of status_t.
  * @note .
  */
-status_t UDMA_SendRequest(UDMA_Type *base, udma_req_t *req, UDMAHint hint);
+status_t UDMA_SendRequest(UDMA_reg_t *base, udma_req_t *req, UDMAHint hint);
 
 
 /*!
@@ -218,7 +218,7 @@ status_t UDMA_SendRequest(UDMA_Type *base, udma_req_t *req, UDMAHint hint);
  * @param base The UDMA channel base pointer.
  * @note .
  */
-status_t UDMA_AbortSend(UDMA_Type *base);
+status_t UDMA_AbortSend(UDMA_reg_t *base);
 
 /*!
  * @brief Abort a uDMA receive transfer.
@@ -228,7 +228,7 @@ status_t UDMA_AbortSend(UDMA_Type *base);
  * @param base The UDMA channel base pointer.
  * @note .
  */
-status_t UDMA_AbortReceive(UDMA_Type *base);
+status_t UDMA_AbortReceive(UDMA_reg_t *base);
 
 /*!
  * @brief UDMA channel event interrupt handler.
@@ -266,7 +266,7 @@ void UDMA_WaitRequestEnd(udma_req_t *req);
  * @param base The UDMA channel.
  * @note .
  */
-void UDMA_AutoPollingWait(UDMA_Type *base);
+void UDMA_AutoPollingWait(UDMA_reg_t *base);
 
 /*!
  * @brief Get UDMA TX channel busy state.
@@ -274,7 +274,7 @@ void UDMA_AutoPollingWait(UDMA_Type *base);
  * @param base The UDMA channel.
  * @note .
  */
-static inline int UDMA_TxBusy(UDMA_Type *base)
+static inline int UDMA_TxBusy(UDMA_reg_t *base)
 {
     return (base->TX_CFG & UDMA_CFG_EN_MASK);
 }
@@ -285,7 +285,7 @@ static inline int UDMA_TxBusy(UDMA_Type *base)
  * @param base The UDMA channel.
  * @note .
  */
-static inline int UDMA_RxBusy(UDMA_Type *base)
+static inline int UDMA_RxBusy(UDMA_reg_t *base)
 {
     return (base->RX_CFG & UDMA_CFG_EN_MASK);
 }
@@ -296,7 +296,7 @@ static inline int UDMA_RxBusy(UDMA_Type *base)
  * @param base The UDMA channel.
  * @note .
  */
-static inline void UDMA_RXClearAndStop(UDMA_Type *base)
+static inline void UDMA_RXClearAndStop(UDMA_reg_t *base)
 {
     base->RX_CFG |= UDMA_CFG_CLR(1);
 }
@@ -307,7 +307,7 @@ static inline void UDMA_RXClearAndStop(UDMA_Type *base)
  * @param base The UDMA channel.
  * @note .
  */
-static inline void UDMA_TXClearAndStop(UDMA_Type *base)
+static inline void UDMA_TXClearAndStop(UDMA_reg_t *base)
 {
     base->TX_CFG |= UDMA_CFG_CLR(1);
 }

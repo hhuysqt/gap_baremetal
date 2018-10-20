@@ -81,14 +81,14 @@ uart_transfer_t RX_INFO = {
 
 static uart_handle_t *s_uartHandle[UART_HANDLE_ARRAY_SIZE];
 /* Array of UART peripheral base address. */
-static UART_Type *const s_uartBases[] = UART_BASE_PTRS;
+static UART_reg_t *const s_uartBases[] = UART_BASE_PTRS;
 
 /* UART ISR for transactional APIs. */
 static uart_isr_t s_uartIsr;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-uint32_t UART_GetInstance(UART_Type *base)
+uint32_t UART_GetInstance(UART_reg_t *base)
 {
     uint32_t instance;
     uint32_t uartArrayCount = (sizeof(s_uartBases) / sizeof(s_uartBases[0]));
@@ -121,9 +121,9 @@ void UART_GetDefaultConfig(uart_config_t *config)
 }
 
 
-status_t UART_Init(UART_Type *base, const uart_config_t *config, uint32_t srcClock_Hz)
+status_t UART_Init(UART_reg_t *base, const uart_config_t *config, uint32_t srcClock_Hz)
 {
-    UDMA_Init((UDMA_Type *)base);
+    UDMA_Init((UDMA_reg_t *)base);
 
     /* 8N1*/
     base->SETUP = UART_SETUP_BIT_LENGTH(uUART_8bits) |
@@ -139,7 +139,7 @@ status_t UART_Init(UART_Type *base, const uart_config_t *config, uint32_t srcClo
     return 0;
 }
 
-status_t UART_SetBaudRate(UART_Type *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz)
+status_t UART_SetBaudRate(UART_reg_t *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz)
 {
     assert(baudRate_Bps);
 
@@ -151,7 +151,7 @@ status_t UART_SetBaudRate(UART_Type *base, uint32_t baudRate_Bps, uint32_t srcCl
     return 0;
 }
 
-void UART_Deinit(UART_Type *base)
+void UART_Deinit(UART_reg_t *base)
 {
     /* Wait TX end */
     while (UART_TXBusy(base));
@@ -159,17 +159,17 @@ void UART_Deinit(UART_Type *base)
     /* Disable TX RX */
     base->SETUP = 0;
 
-    UDMA_Deinit((UDMA_Type *)base);
+    UDMA_Deinit((UDMA_reg_t *)base);
 
     uart_is_init = 0;
 }
 
-uint32_t UART_GetStatusFlags(UART_Type *base)
+uint32_t UART_GetStatusFlags(UART_reg_t *base)
 {
     return base->STATUS;
 }
 
-void UART_WriteByte(UART_Type *base, uint8_t data)
+void UART_WriteByte(UART_reg_t *base, uint8_t data)
 {
     /* setup next transfer */
     uart_tx_buffer[0] = data;
@@ -177,13 +177,13 @@ void UART_WriteByte(UART_Type *base, uint8_t data)
     UART_TransferSendBlocking(base, uart_tx_buffer, 1);
 }
 
-uint8_t UART_ReadByte(UART_Type *base)
+uint8_t UART_ReadByte(UART_reg_t *base)
 {
     UART_TransferReceiveBlocking(base, uart_rx_buffer, 1);
     return uart_rx_buffer[0];
 }
 
-status_t UART_TransferSendBlocking(UART_Type *base, const uint8_t *tx, size_t tx_length)
+status_t UART_TransferSendBlocking(UART_reg_t *base, const uint8_t *tx, size_t tx_length)
 {
     status_t status;
     udma_req_info_t info = TX_INFO;
@@ -192,12 +192,12 @@ status_t UART_TransferSendBlocking(UART_Type *base, const uint8_t *tx, size_t tx
     info.dataSize = tx_length;
     info.configFlags |= UDMA_CFG_EN(1);
 
-    status = UDMA_BlockTransfer((UDMA_Type *)base, &info, UDMA_WAIT);
+    status = UDMA_BlockTransfer((UDMA_reg_t *)base, &info, UDMA_WAIT);
 
     return status;
 }
 
-status_t UART_TransferReceiveBlocking(UART_Type *base, const uint8_t *rx, size_t rx_length)
+status_t UART_TransferReceiveBlocking(UART_reg_t *base, const uint8_t *rx, size_t rx_length)
 {
     status_t status;
     udma_req_info_t info = RX_INFO;
@@ -206,12 +206,12 @@ status_t UART_TransferReceiveBlocking(UART_Type *base, const uint8_t *rx, size_t
     info.dataSize = rx_length;
     info.configFlags |= UDMA_CFG_EN(1);
 
-    status = UDMA_BlockTransfer((UDMA_Type *)base, &info, UDMA_WAIT);
+    status = UDMA_BlockTransfer((UDMA_reg_t *)base, &info, UDMA_WAIT);
 
     return status;
 }
 
-status_t UART_TransferSendNonBlocking(UART_Type *base, uart_handle_t *handle, const uint8_t *tx, size_t tx_length)
+status_t UART_TransferSendNonBlocking(UART_reg_t *base, uart_handle_t *handle, const uint8_t *tx, size_t tx_length)
 {
     assert(handle);
     assert(tx);
@@ -239,7 +239,7 @@ status_t UART_TransferSendNonBlocking(UART_Type *base, uart_handle_t *handle, co
         handle->txDataSizeAll = tx_length;
         handle->txState = uUART_TxBusy;
 
-        UDMA_SendRequest((UDMA_Type*)base, TX, UDMA_NO_WAIT);
+        UDMA_SendRequest((UDMA_reg_t*)base, TX, UDMA_NO_WAIT);
 
         status = uStatus_Success;
     }
@@ -248,7 +248,7 @@ status_t UART_TransferSendNonBlocking(UART_Type *base, uart_handle_t *handle, co
 }
 
 
-status_t UART_TransferReceiveNonBlocking(UART_Type *base, uart_handle_t *handle, const uint8_t *rx, size_t rx_length, size_t *receivedBytes)
+status_t UART_TransferReceiveNonBlocking(UART_reg_t *base, uart_handle_t *handle, const uint8_t *rx, size_t rx_length, size_t *receivedBytes)
 {
     assert(handle);
     assert(rx);
@@ -275,7 +275,7 @@ status_t UART_TransferReceiveNonBlocking(UART_Type *base, uart_handle_t *handle,
         handle->rxDataSizeAll = rx_length;
         handle->rxState = uUART_RxBusy;
 
-        UDMA_SendRequest((UDMA_Type*)base, RX, UDMA_NO_WAIT);
+        UDMA_SendRequest((UDMA_reg_t*)base, RX, UDMA_NO_WAIT);
 
         status = uStatus_Success;
     }
@@ -283,7 +283,7 @@ status_t UART_TransferReceiveNonBlocking(UART_Type *base, uart_handle_t *handle,
     return status;
 }
 
-void UART_TransferCreateHandle(UART_Type *base,
+void UART_TransferCreateHandle(UART_reg_t *base,
                                uart_handle_t *handle,
                                uart_transfer_callback_t callback,
                                void *userData)
@@ -312,7 +312,7 @@ void UART_TransferCreateHandle(UART_Type *base,
     s_uartIsr = UART_TransferHandleIRQ;
 }
 
-void UART_TransferAbortSend(UART_Type *base, uart_handle_t *handle)
+void UART_TransferAbortSend(UART_reg_t *base, uart_handle_t *handle)
 {
     assert(handle);
 
@@ -320,7 +320,7 @@ void UART_TransferAbortSend(UART_Type *base, uart_handle_t *handle)
     handle->txState = uUART_TxIdle;
 }
 
-void UART_TransferAbortReceive(UART_Type *base, uart_handle_t *handle)
+void UART_TransferAbortReceive(UART_reg_t *base, uart_handle_t *handle)
 {
     assert(handle);
 
@@ -328,7 +328,7 @@ void UART_TransferAbortReceive(UART_Type *base, uart_handle_t *handle)
     handle->rxState = uUART_RxIdle;
 }
 
-void UART_TransferHandleIRQ(UART_Type *base, uart_handle_t *handle)
+void UART_TransferHandleIRQ(UART_reg_t *base, uart_handle_t *handle)
 {
     assert(handle);
 

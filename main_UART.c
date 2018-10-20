@@ -6,8 +6,10 @@
 /* Demo utlities includes. */
 #include "gap_common.h"
 #include "gap_uart.h"
-#include "pinmap.h"
-#include "PeripheralPins.h"
+//#include "pinmap.h"
+//#include "PeripheralPins.h"
+
+#include "gap_gpio.h"
 
 /* Place a dummy debug_struct for plpbridge tool */
 debug_struct_t HAL_DEBUG_STRUCT_NAME = GAP_DEBUG_STRUCT_INIT;
@@ -21,12 +23,12 @@ void vTestUART( void *parameters );
 /****************************************************************************/
 
 /* Variables used. */
-static UART_Type *const uart_addrs[] = UART_BASE_PTRS;
+static UART_reg_t *const uart_addrs[] = UART_BASE_PTRS;
 
 /****************************************************************************/
 
 
-static void serial_init( PinName tx, PinName rx )
+static void serial_init(void)
 {
     uart_config_t config;
 
@@ -34,19 +36,13 @@ static void serial_init( PinName tx, PinName rx )
 
     UART_Init( uart_addrs[0], &config, SystemCoreClock );
 
-    pinmap_pinout(tx, PinMap_UART_TX);
-    pinmap_pinout(rx, PinMap_UART_RX);
+    //pinmap_pinout(tx, PinMap_UART_TX);
+    //pinmap_pinout(rx, PinMap_UART_RX);
+    gap8_configpin(GAP8_PIN_A7_UART_TX | GAP8_PIN_PULL_UP);
+    gap8_configpin(GAP8_PIN_B6_UART_RX | GAP8_PIN_PULL_UP);
 
-    if( tx != NC )
-    {
-        UART_EnableTx( uart_addrs[0], true );
-        pin_mode( tx, PullUp );
-    }
-    if( rx != NC )
-    {
-        UART_EnableRx( uart_addrs[0], true );
-        pin_mode( rx, PullUp );
-    }
+    UART_EnableTx( uart_addrs[0], true );
+    UART_EnableRx( uart_addrs[0], true );
 }
 
 static void serial_format( uart_bit_length_t data_bits, uart_parity_mode_t parity, uart_stop_bit_count_t stop_bits )
@@ -67,10 +63,7 @@ int main(void)
     const char *buf = "abcd";
 
     /* Serial pins init */
-    serial_init( USBTX, USBRX );
-
-    printf("USBTX  = %d \n", USBTX);
-    printf("USBRX  = %d \n", USBRX);
+    serial_init();
 
     /* Serial format 8N1 configuration : 8 bits, parity disabled, 2 stop bits. */
     serial_format( uUART_8bits, uUART_ParityDisabled, uUART_OneStopBit );

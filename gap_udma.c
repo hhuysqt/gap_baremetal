@@ -72,26 +72,26 @@ GAP_FC_DATA udma_req_t  udma_requests[request_queue_num];
  */
 static void UDMA_SetChannelBase() {
 #if DEVICE_LVDS == 1
-  udma_channels[0].base = (UDMA_Type *) LVDS;
+  udma_channels[0].base = (UDMA_reg_t *) LVDS;
 #esle
 #if DEVICE_ORCA_ == 1
-  udma_channels[0].base = (UDMA_Type *) ORCA;
+  udma_channels[0].base = (UDMA_reg_t *) ORCA;
 #endif
 #endif
-  udma_channels[1].base = (UDMA_Type *) SPIM0;
+  udma_channels[1].base = (UDMA_reg_t *) SPIM0;
 
-  udma_channels[2].base = (UDMA_Type *) SPIM1;
-  udma_channels[3].base = (UDMA_Type *) HYPERBUS0;
-  udma_channels[4].base = (UDMA_Type *) UART;
-  udma_channels[5].base = (UDMA_Type *) I2C0;
-  udma_channels[6].base = (UDMA_Type *) I2C1;
-  udma_channels[7].base = (UDMA_Type *) TCDM;
+  udma_channels[2].base = (UDMA_reg_t *) SPIM1;
+  udma_channels[3].base = (UDMA_reg_t *) HYPERBUS0;
+  udma_channels[4].base = (UDMA_reg_t *) UART;
+  udma_channels[5].base = (UDMA_reg_t *) I2C0;
+  udma_channels[6].base = (UDMA_reg_t *) I2C1;
+  udma_channels[7].base = (UDMA_reg_t *) TCDM;
   /* Special channel I2S1 use TX for RX */
-  udma_channels[8].base = (UDMA_Type *) I2S;
-  udma_channels[9].base = (UDMA_Type *) CPI;
+  udma_channels[8].base = (UDMA_reg_t *) I2S;
+  udma_channels[9].base = (UDMA_reg_t *) CPI;
 }
 
-static uint32_t UDMA_GetInstance(UDMA_Type *base)
+static uint32_t UDMA_GetInstance(UDMA_reg_t *base)
 {
   uint32_t instance;
   for (instance = 0; instance < UDMA_CHANNEL_NUM; instance++)
@@ -119,7 +119,7 @@ udma_req_t* UDMA_FindAvailableRequest()
     }
 }
 
-void UDMA_Init(UDMA_Type *base)
+void UDMA_Init(UDMA_reg_t *base)
 {
     if(udmaInit == 0) {
       /* Initialize every channel queue */
@@ -156,7 +156,7 @@ void UDMA_Init(UDMA_Type *base)
 }
 
 
-void UDMA_Deinit(UDMA_Type *base)
+void UDMA_Deinit(UDMA_reg_t *base)
 {
   uint32_t index = UDMA_GetInstance(base);
 
@@ -175,7 +175,7 @@ void UDMA_Deinit(UDMA_Type *base)
     udmaInit--;
 }
 
-status_t UDMA_BlockTransfer(UDMA_Type *base, udma_req_info_t *info, UDMAHint hint)
+status_t UDMA_BlockTransfer(UDMA_reg_t *base, udma_req_info_t *info, UDMAHint hint)
 {
     if (info->isTx) {
         assert(!UDMA_TxBusy(base));
@@ -209,11 +209,11 @@ status_t UDMA_BlockTransfer(UDMA_Type *base, udma_req_info_t *info, UDMAHint hin
     return uStatus_Success;
 }
 
-static void UDMA_StartTransfer(UDMA_Type *base, udma_req_info_t *info) {
+static void UDMA_StartTransfer(UDMA_reg_t *base, udma_req_info_t *info) {
     /* Send enqueue request to the FIFO. */
     /* Hyperbus ctrl */
     if((info->ctrl & 0x0F) == UDMA_CTRL_HYPERBUS) {
-        HYPERBUS_Type *hyperbus_ptr = (HYPERBUS_Type *) base;
+        HYPERBUS_reg_t *hyperbus_ptr = (HYPERBUS_reg_t *) base;
 
         uint32_t ext_addr = info->u.hyperbus.ext_addr;
         uint32_t reg_mem_access = info->u.hyperbus.reg_mem_access;
@@ -228,7 +228,7 @@ static void UDMA_StartTransfer(UDMA_Type *base, udma_req_info_t *info) {
     }
     /* TCDM ctrl */
     else if ((info->ctrl & 0x0F) == UDMA_CTRL_TCDM) {
-        TCDM_Type *tcdm_ptr = (TCDM_Type *) base;
+        TCDM_reg_t *tcdm_ptr = (TCDM_reg_t *) base;
         /* RX or TX */
         if (info->channelId == UDMA_EVENT_TCDM_RX)
             tcdm_ptr->SRC_ADDR = info->u.fcTcdm.fc_addr;
@@ -260,7 +260,7 @@ static void UDMA_StartTransfer(UDMA_Type *base, udma_req_info_t *info) {
  * @return status of status_t.
  * @note .
  */
-static status_t UDMA_EnqueueRequest(UDMA_Type *base, udma_req_t *req)
+static status_t UDMA_EnqueueRequest(UDMA_reg_t *base, udma_req_t *req)
 {
     int irq = __disable_irq();
 
@@ -317,7 +317,7 @@ static status_t UDMA_EnqueueRequest(UDMA_Type *base, udma_req_t *req)
     return 1;
 }
 
-status_t UDMA_SendRequest(UDMA_Type *base, udma_req_t *req, UDMAHint hint)
+status_t UDMA_SendRequest(UDMA_reg_t *base, udma_req_t *req, UDMAHint hint)
 {
     int32_t status;
 
@@ -337,7 +337,7 @@ status_t UDMA_SendRequest(UDMA_Type *base, udma_req_t *req, UDMAHint hint)
     }
 
     /* Enqueue request and send it to FIFO */
-    status = UDMA_EnqueueRequest((UDMA_Type *)base, req);
+    status = UDMA_EnqueueRequest((UDMA_reg_t *)base, req);
 
     /* Enqueue request wait chosen by user. If it is a dual request,
      * For example, SPI, I2C read operation.
@@ -366,11 +366,11 @@ status_t UDMA_SendRequest(UDMA_Type *base, udma_req_t *req, UDMAHint hint)
 static inline void UDMA_RepeatTransfer(udma_req_t *req) {
 
     if((req->info.channelId & 0xFE) == UDMA_EVENT_HYPERBUS_RX) {
-        HYPERBUS_Type *hyperbus_ptr = (HYPERBUS_Type *) req->channel->base;
+        HYPERBUS_reg_t *hyperbus_ptr = (HYPERBUS_reg_t *) req->channel->base;
         hyperbus_ptr->EXT_ADDR = req->info.u.hyperbus.ext_addr + req->info.repeat.size;
     }
 
-    UDMA_Type *base = (UDMA_Type *) req->channel->base;
+    UDMA_reg_t *base = (UDMA_reg_t *) req->channel->base;
 
     assert((uint32_t)req->info.repeat.size == req->info.dataSize);
 
@@ -499,7 +499,7 @@ void UDMA_EventHandler(uint32_t index, int abort)
     }
 }
 
-status_t UDMA_AbortSend(UDMA_Type *base) {
+status_t UDMA_AbortSend(UDMA_reg_t *base) {
 
     /* Clear TX transfer */
     base->TX_CFG = UDMA_CFG_CLR(1);
@@ -513,7 +513,7 @@ status_t UDMA_AbortSend(UDMA_Type *base) {
     return uStatus_Success;
 }
 
-status_t UDMA_AbortReceive(UDMA_Type *base) {
+status_t UDMA_AbortReceive(UDMA_reg_t *base) {
 
     /* Clear RX transfer */
     base->RX_CFG = UDMA_CFG_CLR(1);
@@ -534,7 +534,7 @@ void UDMA_WaitRequestEnd(udma_req_t *req)
     }
 }
 
-void UDMA_AutoPollingWait(UDMA_Type *base)
+void UDMA_AutoPollingWait(UDMA_reg_t *base)
 {
     /* if polling already finished, do not need to wait */
     while(!auto_polling_end) {
