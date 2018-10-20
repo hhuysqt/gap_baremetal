@@ -6,5 +6,5 @@ main_UART.c gap_gpio.c system_GAP8.c \
 -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wundef \
 -fdata-sections -ffunction-sections \
 -march=rv32imcxgap8 -mPE=8 -mFC=1 -D__riscv__ -D__pulp__ -D__GAP8__ \
--MMD -MP -nostartfiles -O3 \
+-MMD -MP -nostartfiles -Og \
 -T GAP8.ld
