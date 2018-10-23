@@ -58,6 +58,11 @@
 
 #ifndef _GAP8_H_
 #define _GAP8_H_                              /**< Symbol preventing repeated inclusion */
+
+/* Nuttx definition */
+#define OK    0
+#define ERROR -1
+
 /* ----------------------------------------------------------------------------
    -- Interrupt vector numbers
    ---------------------------------------------------------------------------- */

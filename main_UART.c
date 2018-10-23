@@ -10,7 +10,7 @@
 //#include "pinmap.h"
 //#include "PeripheralPins.h"
 
-#include "gap_gpio.h"
+#include "gap8_gpio.h"
 
 /* Place a dummy debug_struct for plpbridge tool */
 debug_struct_t HAL_DEBUG_STRUCT_NAME = GAP_DEBUG_STRUCT_INIT;

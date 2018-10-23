@@ -73,7 +73,7 @@ GAP_FC_DATA udma_req_t  udma_requests[request_queue_num];
 static void UDMA_SetChannelBase() {
 #if DEVICE_LVDS == 1
   udma_channels[0].base = (UDMA_reg_t *) LVDS;
-#esle
+#else
 #if DEVICE_ORCA_ == 1
   udma_channels[0].base = (UDMA_reg_t *) ORCA;
 #endif
