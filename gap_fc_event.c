@@ -31,6 +31,8 @@
 #include "gap_fc_event.h"
 //#include "gap_pmu.h"
 
+#include "gap8_udma.h"
+
 uint32_t fc_handler_vector[UDMA_CHANNEL_NUM];
 
 __WEAK void RTC_APB_IRQHandler(){}
@@ -55,7 +57,8 @@ void FC_EventHandler()
     event &= 0xFF;
 
     if(event < UDMA_EVENT_RESERVED1) {
-        UDMA_EventHandler(event, 0);
+        //UDMA_EventHandler(event, 0);
+        gap8_udma_doirq(event);
     } else if(event == RTC_APB_EVENT) {
         RTC_APB_IRQHandler();
     } else if(event == RTC_EVENT) {

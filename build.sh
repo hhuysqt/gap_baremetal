@@ -1,6 +1,6 @@
 riscv32-unknown-elf-gcc -o test \
 startup_GAP8.S \
-gap_fc_event.c gap_fll.c gap_hyperbus.c gap_pmu.c gap_uart.c gap_udma.c \
+gap_fc_event.c gap_fll.c gap_pmu.c gap8_uart.c gap8_udma.c \
 main_UART.c gap8_gpio.c system_GAP8.c \
 -g -fno-jump-tables -fno-tree-loop-distribute-patterns \
 -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wundef \

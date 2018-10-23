@@ -2,9 +2,12 @@
  * uDMA driver for GAP8
  *  GAP8 features a simple uDMA subsystem. Peripherals including UART, SPI, I2C, I2S,
  *  CPI, LVDS, Hyperbus, have config registers memory-mapped, but not data registers.
- *  The only way to send or receive data is using the uDMA.
+ *  The only way to send or receive data is using the uDMA. Those peripherals share 
+ *  the same uDMA ISR.
  * 
- *  Those peripherals share the same uDMA ISR.
+ *  Note that uDMA can only recognize L2 RAM. So data must not be stored at L1, which
+ *  means that if you link the stack at L1, you cannot use local buffers as data src 
+ *  or destination.
  * 
  * Author: hhuysqt <1020988872@qq.com>
  * 
@@ -20,7 +23,7 @@
 
 #define CHECK_CHANNEL_ID(INSTANCE) \
   if ((INSTANCE) == NULL || \
-      (INSTANCE)->id < 0 || (INSTANCE)->id >= GAP8_UDMA_NR_CHANNELS) \
+      (INSTANCE)->id >= GAP8_UDMA_NR_CHANNELS) \
     { \
       return ERROR; \
     }
@@ -226,11 +229,11 @@ int gap8_udma_tx_start(struct gap8_udma_peripheral *instance,
        * finished the whole queue, making it the first enqueued element
        **/
       instance->tx = instance->txtail = thisreq;
-
-      _dma_txstart(instance);
     }
 
   // TODO: unlock the tx queue
+
+  _dma_txstart(instance);
 
   return OK;
 }
@@ -292,11 +295,11 @@ int gap8_udma_rx_start(struct gap8_udma_peripheral *instance,
        * finished the whole queue, making it the first enqueued element
        **/
       instance->rx = instance->rxtail = thisreq;
-
-      _dma_rxstart(instance);
     }
 
   // TODO: unlock the rx queue
+
+  _dma_rxstart(instance);
 
   return OK;
 }
@@ -361,7 +364,7 @@ void gap8_udma_doirq(uint32_t irqn)
 {
   struct gap8_udma_peripheral *the_peripheral;
 
-  if (irqn < GAP8_UDMA_MIN_EVENT || irqn > GAP8_UDMA_MAX_EVENT)
+  if (irqn > GAP8_UDMA_MAX_EVENT)
     {
       /* Bypass */
       return;

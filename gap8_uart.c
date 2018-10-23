@@ -13,6 +13,8 @@
 #include "gap8_uart.h"
 #include <stddef.h>
 
+#include "gap_fc_event.h"
+
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
@@ -76,17 +78,17 @@ struct gap8_uart_t * gap8_uart_initialize(int n)
   UART_reg_t *uartreg;
   uint32_t cfgreg = 0;
 
-  if (n > GAP8_NR_UART)
+  if (n >= GAP8_NR_UART)
     return NULL;
 
   the_uart = &uarts[n];
-  uartreg = (UART_reg_t*)&the_uart->udma;
+  uartreg = (UART_reg_t*)the_uart->udma.regs;
 
   gap8_udma_init(&the_uart->udma);
 
   /* Setup baudrate etc. */
   cfgreg = UART_SETUP_BIT_LENGTH(the_uart->nr_bits - 5) | 
-           UART_SETUP_PARITY_ENA(the_uart->parity_enable & 0x1) |
+           UART_SETUP_PARITY_ENA(the_uart->parity_enable) |
            UART_SETUP_STOP_BITS(the_uart->stop_bits - 1) |
            UART_SETUP_TX_ENA(1) | 
            UART_SETUP_RX_ENA(1);
@@ -97,29 +99,43 @@ struct gap8_uart_t * gap8_uart_initialize(int n)
 
   gap8_udma_tx_setirq(&the_uart->udma, 1);
   gap8_udma_rx_setirq(&the_uart->udma, 1);
+
+  return the_uart;
 }
 
-void gap8_uart_setbaud(struct gap8_uart_t *uart, uint32_t baud, uint32_t baseclock)
+void gap8_uart_setbaud(struct gap8_uart_t *uart, uint32_t baud, uint32_t coreclock)
 {
-  uint16_t div = baseclock / baud;
-  UART_reg_t *uartreg = (UART_reg_t*)&uart->udma;
+  uint16_t div = coreclock / baud;
+  UART_reg_t *uartreg = (UART_reg_t*)uart->udma.regs;
 
   uartreg->SETUP = (uartreg->SETUP & ~(UART_SETUP_CLKDIV_MASK)) | UART_SETUP_CLKDIV(div);
 
-  uart->coreclock = baseclock;
+  uart->coreclock = coreclock;
   uart->baud = baud;
 }
 
 void gap8_uart_sendbytes(struct gap8_uart_t *uart, uint8_t *buff, uint32_t nbytes)
 {
-  struct gap8_udma_peripheral *theudma = (struct gap8_udma_peripheral*)&uart->udma;
+  struct gap8_udma_peripheral *theudma = &uart->udma;
 
   gap8_udma_tx_start(theudma, buff, nbytes, 1);
   while (gap8_udma_tx_poll(theudma, buff) != OK)
     {
       // sleep
+      EU_EVT_MaskWaitAndClr(1<<FC_SW_NOTIF_EVENT);
     }
 }
 
-void gap8_uart_recvbytes(struct gap8_uart_t *uart, uint8_t *buff, uint32_t nbytes);
+void gap8_uart_recvbytes(struct gap8_uart_t *uart, uint8_t *buff, uint32_t nbytes)
+{
+  struct gap8_udma_peripheral *theudma = &uart->udma;
+
+  gap8_udma_rx_start(theudma, buff, nbytes, 1);
+  while (gap8_udma_rx_poll(theudma, buff) != OK)
+    {
+      // sleep
+      EU_EVT_MaskWaitAndClr(1<<FC_SW_NOTIF_EVENT);
+    }
+}
+
 
