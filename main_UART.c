@@ -9,6 +9,7 @@
 
 #include "gap8_gpio.h"
 #include "gap8_uart.h"
+#include "gap8_interrupt.h"
 
 /* Place a dummy debug_struct for plpbridge tool */
 debug_struct_t HAL_DEBUG_STRUCT_NAME = GAP_DEBUG_STRUCT_INIT;
@@ -36,9 +37,12 @@ int main(void)
     uint32_t baudrate = 115200;
     uint8_t get = 'a';
 
+  SCBC->ICACHE_ENABLE = 0xFFFFFFFF;
+    up_irqinitialize();
+
     /* Serial pins init */
     uart0 = gap8_uart_initialize(0);
-    gap8_uart_setbaud(uart0, 115200, SystemCoreClock);
+    gap8_uart_setbaud(uart0, 115200, 50000000);
 
     //UART_TransferSendBlocking(uart_addrs[0], buf, strlen(buf));
     gap8_uart_sendbytes(uart0, buf, strlen(buf));
