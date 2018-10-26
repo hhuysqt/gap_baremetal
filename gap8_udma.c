@@ -14,7 +14,6 @@
  ************************************************************************************/
 
 #include "gap8_udma.h"
-#include "gap_soc_eu.h"
 #include <stddef.h>
 
 /****************************************************************************
@@ -136,11 +135,11 @@ int gap8_udma_tx_setirq(struct gap8_udma_peripheral *instance, bool enable)
 
   if (enable)
     {
-      SOC_EU_SetFCMask(1 + (instance->id << 1));
+      up_enable_event(1 + (instance->id << 1));
     }
   else
     {
-      SOC_EU_ClearFCMask(1 + (instance->id << 1));
+      up_disable_event(1 + (instance->id << 1));
     }
 
   return OK;
@@ -162,11 +161,11 @@ int gap8_udma_rx_setirq(struct gap8_udma_peripheral *instance, bool enable)
 
   if (enable)
     {
-      SOC_EU_SetFCMask(instance->id << 1);
+      up_enable_event(instance->id << 1);
     }
   else
     {
-      SOC_EU_ClearFCMask(instance->id << 1);
+      up_disable_event(instance->id << 1);
     }
 
   return OK;

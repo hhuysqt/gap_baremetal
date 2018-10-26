@@ -373,6 +373,20 @@ static inline uint32_t up_irq_enable(void)
   return oldstat;
 }
 
+/****************************************************************************
+ * Name: gap8_sleep_wait_sw_evnt
+ *
+ * Description:
+ *   Sleep on specific event.
+ *
+ ****************************************************************************/
+static inline void gap8_sleep_wait_sw_evnt(uint32_t event_mask)
+{
+  FCEU->MASK_OR = event_mask;
+  __builtin_pulp_event_unit_read((void*)&FCEU->EVENT_WAIT_CLEAR, 0);
+  FCEU->MASK_AND = event_mask;
+}
+
 /************************************************************************************
  * Public Function Prototypes
  ************************************************************************************/

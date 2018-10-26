@@ -1,221 +1,66 @@
-/*
-** ###################################################################
-**     Processors:          GAP8
-**
-**     Compilers:           GNU C Compiler
-**
-**     Reference manual:    riscv-spec-v2.1, January 2017
-**     Version:             rev. 2.9, 2017-07-19
-**
-**     Abstract:
-**         CMSIS Peripheral Access Layer for GAP8
-**
-**     Copyright (c) 2015 - 2018 GreenWave Technologies, Inc.
-**     All rights reserved.
-**
-**     Redistribution and use in source and binary forms, with or without modification,
-**     are permitted provided that the following conditions are met:
-**
-**     o Redistributions of source code must retain the above copyright notice, this list
-**       of conditions and the following disclaimer.
-**
-**     o Redistributions in binary form must reproduce the above copyright notice, this
-**       list of conditions and the following disclaimer in the documentation and/or
-**       other materials provided with the distribution.
-**
-**     o Neither the name of GreenWaves Technologies, Inc. nor the names of its
-**       contributors may be used to endorse or promote products derived from this
-**       software without specific prior written permission.
-**
-**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**
-**     http:                 http://greenwaves-technologies.com
-**     mail:                 jie.chen@greenwaves-technologies.com
-**
-**     Revisions:
-**     - rev. 1.0 (2017-07-19)
-**         Initial version.
-** ###################################################################
-*/
+/*******************************************************************************
+ * Peripheral registers on GAP8
+ * Modified from gap_sdk
+ * 
+ * Author: hhuysqt <1020988872@qq.com>
+ * 
+ ******************************************************************************/
 
-/*!
- * @file GAP8.h
- * @version 1.0
- * @date 2017-07-19
- * @brief CMSIS Peripheral Access Layer for GAP8
- *
- * CMSIS Peripheral Access Layer for GAP8
- */
+#ifndef _CHIP_GAP8_H_
+#define _CHIP_GAP8_H_
 
-#ifndef _GAP8_H_
-#define _GAP8_H_                              /**< Symbol preventing repeated inclusion */
-
-/* Nuttx definition */
+/* Nuttx compatible */
 #define OK    0
 #define ERROR -1
 
-/* ----------------------------------------------------------------------------
-   -- Interrupt vector numbers
-   ---------------------------------------------------------------------------- */
+/************************************************************************************
+ * Included Files
+ ************************************************************************************/
 
-/*!
- * @addtogroup Interrupt_vector_numbers Interrupt vector numbers
- * @{
- */
-/** Interrupt Number Definitions */
-#define NUMBER_OF_INT_VECTORS  32                  /**< Number of interrupts in the Vector table */
-
-typedef enum IRQn {
-  FC_NOTIFY_CLUSTER_EVENT      = 0,                /**< Software event interrupt */
-  CLUSTER_NOTIFY_FC_EVENT      = 1,                /**< Software event interrupt */
-  FC_SW_NOTIF_HWCE_EVENT       = 2,                /**< Software event interrupt */
-  FC_SW_NOTIF_EVENT            = 3,                /**< Software event interrupt */
-  CLUSTER_NOTIFY_FC_IRQn       = 4,                /**< HW       event interrupt */
-  PendSV_IRQn                  = 7,                /**< Software event U -> M PendSV interrupt */
-
-  /* Device specific interrupts */
-  DMA_EVT_IRQn                 = 8,                /**< DMA event interrupt */
-  DMA_IRQn                     = 9,                /**< DMA interrupt */
-  FC_TIMER0_IRQn               = 10,               /**< FC timer0 event interrupt */
-  SysTick_IRQn                 = 10,               /**< GAP8 U -> M System Tick Interrupt */
-  FC_TIMER1_IRQn               = 11,               /**< FC timer1 interrupt */
-
-  EU_HWCE_EVENT                = 12,              /**< GAP8 HWCE SW Event */
-  EU_HW_BARRIER_EVENT          = 16,              /**< GAP8 Hardware Barrier SW Event */
-  EU_MUTEX_EVENT               = 17,              /**< GAP8 Mutex SW Event */
-  EU_DISPATCH_EVENT            = 18,              /**< GAP8 Dispatch SW Event */
-  EU_LOOP_EVENT                = 19,              /**< GAP8 Loop SW Event */
-
-  /* Fault interrupts */
-  FC_SOC_EVENT_IRQn            = 27,              /**< GAP8 SoC Event Interrupt */
-  MPU_ERROR_IRQn               = 28,              /**< GAP8 MPU Error Interrupt */
-  ERR_EVENT_IRQn               = 29,              /**< GAP8 Event Error Interrupt */
-
-  /* Core interrupts */
-  Rst_handler_IRQn             = 32,              /**< GAP8 Reset handler Interrupt */
-  Ill_ins_IRQn                 = 33,              /**< GAP8 Usage Fault Interrupt */
-  SVCall_IRQn                  = 34               /**< GAP8 SV Call Interrupt */
-} IRQn_reg_t;
-
-/*!
- * @}
- */ /* end of group Interrupt_vector_numbers */
+#include "gap8_interrupt.h"
+#include <stdint.h>
 
 
-/* ----------------------------------------------------------------------------
-   -- GAP8 Core Configuration
-   ---------------------------------------------------------------------------- */
+/************************************************************************************
+ * Public Types
+ ************************************************************************************/
 
-/*!
- * @addtogroup GAP8_Core_Configuration GAP8 Core Configuration
- * @{
- */
+#define SOC_PERI_BASE       (0x1A100000UL)     /* SOC Peripherals Base Address */
 
-#define __MPU_PRESENT                  1         /**< Defines if an MPU is present or not */
-#define __NVIC_PRIO_BITS               0         /**< Number of priority bits implemented in the NVIC */
-#define __Vendor_SysTickConfig         0         /**< Vendor specific implementation of SysTickConfig is defined */
-#define __FPU_PRESENT                  0         /**< Defines if an FPU is present or not */
+typedef struct
+{
+  volatile uint32_t ICACHE_ENABLE;            /* Cluster Icache Enable Register  */
+  volatile uint32_t ICACHE_FLUSH;             /* Cluster Icache Flush Register */
+  volatile uint32_t ICACHE_LX_SEL_FLUSH;      /* Cluster Icache Level-X Flush Register or FC Flush Selected Address Register*/
+  volatile uint32_t ICACHE_SEL_FLUSH_STATUS;  /* Cluster Icache Flush Selected Address Register or FC ICACHE status */
+  volatile uint32_t ICACHE_IS_PRI;            /* Cluster Icache is private Icache */
+} SCBC_reg_t;
+#define CORE_PERI_BASE      (0x00200000UL)                             /*!< RISC Core Peripheral Base Address */
+#define CORE_SCBC_BASE      (CORE_PERI_BASE +  0x1400UL)               /*!< RISC Core System Control Block Cache Base Address */
+#define SCBC                ((SCBC_reg_t*)CORE_SCBC_BASE )           /*!< Icache SCBC configuration struct */
 
-#include "core_gap.h"              /* Core Peripheral Access Layer */
-#include "core_gap_memory_define.h"       /* Core Memory regions definitions */
-
-#ifdef FEATURE_CLUSTER
-#include "core_gap_cluster.h"              /* Cluster Access Layer */
-#endif
-
-#include "system_GAP8.h"            /* Device specific configuration file */
-
-/*!
- * @}
- */ /* end of group GAP8_Core_Configuration */
-
-
-/* ----------------------------------------------------------------------------
-   -- Mapping Information
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup Mapping_Information Mapping Information
- * @{
- */
-
-/** Mapping Information */
-/*!
- * @addtogroup udma_request
- * @{
- */
-
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
-
-
-/*!
- * @}
- */ /* end of group udma_request */
-
-
-
-/*!
- * @}
- */ /* end of group Mapping_Information */
-
-
-/* ----------------------------------------------------------------------------
-   -- Device Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-/*!
- * @addtogroup Peripheral_access_layer Device Peripheral Access Layer
- * @{
- */
-
-/* ----------------------------------------------------------------------------
-   -- FLL_CTRL Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup FLL_CTRL_Peripheral_Access_Layer FLL_CTRL Peripheral Access Layer
- * @{
- */
-
-/** FLL_CTRL - Registers Layout Typedef */
+/* FLL_CTRL */
 typedef struct {
-  __IO  uint32_t SOC_FLL_STATUS;            /**< FLL_CTRL Status register, offset: 0x00 */
-  __IO  uint32_t SOC_CONF1;                 /**< FLL_CTRL Configuration1 register, offset: 0x04 */
-  __IO  uint32_t SOC_CONF2;                 /**< FLL_CTRL Configuration2 register, offset: 0x08 */
-  __IO  uint32_t SOC_INTEGRATOR;            /**< FLL_CTRL INTEGRATOR register, offset: 0x0C */
-  __IO  uint32_t CLUSTER_FLL_STATUS;        /**< FLL_CTRL Status register, offset: 0x10 */
-  __IO  uint32_t CLUSTER_CONF1;             /**< FLL_CTRL Configuration1 register, offset: 0x14 */
-  __IO  uint32_t CLUSTER_CONF2;             /**< FLL_CTRL Configuration2 register, offset: 0x18 */
-  __IO  uint32_t CLUSTER_INTEGRATOR;        /**< FLL_CTRL INTEGRATOR register, offset: 0x1C */
-  __IO  uint32_t FLL_CONVERGE;              /**< FLL_CTRL Fll Converge register, offset: 0x20 */
-
+  volatile uint32_t SOC_FLL_STATUS;            /* Status register         */
+  volatile uint32_t SOC_CONF1;                 /* Configuration1 register */
+  volatile uint32_t SOC_CONF2;                 /* Configuration2 register */
+  volatile uint32_t SOC_INTEGRATOR;            /* INTEGRATOR register     */
+  volatile uint32_t CLUSTER_FLL_STATUS;        /* Status register         */
+  volatile uint32_t CLUSTER_CONF1;             /* Configuration1 register */
+  volatile uint32_t CLUSTER_CONF2;             /* Configuration2 register */
+  volatile uint32_t CLUSTER_INTEGRATOR;        /* INTEGRATOR register     */
+  volatile uint32_t FLL_CONVERGE;              /* Fll Converge register   */
 } FLL_CTRL_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- FLL_CTRL Register Masks
-   ---------------------------------------------------------------------------- */
+#define FLL_CTRL                                     ((FLL_CTRL_reg_t *)0x1A100000)
 
-/*!
- * @addtogroup FLL_CTRL_Register_Masks FLL_CTRL Register Masks
- * @{
- */
-/*! @name FLL_STATUS - FLL_CTRL status register */
+/* FLL_STATUS - FLL_CTRL status register */
 #define FLL_CTRL_STATUS_MULTI_FACTOR_MASK              (0xFFFFU)
 #define FLL_CTRL_STATUS_MULTI_FACTOR_SHIFT             (0U)
 #define FLL_CTRL_STATUS_MULTI_FACTOR(x)                (((uint32_t)(((uint32_t)(x)) /* << FLL_CTRL_STATUS_MULTI_FACTOR_SHIFT */)) & FLL_CTRL_STATUS_MULTI_FACTOR_MASK)
 #define READ_FLL_CTRL_STATUS_MULTI_FACTOR(x)           (((uint32_t)(((uint32_t)(x)) & FLL_CTRL_STATUS_MULTI_FACTOR_MASK)) /*>> FLL_CTRL_STATUS_MULTI_FACTOR_SHIFT*/)
 
-/*! @name SOC_CONF1 - FLL_CTRL configuration 1 register */
+/* SOC_CONF1 - FLL_CTRL configuration 1 register */
 #define FLL_CTRL_CONF1_MULTI_FACTOR_MASK           (0xFFFFU)
 #define FLL_CTRL_CONF1_MULTI_FACTOR_SHIFT          (0U)
 #define FLL_CTRL_CONF1_MULTI_FACTOR(x)             (((uint32_t)(((uint32_t)(x)) /* << FLL_CTRL_CONF1_MULTI_FACTOR_SHIFT */)) & FLL_CTRL_CONF1_MULTI_FACTOR_MASK)
@@ -241,7 +86,7 @@ typedef struct {
 #define FLL_CTRL_CONF1_MODE(x)                     (((uint32_t)(((uint32_t)(x)) << FLL_CTRL_CONF1_MODE_SHIFT)) & FLL_CTRL_CONF1_MODE_MASK)
 #define READ_FLL_CTRL_CONF1_MODE(x)                (((uint32_t)(((uint32_t)(x)) & FLL_CTRL_CONF1_MODE_MASK)) >> FLL_CTRL_CONF1_MODE_SHIFT)
 
-/*! @name SOC_CONF2 - FLL_CTRL configuration 2 register */
+/* SOC_CONF2 - FLL_CTRL configuration 2 register */
 #define FLL_CTRL_CONF2_LOOPGAIN_MASK               (0xFU)
 #define FLL_CTRL_CONF2_LOOPGAIN_SHIF  T            (0U)
 #define FLL_CTRL_CONF2_LOOPGAIN(x)                 (((uint32_t)(((uint32_t)(x)) /* << FLL_CTRL_CONF2_LOOPGAIN_SHIFT */)) & FLL_CTRL_CONF2_LOOPGAIN_MASK)
@@ -277,7 +122,7 @@ typedef struct {
 #define FLL_CTRL_CONF2_DITHERING(x)                (((uint32_t)(((uint32_t)(x)) << FLL_CTRL_CONF2_DITHERING_SHIFT)) & FLL_CTRL_CONF2_DITHERING_MASK)
 #define READ_FLL_CTRL_CONF2_DITHERING(x)           (((uint32_t)(((uint32_t)(x)) & FLL_CTRL_CONF2_DITHERING_MASK)) >> FLL_CTRL_CONF2_DITHERING_SHIFT)
 
-/*! @name SOC_INTEGRATOR - FLL_CTRL configuration 2 register */
+/* SOC_INTEGRATOR - FLL_CTRL configuration 2 register */
 #define FLL_CTRL_INTEGRATOR_FRACT_PART_MASK        (0xFFC0U)
 #define FLL_CTRL_INTEGRATOR_FRACT_PART_SHIFT       (6U)
 #define FLL_CTRL_INTEGRATOR_FRACT_PART(x)          (((uint32_t)(((uint32_t)(x)) << FLL_CTRL_INTEGRATOR_FRACT_PART_SHIFT)) & FLL_CTRL_INTEGRATOR_FRACT_PART_MASK)
@@ -288,7 +133,7 @@ typedef struct {
 #define FLL_CTRL_INTEGRATOR_INT_PART(x)            (((uint32_t)(((uint32_t)(x)) << FLL_CTRL_INTEGRATOR_INT_PART_SHIFT)) & FLL_CTRL_INTEGRATOR_INT_PART_MASK)
 #define READ_FLL_CTRL_INTEGRATOR_INT_PART(x)       (((uint32_t)(((uint32_t)(x)) & FLL_CTRL_INTEGRATOR_INT_PART_MASK)) >> FLL_CTRL_INTEGRATOR_INT_PART_SHIFT)
 
-/*! @name FLL_CONVERGE - FLL_CTRL configuration 2 register */
+/* FLL_CONVERGE - FLL_CTRL configuration 2 register */
 #define FLL_CTRL_SOC_FLL_CONV_MASK                 (0x1U)
 #define FLL_CTRL_SOC_FLL_CONV_SHIFT                (0U)
 #define FLL_CTRL_SOC_FLL_CONV(x)                   (((uint32_t)(((uint32_t)(x)) /*<< FLL_CTRL_SOC_FLL_CONV_SHIFT */)) & FLL_CTRL_SOC_FLL_CONV_MASK)
@@ -300,131 +145,57 @@ typedef struct {
 #define READ_FLL_CTRL_CLUSTER_FLL_CONV(x)          (((uint32_t)(((uint32_t)(x)) & FLL_CTRL_CLUSTER_FLL_CONV_MASK)) >> FLL_CTRL_CLUSTER_FLL_CONV_SHIFT)
 
 
-/*!
- * @}
- */ /* end of group FLL_CTRL_Register_Masks */
-
 /* The number of FLL */
 #define FLL_NUM        2
 /* The FLL reference frequency*/
 #define FLL_REF_CLK    32768
 
 
-/* FLL_CTRL - Peripheral instance base addresses */
-/** Peripheral FLL_CTRL base address */
-#define FLL_CTRL_BASE                                (SOC_PERI_BASE)
-/** Peripheral FLL_CTRL base pointer */
-#define FLL_CTRL                                     ((FLL_CTRL_reg_t *)FLL_CTRL_BASE)
-/** Array initializer of FLL_CTRL base addresses */
-#define FLL_CTRL_BASE_ADDRS                          { FLL_CTRL_BASE }
-/** Array initializer of FLL_CTRL base pointers */
-#define FLL_CTRL_BASE_PTRS                           { FLL_CTRL }
-
-/*!
- * @}
- */ /* end of group FLL_CTRL_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- GPIO Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup GPIO_Peripheral_Access_Layer GPIO Peripheral Access Layer
- * @{
- */
-
 /** GPIO - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t DIR;                       /**< GPIO gpio direction register, offset: 0x00 */
-  __IO  uint32_t IN;                        /**< GPIO gpio in register, offset: 0x04 */
-  __IO  uint32_t OUT;                       /**< GPIO gpio out register, offset: 0x08 */
-  __IO  uint32_t INTEN;                     /**< GPIO gpio inten register, offset: 0x0C */
-  __IO  uint32_t INTCFG[2];                 /**< GPIO gpio int configuration register 0, offset: 0x10 */
-  __IO  uint32_t INTSTATUS;                 /**< GPIO gpio int status register, offset: 0x18 */
-  __IO  uint32_t EN;                        /**< GPIO gpio enable register, offset: 0x1C */
-  __IO  uint32_t PADCFG[8];                 /**< GPIO pad configuration registers, offset: 0x020 */
+  volatile uint32_t DIR;         /* gpio direction register */
+  volatile uint32_t IN;          /* gpio in register */
+  volatile uint32_t OUT;         /* gpio out register */
+  volatile uint32_t INTEN;       /* gpio inten register */
+  volatile uint32_t INTCFG[2];   /* gpio int configuration registers */
+  volatile uint32_t INTSTATUS;   /* gpio int status register */
+  volatile uint32_t EN;          /* gpio enable register */
+  volatile uint32_t PADCFG[8];   /* pad configuration registers, */
 } GPIO_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- GPIO Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup GPIO_Register_Masks GPIO Register Masks
- * @{
- */
 #define GPIO_INTCFG_TYPE_MASK                     (0x3U)
 #define GPIO_INTCFG_TYPE_SHIFT                    (0U)
 #define GPIO_INTCFG_TYPE(x)                       (((uint32_t)(((uint32_t)(x)) << GPIO_INTCFG_TYPE_SHIFT)) & GPIO_INTCFG_TYPE_MASK)
 
 #define GPIO_INTCFG_TYPE_BITS_WIDTH_MASK          (0x3U)
 
-
-/*!
- * @}
- */ /* end of group GPIO_Register_Masks */
-
-
-/* GPIO - Peripheral instance base addresses */
-/** Peripheral GPIOA base address */
-#define GPIOA_BASE                              (SOC_PERI_BASE + 0x1000u)
 /** Peripheral GPIOA base pointer */
-#define GPIOA                                   ((GPIO_reg_t *)GPIOA_BASE)
-/** Array initializer of GPIO base addresses */
-#define GPIO_BASE_ADDRS                         { GPIOA_BASE }
-/** Array initializer of GPIO base pointers */
-#define GPIO_BASE_PTRS                          { GPIOA }
-
-/*!
- * @}
- */ /* end of group GPIO_Peripheral_Access_Layer */
-
-
-
-
-/* ----------------------------------------------------------------------------
-   -- UDMA Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup UDMA_Peripheral_Access_Layer  UDMA Peripheral Access Layer
- * @{
- */
+#define GPIOA                                   ((GPIO_reg_t *)0x1A101000)
 
 /** UDMA - General Register Layout Typedef */
 typedef struct {
-  __IO uint32_t RX_SADDR;                          /**< RX UDMA buffer transfer address register, offset: 0x0 */
-  __IO uint32_t RX_SIZE;                           /**< RX UDMA buffer transfer size register, offset: 0x4 */
-  __IO uint32_t RX_CFG;                            /**< RX UDMA transfer configuration register, offset: 0x8 */
-  __IO uint32_t RX_INITCFG;                        /**< Reserved, offset: 0xC */
-  __IO uint32_t TX_SADDR;                          /**< TX UDMA buffer transfer address register, offset: 0x10 */
-  __IO uint32_t TX_SIZE;                           /**< TX UDMA buffer transfer size register, offset: 0x14 */
-  __IO uint32_t TX_CFG;                            /**< TX UDMA transfer configuration register, offset: 0x18 */
-  __IO uint32_t TX_INITCFG;                        /**< Reserved, offset: 0x1C */
-
+  volatile uint32_t RX_SADDR;       /* RX UDMA buffer transfer address register */
+  volatile uint32_t RX_SIZE;        /* RX UDMA buffer transfer size register */
+  volatile uint32_t RX_CFG;         /* RX UDMA transfer configuration register */
+  volatile uint32_t RX_INITCFG;     /* Reserved */
+  volatile uint32_t TX_SADDR;       /* TX UDMA buffer transfer address register */
+  volatile uint32_t TX_SIZE;        /* TX UDMA buffer transfer size register */
+  volatile uint32_t TX_CFG;         /* TX UDMA transfer configuration register */
+  volatile uint32_t TX_INITCFG;     /* Reserved */
 } UDMA_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- UDMA Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup UDMA_Register_Masks UDMA Register Masks
- * @{
- */
-/*! @name RX_SADDR - RX TX UDMA buffer transfer address register */
+/* RX_SADDR - RX TX UDMA buffer transfer address register */
 #define UDMA_SADDR_ADDR_MASK                 (0xFFFFU)
 #define UDMA_SADDR_ADDR_SHIFT                (0U)
 #define UDMA_SADDR_ADDR(x)                   (((uint32_t)(((uint32_t)(x)) /*<< UDMA_SADDR_ADDR_SHIFT*/)) & UDMA_SADDR_ADDR_MASK)
 
-/*! @name RX_SIZE - RX TX UDMA buffer transfer size register */
+/* RX_SIZE - RX TX UDMA buffer transfer size register */
 #define UDMA_SIZE_SIZE_MASK                  (0x1FFFFU)
 #define UDMA_SIZE_SIZE_SHIFT                 (0U)
 #define UDMA_SIZE_SIZE(x)                    (((uint32_t)(((uint32_t)(x)) << UDMA_SIZE_SIZE_SHIFT)) & UDMA_SIZE_SIZE_MASK)
 
 
-/*! @name RX_CFG - RX TX UDMA transfer configuration register */
+/* RX_CFG - RX TX UDMA transfer configuration register */
 #define UDMA_CFG_CONTINOUS_MASK              (0x1U)
 #define UDMA_CFG_CONTINOUS_SHIFT             (0U)
 #define UDMA_CFG_CONTINOUS(x)                (((uint32_t)(((uint32_t)(x)) /*<< UDMA_CFG_CONTINOUS_SHIFT*/)) & UDMA_CFG_CONTINOUS_MASK)
@@ -438,108 +209,48 @@ typedef struct {
 #define UDMA_CFG_CLR_SHIFT                   (5U)
 #define UDMA_CFG_CLR(x)                      (((uint32_t)(((uint32_t)(x)) << UDMA_CFG_CLR_SHIFT)) & UDMA_CFG_CLR_MASK)
 
-/*!
- * @}
- */ /* end of group UDMA_Register_Masks */
-
-
-/* UDMA - Peripheral instance base addresses */
 /** Peripheral UDMA base address 0x1A102000 */
-#define UDMA_BASE                                (SOC_PERI_BASE + 0x02000u)
-/** Peripheral UDMA events number */
-#define UDMA_EVENTS_NUM                          19
-/** Peripheral UDMA channel number */
-#define UDMA_CHANNEL_NUM                         10
-
-/*!
- * @}
- */ /* end of group UDMA_Peripheral_Access_Layer */
-
-
-
-
-/* ----------------------------------------------------------------------------
-   -- UDMA Global Configuration Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup UDMA_GC_Peripheral_Access_Layer UDMA_GC Peripheral Access Layer
- * @{
- */
+#define UDMA_BASE                                (0x1A102000)
 
 /** UDMA Global configuration - Register Layout Typedef */
 typedef struct {
-  __IO uint32_t CG;                          /**< UDMA_GC clock gating register, offset: 0x0 */
-  __IO uint32_t EVTIN;                       /**< UDMA_GC input event register, offset: 0x04 */
+  volatile uint32_t CG;          /* clock gating register */
+  volatile uint32_t EVTIN;       /* input event register */
 } UDMA_GC_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- UDMA_GC Register Masks
-   ---------------------------------------------------------------------------- */
-/*!
- * @addtogroup UDMA_GC_Register_Masks UDMA_GC Register Masks
- * @{
- */
-
-/*! @name UDMA_GC - UDMA event in register, User chooses which events can come to UDMA as reference events, support up to 4 choices */
-#define UDMA_GC_EVTIN_CHOICE0_MASK                  (0xFFU)
-#define UDMA_GC_EVTIN_CHOICE0_SHIFT                 (0U)
-#define UDMA_GC_EVTIN_CHOICE0(x)                    (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE0_SHIFT)) & UDMA_GC_EVTIN_CHOICE0_MASK)
-
-#define UDMA_GC_EVTIN_CHOICE1_MASK                  (0xFF00U)
-#define UDMA_GC_EVTIN_CHOICE1_SHIFT                 (8U)
-#define UDMA_GC_EVTIN_CHOICE1(x)                    (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE1_SHIFT)) & UDMA_GC_EVTIN_CHOICE1_MASK)
-
-#define UDMA_GC_EVTIN_CHOICE2_MASK                  (0xFF0000U)
-#define UDMA_GC_EVTIN_CHOICE2_SHIFT                 (16U)
-#define UDMA_GC_EVTIN_CHOICE2(x)                    (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE2_SHIFT)) & UDMA_GC_EVTIN_CHOICE2_MASK)
-
-#define UDMA_GC_EVTIN_CHOICE3_MASK                  (0xFF000000)
-#define UDMA_GC_EVTIN_CHOICE3_SHIFT                 (24U)
-#define UDMA_GC_EVTIN_CHOICE3(x)                    (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE3_SHIFT)) & UDMA_GC_EVTIN_CHOICE3_MASK)
-
-/*!
- * @}
- */ /* end of group UDMA_GC_Register_Masks */
-
-
-/* UDMA Global configuration - instance base addresses */
-/** Global configuration UDMA base address */
 #define UDMA_GC_BASE                              (UDMA_BASE + 0x780u)
 #define UDMA_GC                            ((UDMA_GC_reg_t *)UDMA_GC_BASE)
 
-/*!
- * @}
- */ /* end of group UDMA_GC_Peripheral_Access_Layer */
+/* UDMA_GC - UDMA event in register, User chooses which events can come to UDMA as reference events, support up to 4 choices */
+#define UDMA_GC_EVTIN_CHOICE0_MASK      (0xFFU)
+#define UDMA_GC_EVTIN_CHOICE0_SHIFT     (0U)
+#define UDMA_GC_EVTIN_CHOICE0(x)        (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE0_SHIFT)) & UDMA_GC_EVTIN_CHOICE0_MASK)
 
+#define UDMA_GC_EVTIN_CHOICE1_MASK      (0xFF00U)
+#define UDMA_GC_EVTIN_CHOICE1_SHIFT     (8U)
+#define UDMA_GC_EVTIN_CHOICE1(x)        (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE1_SHIFT)) & UDMA_GC_EVTIN_CHOICE1_MASK)
 
-/* ----------------------------------------------------------------------------
-   -- LVDS Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
+#define UDMA_GC_EVTIN_CHOICE2_MASK      (0xFF0000U)
+#define UDMA_GC_EVTIN_CHOICE2_SHIFT     (16U)
+#define UDMA_GC_EVTIN_CHOICE2(x)        (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE2_SHIFT)) & UDMA_GC_EVTIN_CHOICE2_MASK)
 
-/*!
- * @addtogroup LVDS_Peripheral_Access_Layer LVDS Peripheral Access Layer
- * @{
- */
+#define UDMA_GC_EVTIN_CHOICE3_MASK      (0xFF000000)
+#define UDMA_GC_EVTIN_CHOICE3_SHIFT     (24U)
+#define UDMA_GC_EVTIN_CHOICE3(x)        (((uint32_t)(((uint32_t)(x)) << UDMA_GC_EVTIN_CHOICE3_SHIFT)) & UDMA_GC_EVTIN_CHOICE3_MASK)
+
 
 /** LVDS - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t    UDMA_LVDS;                           /**< LVDS UDMA general register, offset: 0x0 */
-  __IO  uint32_t RF_CFG;                            /**< LVDS configuration register, offset: 0x20 */
-  __IO  uint32_t RF_GPIO;                           /**< Reserved, offset: 0x24 */
-  __IO  uint32_t RF_STATUS;                         /**< LVDS Status register, offset: 0x28 */
+  UDMA_reg_t    UDMA_LVDS;           /* UDMA general register */
+  volatile  uint32_t RF_CFG;         /* configuration register */
+  volatile  uint32_t RF_GPIO;        /* Reserved */
+  volatile  uint32_t RF_STATUS;      /* Status register */
 } LVDS_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- LVDS Register Masks
-   ---------------------------------------------------------------------------- */
+#define LVDS_BASE                                 (UDMA_BASE + 0 * 128U)
+#define LVDS                                      ((LVDS_reg_t *)LVDS_BASE)
 
-/*!
- * @addtogroup LVDS_Register_Masks LVDS Register Masks
- * @{
- */
-
-/*! @name RF_CFG - LVDS configuration register */
+/* RF_CFG - LVDS configuration register */
 #define LVDS_RF_CFG_TX_ENB_MASK                  (0x1U)
 #define LVDS_RF_CFG_TX_ENB_SHIFT                 (0U)
 #define LVDS_RF_CFG_TX_ENB(x)                    (((uint32_t)(((uint32_t)(x)) << /*LVDS_RF_CFG_TX_ENB_SHIFT*/)) & LVDS_RF_CFG_TX_ENB_MASK)
@@ -592,69 +303,30 @@ typedef struct {
 #define LVDS_RF_CFG_MODE_RX_SHIFT                (12U)
 #define LVDS_RF_CFG_MODE_RX(x)                   (((uint32_t)(((uint32_t)(x)) << LVDS_RF_CFG_MODE_RX_SHIFT)) & LVDS_RF_CFG_MODE_RX_MASK)
 
-/*! @name RF_STATUS - LVDS Status register */
+/* RF_STATUS - LVDS Status register */
 #define LVDS_RF_STATUS_SYNC_FLAG_MASK            (0x1U)
 #define LVDS_RF_STATUS_SYNC_FLAG_SHIFT           (0U)
 #define LVDS_RF_STATUS_SYNC_FLAG(x)              (((uint32_t)(((uint32_t)(x)) /*<< LVDS_RF_STATUS_SYNC_FLAG_SHIFT*/)) & LVDS_RF_STATUS_SYNC_FLAG_MASK)
 
 
-/*!
- * @}
- */ /* end of group LVDS_Register_Masks */
-
-
-/* LVDS - Peripheral instance base addresses */
-/** Peripheral LVDS base address */
-#define LVDS_BASE                                 (UDMA_BASE + 0 * 128U)
-/** Peripheral LVDS base pointer */
-#define LVDS                                      ((LVDS_reg_t *)LVDS_BASE)
-/** Array initializer of LVDS peripheral base addresses */
-#define LVDS_BASE_ADDRS                           { LVDS_BASE }
-/** Array initializer of LVDS peripheral base pointers */
-#define LVDS_BASE_PTRS                            { LVDS }
-/** Interrupt vectors for the LVDS peripheral type */
-#define LVDS_RX_IRQS                              { LVDS_RX_IRQn }
-#define LVDS_TX_IRQS                              { LVDS_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group LVDS_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- ORCA Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup ORCA_Peripheral_Access_Layer ORCA Peripheral Access Layer
- * @{
- */
-
 /** ORCA - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t    UDMA_ORCA;                           /**< ORCA UDMA general register, offset: 0x0 */
-  __IO  uint32_t RF_CFG;                            /**< ORCA configuration register, offset: 0x20 */
-  __IO  uint32_t RF_GPIO;                           /**< Reserved, offset: 0x24 */
-  __IO  uint32_t RF_STATUS;                         /**< ORCA Status register, offset: 0x28 */
-  __IO  uint32_t PAD;                               /**< ORCA reserved, offset: 0x2C */
-  __IO  uint32_t CLKDIV_EN;                         /**< ORCA uDMA clock divider enable register, offset: 0x30 */
-  __IO  uint32_t CLKDIV_CFG;                        /**< ORCA uDMA clock divider configuration register, offset: 0x34 */
-  __IO  uint32_t CLKDIV_UPD;                        /**< ORCA uDMA clock divider data register, offset: 0x38 */
-  __IO  uint32_t ORCA_CFG;                          /**< ORCA configuration register, offset: 0x3C */
-  __IO  uint32_t CNT_EVENT;                         /**< ORCA Status register, offset: 0x40 */
+  UDMA_reg_t    UDMA_ORCA;           /* ORCA UDMA general register */
+  volatile  uint32_t RF_CFG;         /* ORCA configuration register */
+  volatile  uint32_t RF_GPIO;        /* Reserved */
+  volatile  uint32_t RF_STATUS;      /* ORCA Status register */
+  volatile  uint32_t PAD;            /* ORCA reserved */
+  volatile  uint32_t CLKDIV_EN;      /* ORCA uDMA clock divider enable register */
+  volatile  uint32_t CLKDIV_CFG;     /* ORCA uDMA clock divider configuration register */
+  volatile  uint32_t CLKDIV_UPD;     /* ORCA uDMA clock divider data register */
+  volatile  uint32_t ORCA_CFG;       /* ORCA configuration register */
+  volatile  uint32_t CNT_EVENT;      /* ORCA Status register */
 } ORCA_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- ORCA Register Masks
-   ---------------------------------------------------------------------------- */
+#define ORCA_BASE                                 (UDMA_BASE + 0 * 128U)
+#define ORCA                                      ((ORCA_reg_t *)ORCA_BASE)
 
-/*!
- * @addtogroup ORCA_Register_Masks ORCA Register Masks
- * @{
- */
-
-/*! @name RF_CFG - ORCA configuration register */
+/* RF_CFG - ORCA configuration register */
 #define ORCA_RF_CFG_TX_ENB_MASK                  (0x1U)
 #define ORCA_RF_CFG_TX_ENB_SHIFT                 (0U)
 #define ORCA_RF_CFG_TX_ENB(x)                    (((uint32_t)(((uint32_t)(x)) /*<< ORCA_RF_CFG_TX_ENB_SHIFT*/)) & ORCA_RF_CFG_TX_ENB_MASK)
@@ -707,28 +379,27 @@ typedef struct {
 #define ORCA_RF_CFG_MODE_RX_SHIFT                (12U)
 #define ORCA_RF_CFG_MODE_RX(x)                   (((uint32_t)(((uint32_t)(x)) << ORCA_RF_CFG_MODE_RX_SHIFT)) & ORCA_RF_CFG_MODE_RX_MASK)
 
-/*! @name RF_STATUS - ORCA Status register */
+/* RF_STATUS - ORCA Status register */
 #define ORCA_RF_STATUS_SYNC_FLAG_MASK            (0x1U)
 #define ORCA_RF_STATUS_SYNC_FLAG_SHIFT           (0U)
 #define ORCA_RF_STATUS_SYNC_FLAG(x)              (((uint32_t)(((uint32_t)(x)) /*<< ORCA_RF_STATUS_SYNC_FLAG_SHIFT*/)) & ORCA_RF_STATUS_SYNC_FLAG_MASK)
 
-
-/*! @name CLKDIV_EN - ORCA uDMA clock divider enable register */
+/* CLKDIV_EN - ORCA uDMA clock divider enable register */
 #define ORCA_CLKDIV_EN_MASK              (0x1U)
 #define ORCA_CLKDIV_EN_SHIFT             (0U)
 #define ORCA_CLKDIV_EN(x)                (((uint32_t)(((uint32_t)(x)) /*<< ORCA_CLKDIV_EN_SHIFT*/)) & ORCA_CLKDIV_EN_MASK)
 
-/*! @name CLKDIV_CFG - ORCA uDMA clock divider configuration register */
+/* CLKDIV_CFG - ORCA uDMA clock divider configuration register */
 #define ORCA_CLKDIV_CFG_MASK             (0xFFU)
 #define ORCA_CLKDIV_CFG_SHIFT            (0U)
 #define ORCA_CLKDIV_CFG(x)               (((uint32_t)(((uint32_t)(x)) /*<< ORCA_CLKDIV_CFG_SHIFT*/)) & ORCA_CLKDIV_CFG_MASK)
 
-/*! @name CLKDIV_UDP - ORCA uDMA clock divider enable register */
+/* CLKDIV_UDP - ORCA uDMA clock divider enable register */
 #define ORCA_CLKDIV_UDP_MASK             (0x1U)
 #define ORCA_CLKDIV_UDP_SHIFT            (0U)
 #define ORCA_CLKDIV_UDP(x)               (((uint32_t)(((uint32_t)(x)) /*<< ORCA_CLKDIV_UDP_SHIFT*/)) & ORCA_CLKDIV_UDP_MASK)
 
-/*! @name ORCA_CFG - ORCA configuration register */
+/* ORCA_CFG - ORCA configuration register */
 #define ORCA_CFG_SIZE_MASK               (0xFU)
 #define ORCA_CFG_SIZE_SHIFT              (0U)
 #define ORCA_CFG_SIZE(x)                 (((uint32_t)(((uint32_t)(x)) /*<< ORCA_CFG_SIZE_SHIFT*/)) & ORCA_CFG_SIZE_MASK)
@@ -741,49 +412,18 @@ typedef struct {
 #define ORCA_CFG_EN_SHIFT                (8U)
 #define ORCA_CFG_EN(x)                   (((uint32_t)(((uint32_t)(x)) << ORCA_CFG_EN_SHIFT)) & ORCA_CFG_EN_MASK)
 
-/*!
- * @}
- */ /* end of group ORCA_Register_Masks */
-
-
-/* ORCA - Peripheral instance base addresses */
-/** Peripheral ORCA base address */
-#define ORCA_BASE                                 (UDMA_BASE + 0 * 128U)
-/** Peripheral ORCA base pointer */
-#define ORCA                                      ((ORCA_reg_t *)ORCA_BASE)
-/** Array initializer of ORCA peripheral base addresses */
-#define ORCA_BASE_ADDRS                           { ORCA_BASE }
-/** Array initializer of ORCA peripheral base pointers */
-#define ORCA_BASE_PTRS                            { ORCA }
-/** Interrupt vectors for the ORCA peripheral type */
-#define ORCA_RX_IRQS                              { ORCA_RX_IRQn }
-#define ORCA_TX_IRQS                              { ORCA_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group ORCA_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- SPIM Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup SPIM_Peripheral_Access_Layer SPIM Peripheral Access Layer
- * @{
- */
 
 /** SPIM - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t    UDMA_SPIM;                           /**< SPIM UDMA general register, offset: 0x0 */
+  UDMA_reg_t    UDMA_SPIM;              /* SPIM UDMA general register */
 } SPIM_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- SPIM Register Masks
-   ---------------------------------------------------------------------------- */
+#define SPIM0_BASE                                (UDMA_BASE + 1 * 128U)
+#define SPIM0                                     ((SPIM_reg_t *)SPIM0_BASE)
+#define SPIM1_BASE                                (UDMA_BASE + 2 * 128U)
+#define SPIM1                                     ((SPIM_reg_t *)SPIM1_BASE)
 
-/*! @name uDMA - SPIM uDMA control CMD */
+/* uDMA - SPIM uDMA control CMD */
 #define SPIM_CMD_CFG_ID               0
 #define SPIM_CMD_SOT_ID               1
 #define SPIM_CMD_SEND_CMD_ID          2
@@ -806,7 +446,7 @@ typedef struct {
  * @addtogroup SPIM_Register_Masks SPIM Register Masks
  * @{
  */
-/*! @name CMD_CFG - SPIM configuration register */
+/* CMD_CFG - SPIM configuration register */
 #define SPIM_CMD_CFG_CLKDIV_MASK                  (0xFFU)
 #define SPIM_CMD_CFG_CLKDIV_SHIFT                 (0U)
 #define SPIM_CMD_CFG_CLKDIV(x)                    (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_CFG_CLKDIV_SHIFT*/)) & SPIM_CMD_CFG_CLKDIV_MASK)
@@ -817,12 +457,12 @@ typedef struct {
 #define SPIM_CMD_CFG_CPOL_SHIFT                   (9U)
 #define SPIM_CMD_CFG_CPOL(x)                      (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_CFG_CPOL_SHIFT)) & SPIM_CMD_CFG_CPOL_MASK)
 
-/*! @name CMD_SOT - SPIM chip select (CS) */
+/* CMD_SOT - SPIM chip select (CS) */
 #define SPIM_CMD_SOT_CS_MASK                      (0x3U)
 #define SPIM_CMD_SOT_CS_SHIFT                     (0U)
 #define SPIM_CMD_SOT_CS(x)                        (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_SOT_CS_SHIFT)) & SPIM_CMD_SOT_CS_MASK)
 
-/*! @name CMD_SEND_CMD - SPIM Transmit a command */
+/* CMD_SEND_CMD - SPIM Transmit a command */
 #define SPIM_CMD_SEND_VALUEL_MASK                (0xFFU)
 #define SPIM_CMD_SEND_VALUEL_SHIFT                (0U)
 #define SPIM_CMD_SEND_VALUEL(x)                   (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_SEND_VALUEL_SHIFT*/)) & SPIM_CMD_SEND_VALUEL_MASK)
@@ -836,7 +476,7 @@ typedef struct {
 #define SPIM_CMD_SEND_QPI_SHIFT                   (27U)
 #define SPIM_CMD_SEND_QPI(x)                      (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_SEND_QPI_SHIFT)) & SPIM_CMD_SEND_QPI_MASK)
 
-/*! @name CMD_SEND_ADDR - SPIM Transmit a address */
+/* CMD_SEND_ADDR - SPIM Transmit a address */
 #define SPIM_CMD_SEND_ADDR_VALUE_MASK             (0xFFFFU)
 #define SPIM_CMD_SEND_ADDR_VALUE_SHIFT            (0U)
 #define SPIM_CMD_SEND_ADDR_VALUE(x)               (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_SEND_ADDR_VALUE_SHIFT*/)) & SPIM_CMD_SEND_ADDR_VALUE_MASK)
@@ -847,17 +487,17 @@ typedef struct {
 #define SPIM_CMD_SEND_ADDR_QPI_SHIFT              (27U)
 #define SPIM_CMD_SEND_ADDR_QPI(x)                 (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_SEND_ADDR_QPI_SHIFT)) & SPIM_CMD_SEND_ADDR_QPI_MASK)
 
-/*! @name CMD_DUMMY - SPIM number of dummy cycle */
+/* CMD_DUMMY - SPIM number of dummy cycle */
 #define SPIM_CMD_DUMMY_CYCLE_MASK                 (0x1F0000U)
 #define SPIM_CMD_DUMMY_CYCLE_SHIFT                (16U)
 #define SPIM_CMD_DUMMY_CYCLE(x)                   (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_DUMMY_CYCLE_SHIFT)) & SPIM_CMD_DUMMY_CYCLE_MASK)
 
-/*! @name CMD_WAIT - SPIM wait in which event - 2 bits */
+/* CMD_WAIT - SPIM wait in which event - 2 bits */
 #define SPIM_CMD_WAIT_EVENT_ID_MASK               (0x3U)
 #define SPIM_CMD_WAIT_EVENT_ID_SHIFT              (0U)
 #define SPIM_CMD_WAIT_EVENT_ID(x)                 (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_WAIT_EVENT_ID_SHIFT*/)) & SPIM_CMD_WAIT_EVENT_ID_MASK)
 
-/*! @name CMD_TX_DATA - SPIM send datas */
+/* CMD_TX_DATA - SPIM send datas */
 #define SPIM_CMD_TX_DATA_SIZE_MASK                (0xFFFFU)
 #define SPIM_CMD_TX_DATA_SIZE_SHIFT               (0U)
 #define SPIM_CMD_TX_DATA_SIZE(x)                  (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_TX_DATA_SIZE_SHIFT*/)) & SPIM_CMD_TX_DATA_SIZE_MASK)
@@ -868,7 +508,7 @@ typedef struct {
 #define SPIM_CMD_TX_DATA_QPI_SHIFT                (27U)
 #define SPIM_CMD_TX_DATA_QPI(x)                   (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_TX_DATA_QPI_SHIFT)) & SPIM_CMD_TX_DATA_QPI_MASK)
 
-/*! @name CMD_RX_DATA - SPIM receive datas */
+/* CMD_RX_DATA - SPIM receive datas */
 #define SPIM_CMD_RX_DATA_SIZE_MASK                (0xFFFFU)
 #define SPIM_CMD_RX_DATA_SIZE_SHIFT               (0U)
 #define SPIM_CMD_RX_DATA_SIZE(x)                  (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_RX_DATA_SIZE_SHIFT*/)) & SPIM_CMD_RX_DATA_SIZE_MASK)
@@ -879,22 +519,22 @@ typedef struct {
 #define SPIM_CMD_RX_DATA_QPI_SHIFT                (27U)
 #define SPIM_CMD_RX_DATA_QPI(x)                   (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_RX_DATA_QPI_SHIFT)) & SPIM_CMD_RX_DATA_QPI_MASK)
 
-/*! @name CMD_RPT - SPIM repeat the next transfer N times */
+/* CMD_RPT - SPIM repeat the next transfer N times */
 #define SPIM_CMD_RPT_CNT_MASK                     (0xFFFFU)
 #define SPIM_CMD_RPT_CNT_SHIFT                    (0U)
 #define SPIM_CMD_RPT_CNT(x)                       (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_RPT_CNT_SHIFT*/)) & SPIM_CMD_RPT_CNT_MASK)
 
-/*! @name CMD_EOT - SPIM clears the chip select (CS), and send a end event or not  */
+/* CMD_EOT - SPIM clears the chip select (CS), and send a end event or not  */
 #define SPIM_CMD_EOT_EVENT_GEN_MASK                (0x1U)
 #define SPIM_CMD_EOT_EVENT_GEN_SHIFT               (0U)
 #define SPIM_CMD_EOT_EVENT_GEN(x)                  (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_EOT_EVENT_GEN_SHIFT*/)) & SPIM_CMD_EOT_EVENT_GEN_MASK)
 
-/*! @name CMD_RPT_END - SPIM End of the repeat loop */
+/* CMD_RPT_END - SPIM End of the repeat loop */
 #define SPIM_CMD_RPT_END_SPI_CMD_MASK              (0xFU)
 #define SPIM_CMD_RPT_END_SPI_CMD_SHIFT             (0U)
 #define SPIM_CMD_RPT_END_SPI_CMD(x)                (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_RPT_END_SPI_CMD_SHIFT*/)) & SPIM_CMD_RPT_END_SPI_CMD_MASK)
 
-/*! @name CMD_RX_CHECK - SPIM check up to 16 bits of data against an expected value  */
+/* CMD_RX_CHECK - SPIM check up to 16 bits of data against an expected value  */
 #define SPIM_CMD_RX_CHECK_COMP_DATA_MASK            (0xFFFFU)
 #define SPIM_CMD_RX_CHECK_COMP_DATA_SHIFT           (0U)
 #define SPIM_CMD_RX_CHECK_COMP_DATA(x)              (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_RX_CHECK_COMP_DATA_SHIFT*/)) & SPIM_CMD_RX_CHECK_COMP_DATA_MASK)
@@ -914,7 +554,7 @@ typedef struct {
 #define SPIM_CMD_RX_CHECK_QPI_SHIFT                 (27U)
 #define SPIM_CMD_RX_CHECK_QPI(x)                    (((uint32_t)(((uint32_t)(x)) << SPIM_CMD_RX_CHECK_QPI_SHIFT)) & SPIM_CMD_RX_CHECK_QPI_MASK)
 
-/*! @name CMD_FULL_DULP - SPIM Activate full duplex mode */
+/* CMD_FULL_DULP - SPIM Activate full duplex mode */
 #define SPIM_CMD_FULL_SIZE_CMD_MASK                 (0xFFFFU)
 #define SPIM_CMD_FULL_SIZE_CMD_SHIFT                (0U)
 #define SPIM_CMD_FULL_SIZE_CMD(x)                   (((uint32_t)(((uint32_t)(x)) /*<< SPIM_CMD_FULL_SIZE_CMD_SHIFT*/)) & SPIM_CMD_FULL_SIZE_CMD_MASK)
@@ -984,67 +624,26 @@ typedef struct {
                                            | SPIM_CMD_RX_CHECK_CHECK_TYPE(mode) \
                                            | SPIM_CMD_RX_CHECK_BYTE_ALIGN(byte_align) \
                                            | SPIM_CMD_RX_CHECK_QPI(qpi) )
-/*!
- * @}
- */ /* end of group SPIM_Register_Masks */
 
-
-/* SPIM - Peripheral instance base addresses */
-/** Peripheral SPIM0 base address */
-#define SPIM0_BASE                                (UDMA_BASE + 1 * 128U)
-/** Peripheral SPIM0 base pointer */
-#define SPIM0                                     ((SPIM_reg_t *)SPIM0_BASE)
-/** Peripheral SPIM1 base address */
-#define SPIM1_BASE                                (UDMA_BASE + 2 * 128U)
-/** Peripheral SPIM1 base pointer */
-#define SPIM1                                     ((SPIM_reg_t *)SPIM1_BASE)
-/** Array initializer of SPIM peripheral base addresses */
-#define SPIM_BASE_ADDRS                           { SPIM0_BASE, SPIM1_BASE }
-/** Array initializer of SPIM peripheral base pointers */
-#define SPIM_BASE_PTRS                            { SPIM0, SPIM1 }
-/** Interrupt vectors for the SPIM peripheral type */
-#define SPIM_RX_IRQS                              { SPIM0_RX_IRQn, SPIM1_RX_IRQn }
-#define SPIM_TX_IRQS                              { SPIM0_TX_IRQn, SPIM1_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group SPIM_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- HYPERBUS Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup HYPERBUS_Peripheral_Access_Layer HYPERBUS Peripheral Access Layer
- * @{
- */
-
-/** HYPERBUS - Register Layout Typedef */
+/* HYPERBUS - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t    UDMA_HYPERBUS;                           /**< HYPERBUS UDMA general register, offset: 0x0 */
-  __IO  uint32_t EXT_ADDR;                           /**< HYPERBUS Memory access address register, offset: 0x20 */
-  __IO  uint32_t EXT_CFG;                            /**< Reserved, offset: 0x24 */
-  __IO  uint32_t MEM_CFG0;                           /**< HYPERBUS Memory control Configuration register0, offset: 0x28 */
-  __IO  uint32_t MEM_CFG1;                           /**< HYPERBUS Memory control Configuration register1, offset: 0x2C */
-  __IO  uint32_t MEM_CFG2;                           /**< HYPERBUS Memory control Configuration register2, offset: 0x30 */
-  __IO  uint32_t MEM_CFG3;                           /**< HYPERBUS Memory control Configuration register3, offset: 0x34 */
-  __IO  uint32_t MEM_CFG4;                           /**< HYPERBUS Memory control Configuration register4, offset: 0x38 */
-  __IO  uint32_t MEM_CFG5;                           /**< HYPERBUS Memory control Configuration register5, offset: 0x3C */
-  __IO  uint32_t MEM_CFG6;                           /**< HYPERBUS Memory control Configuration register6, offset: 0x40 */
-  __IO  uint32_t MEM_CFG7;                           /**< HYPERBUS Memory control Configuration register7, offset: 0x44 */
+  UDMA_reg_t    UDMA_HYPERBUS;        /* UDMA general register */
+  volatile  uint32_t EXT_ADDR;        /* Memory access address register */
+  volatile  uint32_t EXT_CFG;         /* Reserved */
+  volatile  uint32_t MEM_CFG0;        /* Memory control Configuration register0 */
+  volatile  uint32_t MEM_CFG1;        /* Memory control Configuration register1 */
+  volatile  uint32_t MEM_CFG2;        /* Memory control Configuration register2 */
+  volatile  uint32_t MEM_CFG3;        /* Memory control Configuration register3 */
+  volatile  uint32_t MEM_CFG4;        /* Memory control Configuration register4 */
+  volatile  uint32_t MEM_CFG5;        /* Memory control Configuration register5 */
+  volatile  uint32_t MEM_CFG6;        /* Memory control Configuration register6 */
+  volatile  uint32_t MEM_CFG7;        /* Memory control Configuration register7 */
 } HYPERBUS_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- HYPERBUS Register Masks
-   ---------------------------------------------------------------------------- */
+#define HYPERBUS_BASE0                                 (UDMA_BASE + 3 * 128U)
+#define HYPERBUS0                                      ((HYPERBUS_reg_t *)HYPERBUS_BASE0)
 
-/*!
- * @addtogroup HYPERBUS_Register_Masks HYPERBUS Register Masks
- * @{
- */
-
-/*! @name MEM_CFG0 - HYPERBUS Memory control Configuration register0 */
+/* MEM_CFG0 - HYPERBUS Memory control Configuration register0 */
 #define HYPERBUS_MEM_CFG0_MBR0_MASK                    (0xFFU)
 #define HYPERBUS_MEM_CFG0_MBR0_SHIFT                   (0U)
 #define HYPERBUS_MEM_CFG0_MBR0(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG0_MBR0_SHIFT)) & HYPERBUS_MEM_CFG0_MBR0_MASK)
@@ -1055,7 +654,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG0_WRAP_SIZE0_SHIFT             (12U)
 #define HYPERBUS_MEM_CFG0_WRAP_SIZE0(x)                (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG0_WRAP_SIZE0_SHIFT)) & HYPERBUS_MEM_CFG0_WRAP_SIZE0_MASK)
 
-/*! @name MEM_CFG1 - HYPERBUS Memory control Configuration register1 */
+/* MEM_CFG1 - HYPERBUS Memory control Configuration register1 */
 #define HYPERBUS_MEM_CFG1_RD_CSHI0_MASK                (0xFU)
 #define HYPERBUS_MEM_CFG1_RD_CSHI0_SHIFT               (0U)
 #define HYPERBUS_MEM_CFG1_RD_CSHI0(x)                  (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG1_RD_CSHI0_SHIFT)) & HYPERBUS_MEM_CFG1_RD_CSHI0_MASK)
@@ -1075,8 +674,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG1_WR_CSH0_SHIFT                (20U)
 #define HYPERBUS_MEM_CFG1_WR_CSH0(x)                   (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG1_WR_CSH0_SHIFT)) & HYPERBUS_MEM_CFG1_WR_CSH0_MASK)
 
-
-/*! @name MEM_CFG2 - HYPERBUS Memory control Configuration register2 */
+/* MEM_CFG2 - HYPERBUS Memory control Configuration register2 */
 #define HYPERBUS_MEM_CFG2_RD_MAX_LENGTH0_MASK                    (0x1FFU)
 #define HYPERBUS_MEM_CFG2_RD_MAX_LENGTH0_SHIFT                   (0U)
 #define HYPERBUS_MEM_CFG2_RD_MAX_LENGTH0(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG2_RD_MAX_LENGTH0_SHIFT)) & HYPERBUS_MEM_CFG2_RD_MAX_LENGTH0_MASK)
@@ -1084,7 +682,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG2_WR_MAX_LENGTH0_SHIFT                   (16U)
 #define HYPERBUS_MEM_CFG2_WR_MAX_LENGTH0(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG2_WR_MAX_LENGTH0_SHIFT)) & HYPERBUS_MEM_CFG2_WR_MAX_LENGTH0_MASK)
 
-/*! @name MEM_CFG3 - HYPERBUS Memory control Configuration register3 */
+/* MEM_CFG3 - HYPERBUS Memory control Configuration register3 */
 #define HYPERBUS_MEM_CFG3_ACS0_MASK                    (0x1U)
 #define HYPERBUS_MEM_CFG3_ACS0_SHIFT                   (0U)
 #define HYPERBUS_MEM_CFG3_ACS0(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG3_ACS0_SHIFT)) & HYPERBUS_MEM_CFG3_ACS0_MASK)
@@ -1107,8 +705,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG3_RDS_DELAY_ADJ_SHIFT          (8U)
 #define HYPERBUS_MEM_CFG3_RDS_DELAY_ADJ(x)             (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG3_RDS_DELAY_ADJ_SHIFT)) & HYPERBUS_MEM_CFG3_RDS_DELAY_ADJ_MASK)
 
-
-/*! @name MEM_CFG4 - HYPERBUS Memory control Configuration register4 */
+/* MEM_CFG4 - HYPERBUS Memory control Configuration register4 */
 #define HYPERBUS_MEM_CFG4_MBR1_MASK                    (0xFFU)
 #define HYPERBUS_MEM_CFG4_MBR1_SHIFT                   (0U)
 #define HYPERBUS_MEM_CFG4_MBR1(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG4_MBR1_SHIFT)) & HYPERBUS_MEM_CFG4_MBR1_MASK)
@@ -1119,8 +716,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG4_WRAP_SIZE1_SHIFT             (12U)
 #define HYPERBUS_MEM_CFG4_WRAP_SIZE1(x)                (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG4_WRAP_SIZE1_SHIFT)) & HYPERBUS_MEM_CFG4_WRAP_SIZE1_MASK)
 
-
-/*! @name MEM_CFG5 - HYPERBUS Memory control Configuration register5 */
+/* MEM_CFG5 - HYPERBUS Memory control Configuration register5 */
 #define HYPERBUS_MEM_CFG5_RD_CSHI1_MASK                (0xFU)
 #define HYPERBUS_MEM_CFG5_RD_CSHI1_SHIFT               (0U)
 #define HYPERBUS_MEM_CFG5_RD_CSHI1(x)                  (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG5_RD_CSHI1_SHIFT)) & HYPERBUS_MEM_CFG5_RD_CSHI1_MASK)
@@ -1140,7 +736,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG5_WR_CSH1_SHIFT                (20U)
 #define HYPERBUS_MEM_CFG5_WR_CSH1(x)                   (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG5_WR_CSH1_SHIFT)) & HYPERBUS_MEM_CFG5_WR_CSH1_MASK)
 
-/*! @name MEM_CFG6 - HYPERBUS Memory control Configuration register6 */
+/* MEM_CFG6 - HYPERBUS Memory control Configuration register6 */
 #define HYPERBUS_MEM_CFG6_RD_MAX_LENGTH1_MASK          (0x1FFU)
 #define HYPERBUS_MEM_CFG6_RD_MAX_LENGTH1_SHIFT         (0U)
 #define HYPERBUS_MEM_CFG6_RD_MAX_LENGTH1(x)            (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG6_RD_MAX_LENGTH1_SHIFT)) & HYPERBUS_MEM_CFG6_RD_MAX_LENGTH1_MASK)
@@ -1148,8 +744,7 @@ typedef struct {
 #define HYPERBUS_MEM_CFG6_WR_MAX_LENGTH1_SHIFT         (16U)
 #define HYPERBUS_MEM_CFG6_WR_MAX_LENGTH1(x)            (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG6_WR_MAX_LENGTH1_SHIFT)) & HYPERBUS_MEM_CFG6_WR_MAX_LENGTH1_MASK)
 
-
-/*! @name MEM_CFG7 - HYPERBUS Memory control Configuration register7 */
+/* MEM_CFG7 - HYPERBUS Memory control Configuration register7 */
 #define HYPERBUS_MEM_CFG7_ACS1_MASK                    (0x1U)
 #define HYPERBUS_MEM_CFG7_ACS1_SHIFT                   (0U)
 #define HYPERBUS_MEM_CFG7_ACS1(x)                      (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG7_ACS1_SHIFT)) & HYPERBUS_MEM_CFG7_ACS1_MASK)
@@ -1168,54 +763,18 @@ typedef struct {
 #define HYPERBUS_MEM_CFG7_WR_MAX_LEN_EN1_MASK          (0x20U)
 #define HYPERBUS_MEM_CFG7_WR_MAX_LEN_EN1_SHIFT         (5U)
 #define HYPERBUS_MEM_CFG7_WR_MAX_LEN_EN1(x)            (((uint32_t)(((uint32_t)(x)) << HYPERBUS_MEM_CFG7_WR_MAX_LEN_EN1_SHIFT)) & HYPERBUS_MEM_CFG7_WR_MAX_LEN_EN1_MASK)
-/*!
- * @}
- */ /* end of group HYPERBUS_Register_Masks */
-
-
-/* HYPERBUS - Peripheral instance base addresses */
-/** Peripheral HYPERBUS base address */
-#define HYPERBUS_BASE0                                 (UDMA_BASE + 3 * 128U)
-/** Peripheral HYPERBUS base pointer */
-#define HYPERBUS0                                      ((HYPERBUS_reg_t *)HYPERBUS_BASE0)
-/** Array initializer of HYPERBUS peripheral base addresses */
-#define HYPERBUS_BASE_ADDRS                           { HYPERBUS_BASE0 }
-/** Array initializer of HYPERBUS peripheral base pointers */
-#define HYPERBUS_BASE_PTRS                            { HYPERBUS0 }
-/** Interrupt vectors for the HYPERBUS peripheral type */
-#define HYPERBUS_RX_IRQS                              { HYPERBUS_RX_IRQn }
-#define HYPERBUS_TX_IRQS                              { HYPERBUS_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group HYPERBUS_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- UART Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup UART_Peripheral_Access_Layer UART Peripheral Access Layer
- * @{
- */
 
 /** UART - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t    UDMA_UART;                           /**< UART UDMA general register, offset: 0x0 */
-  __IO  uint32_t STATUS;                            /**< UART Status register, offset: 0x20 */
-  __IO  uint32_t SETUP;                             /**< UART Configuration register, offset: 0x24 */
+  UDMA_reg_t    UDMA_UART;      /* UDMA general register */
+  volatile  uint32_t STATUS;    /* Status register */
+  volatile  uint32_t SETUP;     /* Configuration register */
 } UART_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- UART Register Masks
-   ---------------------------------------------------------------------------- */
+#define UART_BASE                                 (UDMA_BASE + 4 * 128U)
+#define UART                                      ((UART_reg_t *)UART_BASE)
 
-/*!
- * @addtogroup UART_Register_Masks UART Register Masks
- * @{
- */
-/*! @name STATUS - UART Status register */
+/* STATUS - UART Status register */
 #define UART_STATUS_TX_BUSY_MASK                    (0x1U)
 #define UART_STATUS_TX_BUSY_SHIFT                   (0U)
 #define UART_STATUS_TX_BUSY(x)                      (((uint32_t)(((uint32_t)(x)) << UART_STATUS_TX_BUSY_SHIFT)) & UART_STATUS_TX_BUSY_MASK)
@@ -1226,7 +785,7 @@ typedef struct {
 #define UART_STATUS_RX_PE_SHIFT                     (2U)
 #define UART_STATUS_RX_PE(x)                        (((uint32_t)(((uint32_t)(x)) << UART_STATUS_RX_PE_SHIFT)) & UART_STATUS_RX_PE_MASK)
 
-/*! @name SETUP - UART SETUP register */
+/* SETUP - UART SETUP register */
 #define UART_SETUP_PARITY_ENA_MASK                  (0x1U)
 #define UART_SETUP_PARITY_ENA_SHIFT                 (0U)
 #define UART_SETUP_PARITY_ENA(x)                    (((uint32_t)(((uint32_t)(x)) << UART_SETUP_PARITY_ENA_SHIFT)) & UART_SETUP_PARITY_ENA_MASK)
@@ -1251,56 +810,21 @@ typedef struct {
 #define UART_SETUP_CLKDIV_SHIFT                     (16U)
 #define UART_SETUP_CLKDIV(x)                        (((uint32_t)(((uint32_t)(x)) << UART_SETUP_CLKDIV_SHIFT)) & UART_SETUP_CLKDIV_MASK)
 
-/*!
- * @}
- */ /* end of group UART_Register_Masks */
-
-
-/* UART - Peripheral instance base addresses */
-/** Peripheral UART base address */
-#define UART_BASE                                 (UDMA_BASE + 4 * 128U)
-/** Peripheral UART base pointer */
-#define UART                                      ((UART_reg_t *)UART_BASE)
-/** Array initializer of UART peripheral base addresses */
-#define UART_BASE_ADDRS                           { UART_BASE }
-/** Array initializer of UART peripheral base pointers */
-#define UART_BASE_PTRS                            { UART }
-/** Interrupt vectors for the UART peripheral type */
-#define UART_RX_IRQS                              { UART_RX_IRQn }
-#define UART_TX_IRQS                              { UART_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group UART_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- I2C Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup I2C_Peripheral_Access_Layer I2C Peripheral Access Layer
- * @{
- */
 
 /** I2C - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t     UDMA_I2C;                           /**< I2C UDMA general register, offset: 0x0 */
-  __IO  uint32_t STATUS;                            /**< I2C Status register, offset: 0x20 */
-  __IO  uint32_t SETUP;                             /**< I2C Configuration register, offset: 0x24 */
+  UDMA_reg_t     UDMA_I2C;        /* UDMA general register */
+  volatile  uint32_t STATUS;      /* Status register */
+  volatile  uint32_t SETUP;       /* Configuration register */
 
 } I2C_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- I2C Register Masks
-   ---------------------------------------------------------------------------- */
+#define I2C0_BASE                                (UDMA_BASE + 5 * 128U)
+#define I2C0                                     ((I2C_reg_t *)I2C0_BASE)
+#define I2C1_BASE                                (UDMA_BASE + 6 * 128U)
+#define I2C1                                     ((I2C_reg_t *)I2C1_BASE)
 
-/*!
- * @addtogroup I2C_Register_Masks I2C Register Masks
- * @{
- */
-/*! @name STATUS - I2C Status register */
+/* STATUS - I2C Status register */
 #define I2C_STATUS_BUSY_MASK                    (0x1U)
 #define I2C_STATUS_BUSY_SHIFT                   (0U)
 #define I2C_STATUS_BUSY(x)                      (((uint32_t)(((uint32_t)(x)) << I2C_STATUS_BUSY_SHIFT)) & I2C_STATUS_BUSY_MASK)
@@ -1308,12 +832,12 @@ typedef struct {
 #define I2C_STATUS_ARB_LOST_SHIFT               (1U)
 #define I2C_STATUS_ARB_LOST(x)                  (((uint32_t)(((uint32_t)(x)) << I2C_STATUS_ARB_LOST_SHIFT)) & I2C_STATUS_ARB_LOST_MASK)
 
-/*! @name SETUP - I2C SETUP register */
+/* SETUP - I2C SETUP register */
 #define I2C_SETUP_DO_RST_MASK                   (0x1U)
 #define I2C_SETUP_DO_RST_SHIFT                  (0U)
 #define I2C_SETUP_DO_RST(x)                     (((uint32_t)(((uint32_t)(x)) << I2C_SETUP_DO_RST_SHIFT)) & I2C_SETUP_DO_RST_MASK)
 
-/*! @name uDMA - I2C uDMA control CMD */
+/* uDMA - I2C uDMA control CMD */
 #define I2C_CMD_MASK                 (0xF0U)
 #define I2C_CMD_SHIFT                (4U)
 
@@ -1327,123 +851,47 @@ typedef struct {
 #define I2C_CMD_RPT                  (((uint32_t)(((uint32_t)(0xC)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0xC0
 #define I2C_CMD_CFG                  (((uint32_t)(((uint32_t)(0xE)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0xE0
 
-/*!
- * @}
- */ /* end of group I2C_Register_Masks */
-
-
-/* I2C - Peripheral instance base addresses */
-/** Peripheral I2C0 base address */
-#define I2C0_BASE                                (UDMA_BASE + 5 * 128U)
-/** Peripheral I2C0 base pointer */
-#define I2C0                                     ((I2C_reg_t *)I2C0_BASE)
-/** Peripheral I2C1 base address */
-#define I2C1_BASE                                (UDMA_BASE + 6 * 128U)
-/** Peripheral I2C1 base pointer */
-#define I2C1                                     ((I2C_reg_t *)I2C1_BASE)
-/** Array initializer of I2C peripheral base addresses */
-#define I2C_BASE_ADDRS                           { I2C0_BASE, I2C1_BASE }
-/** Array initializer of I2C peripheral base pointers */
-#define I2C_BASE_PTRS                            { I2C0, I2C1}
-/** Interrupt vectors for the I2C peripheral type */
-#define I2C_RX_IRQS                              { I2C0_RX_IRQn, I2C1_RX_IRQn }
-#define I2C_TX_IRQS                              { I2C0_TX_IRQn, I2C1_TX_IRQn }
-
-/*!
- * @}
- */ /* end of group I2C_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- TCDM Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup TCDM_Peripheral_Access_Layer TCDM Peripheral Access Layer
- * @{
- */
-
 /** TCDM - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t     UDMA_TCDM;                           /**< TCDM UDMA general register, offset: 0x0 */
-  __IO  uint32_t DST_ADDR;                           /**< TCDM destination address register, offset: 0x20 */
-  __IO  uint32_t SRC_ADDR;                           /**< TCDM source address register, offset: 0x24 */
+  UDMA_reg_t     UDMA_TCDM;        /* UDMA general register */
+  volatile  uint32_t DST_ADDR;     /* destination address register */
+  volatile  uint32_t SRC_ADDR;     /* source address register */
 } TCDM_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- TCDM Register Masks
-   ---------------------------------------------------------------------------- */
+#define TCDM_BASE                                 (UDMA_BASE + 7 * 128U)
+#define TCDM                                      ((TCDM_reg_t *)TCDM_BASE)
 
-/*!
- * @addtogroup TCDM_Register_Masks TCDM Register Masks
- * @{
- */
-/*! @name DST_ADDR - TCDM destination address register */
+/* DST_ADDR - TCDM destination address register */
 #define TCDM_DST_ADDR_MASK                    (0x1FFFFU)
 #define TCDM_DST_ADDR_SHIFT                   (0U)
 #define TCDM_DST_ADDR(x)                      (((uint32_t)(((uint32_t)(x)) << TCDM_DST_ADDR_SHIFT)) & TCDM_DST_ADDR_MASK)
 
-/*! @name SRC_ADDR - TCDM source address register */
+/* SRC_ADDR - TCDM source address register */
 #define TCDM_SRC_ADDR_MASK                    (0x1FFFFU)
 #define TCDM_SRC_ADDR_SHIFT                   (0U)
 #define TCDM_SRC_ADDR(x)                      (((uint32_t)(((uint32_t)(x)) << TCDM_SRC_ADDR_SHIFT)) & TCDM_SRC_ADDR_MASK)
 
-/*!
- * @}
- */ /* end of group TCDM_Register_Masks */
-
-
-/* TCDM - Peripheral instance base addresses */
-/** Peripheral TCDM base address */
-#define TCDM_BASE                                 (UDMA_BASE + 7 * 128U)
-/** Peripheral TCDM base pointer */
-#define TCDM                                      ((TCDM_reg_t *)TCDM_BASE)
-/** Array initializer of TCDM peripheral base addresses */
-#define TCDM_BASE_ADDRS                           { TCDM_BASE }
-/** Array initializer of TCDM peripheral base pointers */
-#define TCDM_BASE_PTRS                            { TCDM }
-/** Interrupt vectors for the TCDM peripheral type */
-#define TCDM_RX_IRQS                              { TCDM_RX_IRQn }
-#define TCDM_TX_IRQS                              { TCDM_TX_IRQn}
-
-/*!
- * @}
- */ /* end of group TCDM_Peripheral_Access_Layer */
-
-/* ----------------------------------------------------------------------------
-   -- I2S Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup I2S_Peripheral_Access_Layer I2S Peripheral Access Layer
- * @{
- */
 
 /** I2S - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t      UDMA_I2S;                         /**< I2S UDMA general register, offset: 0x0 */
-  __IO  uint32_t EXT;                              /**< I2S external clock configuration register, offset: 0x20 */
-  __IO  uint32_t CFG_CLKGEN0;                      /**< I2S clock/WS generator 0 configuration register, offset: 0x24 */
-  __IO  uint32_t CFG_CLKGEN1;                      /**< I2S clock/WS generator 1 configuration register, offset: 0x28 */
-  __IO  uint32_t CHMODE;                           /**< I2S channels mode configuration register, offset: 0x2C */
-  __IO  uint32_t FILT_CH0;                         /**< I2S channels 0 filtering configuration register, offset: 0x30 */
-  __IO  uint32_t FILT_CH1;                         /**< I2S channels 0 filtering configuration register, offset: 0x34 */
+  UDMA_reg_t      UDMA_I2S;            /* UDMA general register */
+  volatile  uint32_t EXT;              /* external clock configuration register */
+  volatile  uint32_t CFG_CLKGEN0;      /* clock/WS generator 0 configuration register */
+  volatile  uint32_t CFG_CLKGEN1;      /* clock/WS generator 1 configuration register */
+  volatile  uint32_t CHMODE;           /* channels mode configuration register */
+  volatile  uint32_t FILT_CH0;         /* channels 0 filtering configuration register */
+  volatile  uint32_t FILT_CH1;         /* channels 0 filtering configuration register */
 } I2S_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- I2S Register Masks
-   ---------------------------------------------------------------------------- */
+#define I2S_BASE                                 (UDMA_BASE + 8 * 128U)
+#define I2S                                      ((I2S_reg_t *)I2S_BASE)
 
-/*!
- * @addtogroup I2S_Register_Masks I2S Register Masks
- * @{
- */
-/*! @name EXT - I2S external clock configuration Register */
+/* EXT - I2S external clock configuration Register */
 #define I2S_EXT_BITS_WORD_MASK                        (0x1FU)
 #define I2S_EXT_BITS_WORD_SHIFT                       (0U)
 #define I2S_EXT_BITS_WORD(x)                          (((uint32_t)(((uint32_t)(x)) << I2S_EXT_BITS_WORD_SHIFT)) & I2S_EXT_BITS_WORD_MASK)
 
-/*! @name CFG_CLKGEN0 - I2S clock/WS generator 0 configuration Register */
+/* CFG_CLKGEN0 - I2S clock/WS generator 0 configuration Register */
 #define I2S_CFG_CLKGEN0_BITS_WORD_MASK                (0x1FU)
 #define I2S_CFG_CLKGEN0_BITS_WORD_SHIFT               (0U)
 #define I2S_CFG_CLKGEN0_BITS_WORD(x)                  (((uint32_t)(((uint32_t)(x)) << I2S_CFG_CLKGEN0_BITS_WORD_SHIFT)) & I2S_CFG_CLKGEN0_BITS_WORD_MASK)
@@ -1454,7 +902,7 @@ typedef struct {
 #define I2S_CFG_CLKGEN0_CLK_DIV_SHIFT                 (16U)
 #define I2S_CFG_CLKGEN0_CLK_DIV(x)                    (((uint32_t)(((uint32_t)(x)) << I2S_CFG_CLKGEN0_CLK_DIV_SHIFT)) & I2S_CFG_CLKGEN0_CLK_DIV_MASK)
 
-/*! @name CFG_CLKGEN1 - I2S clock/WS generator 1 configuration Register */
+/* CFG_CLKGEN1 - I2S clock/WS generator 1 configuration Register */
 #define I2S_CFG_CLKGEN1_BITS_WORD_MASK                (0x1FU)
 #define I2S_CFG_CLKGEN1_BITS_WORD_SHIFT               (0U)
 #define I2S_CFG_CLKGEN1_BITS_WORD(x)                  (((uint32_t)(((uint32_t)(x)) << I2S_CFG_CLKGEN1_BITS_WORD_SHIFT)) & I2S_CFG_CLKGEN1_BITS_WORD_MASK)
@@ -1465,7 +913,7 @@ typedef struct {
 #define I2S_CFG_CLKGEN1_CLK_DIV_SHIFT                 (16U)
 #define I2S_CFG_CLKGEN1_CLK_DIV(x)                    (((uint32_t)(((uint32_t)(x)) << I2S_CFG_CLKGEN1_CLK_DIV_SHIFT)) & I2S_CFG_CLKGEN1_CLK_DIV_MASK)
 
-/*! @name CHMODE - I2S channels mode configuration Register */
+/* CHMODE - I2S channels mode configuration Register */
 #define I2S_CHMODE_CH0_SNAP_CAM_MASK                (0x1U)
 #define I2S_CHMODE_CH0_SNAP_CAM_SHIFT               (0U)
 #define I2S_CHMODE_CH0_SNAP_CAM(x)                  (((uint32_t)(((uint32_t)(x)) << I2S_CHMODE_CH0_SNAP_CAM_SHIFT)) & I2S_CHMODE_CH0_SNAP_CAM_MASK)
@@ -1504,7 +952,7 @@ typedef struct {
 #define I2S_CHMODE_CH1_MODE_SHIFT                   (26U)
 #define I2S_CHMODE_CH1_MODE(x)                      (((uint32_t)(((uint32_t)(x)) << I2S_CHMODE_CH1_MODE_SHIFT)) & I2S_CHMODE_CH1_MODE_MASK)
 
-/*! @name FILT_CH0 - I2S channels 0 filtering configuration Register */
+/* FILT_CH0 - I2S channels 0 filtering configuration Register */
 #define I2S_FILT_CH0_DECIMATION_MASK                (0x3FFU)
 #define I2S_FILT_CH0_DECIMATION_SHIFT               (0U)
 #define I2S_FILT_CH0_DECIMATION(x)                  (((uint32_t)(((uint32_t)(x)) << I2S_FILT_CH0_DECIMATION_SHIFT)) & I2S_FILT_CH0_DECIMATION_MASK)
@@ -1512,7 +960,7 @@ typedef struct {
 #define I2S_FILT_CH0_SHIFT_SHIFT                    (16U)
 #define I2S_FILT_CH0_SHIFT(x)                       (((uint32_t)(((uint32_t)(x)) << I2S_FILT_CH0_SHIFT_SHIFT)) & I2S_FILT_CH0_SHIFT_MASK)
 
-/*! @name FILT_CH1 - I2S channels 0 filtering configuration Register */
+/* FILT_CH1 - I2S channels 0 filtering configuration Register */
 #define I2S_FILT_CH1_DECIMATION_MASK                (0x3FFU)
 #define I2S_FILT_CH1_DECIMATION_SHIFT               (0U)
 #define I2S_FILT_CH1_DECIMATION(x)                  (((uint32_t)(((uint32_t)(x)) << I2S_FILT_CH1_DECIMATION_SHIFT)) & I2S_FILT_CH1_DECIMATION_MASK)
@@ -1520,57 +968,21 @@ typedef struct {
 #define I2S_FILT_CH1_SHIFT_SHIFT                    (16U)
 #define I2S_FILT_CH1_SHIFT(x)                       (((uint32_t)(((uint32_t)(x)) << I2S_FILT_CH1_SHIFT_SHIFT)) & I2S_FILT_CH1_SHIFT_MASK)
 
-/*!
- * @}
- */ /* end of group I2S_Register_Masks */
-
-
-/* I2S - Peripheral instance base addresses */
-/** Peripheral I2S base address */
-#define I2S_BASE                                 (UDMA_BASE + 8 * 128U)
-/** Peripheral I2S base pointer */
-#define I2S                                      ((I2S_reg_t *)I2S_BASE)
-/** Array initializer of I2S peripheral base addresses */
-#define I2S_BASE_ADDRS                           { I2S_BASE }
-/** Array initializer of I2S peripheral base pointers */
-#define I2S_BASE_PTRS                            { I2S }
-/** Interrupt vectors for the I2S peripheral type */
-#define I2S_L_IRQS                               { I2S0_L_IRQn, I2S1_L_IRQn }
-#define I2S_R_IRQS                               { I2S0_R_IRQn, I2S1_R_IRQn }
-/*!
- * @}
- */ /* end of group I2S_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- CPI Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup CPI_Peripheral_Access_Layer CPI Peripheral Access Layer
- * @{
- */
 
 /** CPI - Register Layout Typedef */
 typedef struct {
-  UDMA_reg_t     UDMA_CPI;                           /**< CPI UDMA general register, offset: 0x0 */
-  __IO  uint32_t CFG_GLOB;                          /**< CPI global configuration register, offset: 0x20 */
-  __IO  uint32_t CFG_LL;                            /**< CPI lower left comer configuration register, offset: 0x24 */
-  __IO  uint32_t CFG_UR;                            /**< CPI upper right comer configuration register, offset: 0x28 */
-  __IO  uint32_t CFG_SIZE;                          /**< CPI horizontal resolution configuration register, offset: 0x2C */
-  __IO  uint32_t CFG_FILTER;                        /**< CPI RGB coefficients configuration register, offset: 0x30 */
+  UDMA_reg_t     UDMA_CPI;          /* UDMA general register */
+  volatile  uint32_t CFG_GLOB;      /* global configuration register */
+  volatile  uint32_t CFG_LL;        /* lower left comer configuration register */
+  volatile  uint32_t CFG_UR;        /* upper right comer configuration register */
+  volatile  uint32_t CFG_SIZE;      /* horizontal resolution configuration register */
+  volatile  uint32_t CFG_FILTER;    /* RGB coefficients configuration register */
 } CPI_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- CPI Register Masks
-   ---------------------------------------------------------------------------- */
+#define CPI_BASE                                 (UDMA_BASE + 9 * 128U)
+#define CPI                                      ((CPI_reg_t *)CPI_BASE)
 
-/*!
- * @addtogroup CPI_Register_Masks CPI Register Masks
- * @{
- */
-/*! @name CFG_GLOB - CPI global configuration register */
+/* CFG_GLOB - CPI global configuration register */
 #define CPI_CFG_GLOB_FRAMEDROP_EN_MASK             (0x1U)
 #define CPI_CFG_GLOB_FRAMEDROP_EN_SHIFT            (0U)
 #define CPI_CFG_GLOB_FRAMEDROP_EN(x)               (((uint32_t)(((uint32_t)(x)) << CPI_CFG_GLOB_FRAMEDROP_EN_SHIFT)) & CPI_CFG_GLOB_FRAMEDROP_EN_MASK)
@@ -1590,7 +1002,7 @@ typedef struct {
 #define CPI_CFG_GLOB_EN_SHIFT                      (31U)
 #define CPI_CFG_GLOB_EN(x)                         (((uint32_t)(((uint32_t)(x)) << CPI_CFG_GLOB_EN_SHIFT)) & CPI_CFG_GLOB_EN_MASK)
 
-/*! @name CFG_LL - CPI lower left comer configuration register */
+/* CFG_LL - CPI lower left comer configuration register */
 #define CPI_CFG_LL_FRAMESLICE_LLX_MASK             (0xFFFFU)
 #define CPI_CFG_LL_FRAMESLICE_LLX_SHIFT            (0U)
 #define CPI_CFG_LL_FRAMESLICE_LLX(x)               (((uint32_t)(((uint32_t)(x)) << CPI_CFG_LL_FRAMESLICE_LLX_SHIFT)) & CPI_CFG_LL_FRAMESLICE_LLX_MASK)
@@ -1598,7 +1010,7 @@ typedef struct {
 #define CPI_CFG_LL_FRAMESLICE_LLY_SHIFT            (16U)
 #define CPI_CFG_LL_FRAMESLICE_LLY(x)               (((uint32_t)(((uint32_t)(x)) << CPI_CFG_LL_FRAMESLICE_LLY_SHIFT)) & CPI_CFG_LL_FRAMESLICE_LLY_MASK)
 
-/*! @name CFG_UR - CPI upper right comer configuration register */
+/* CFG_UR - CPI upper right comer configuration register */
 #define CPI_CFG_UR_FRAMESLICE_URX_MASK             (0xFFFFU)
 #define CPI_CFG_UR_FRAMESLICE_URX_SHIFT            (0U)
 #define CPI_CFG_UR_FRAMESLICE_URX(x)               (((uint32_t)(((uint32_t)(x)) << CPI_CFG_UR_FRAMESLICE_URX_SHIFT)) & CPI_CFG_UR_FRAMESLICE_URX_MASK)
@@ -1606,12 +1018,12 @@ typedef struct {
 #define CPI_CFG_UR_FRAMESLICE_URY_SHIFT            (16U)
 #define CPI_CFG_UR_FRAMESLICE_URY(x)               (((uint32_t)(((uint32_t)(x)) << CPI_CFG_UR_FRAMESLICE_URY_SHIFT)) & CPI_CFG_UR_FRAMESLICE_URY_MASK)
 
-/*! @name CFG_SIZE - CPI horizontal resolution configuration register */
+/* CFG_SIZE - CPI horizontal resolution configuration register */
 #define CPI_CFG_SIZE_MASK                          (0xFFFF0000U)
 #define CPI_CFG_SIZE_SHIFT                         (16U)
 #define CPI_CFG_SIZE(x)                            (((uint32_t)(((uint32_t)(x)) << CPI_CFG_SIZE_SHIFT)) & CPI_CFG_SIZE_MASK)
 
-/*! @name CFG_FILTER - CPI RGB coefficients  configuration register */
+/* CFG_FILTER - CPI RGB coefficients  configuration register */
 #define CPI_CFG_FILTER_B_COEFF_MASK                (0xFFU)
 #define CPI_CFG_FILTER_B_COEFF_SHIFT               (0U)
 #define CPI_CFG_FILTER_B_COEFF(x)                  (((uint32_t)(((uint32_t)(x)) << CPI_CFG_FILTER_B_COEFF_SHIFT)) & CPI_CFG_FILTER_B_COEFF_MASK)
@@ -1622,70 +1034,33 @@ typedef struct {
 #define CPI_CFG_FILTER_R_COEFF_SHIFT               (16U)
 #define CPI_CFG_FILTER_R_COEFF(x)                  (((uint32_t)(((uint32_t)(x)) << CPI_CFG_FILTER_R_COEFF_SHIFT)) & CPI_CFG_FILTER_R_COEFF_MASK)
 
-/*!
- * @}
- */ /* end of group CPI_Register_Masks */
-
-
-/* CPI - Peripheral instance base addresses */
-/** Peripheral CPI base address */
-#define CPI_BASE                                 (UDMA_BASE + 9 * 128U)
-/** Peripheral CPI base pointer */
-#define CPI                                      ((CPI_reg_t *)CPI_BASE)
-/** Array initializer of CPI peripheral base addresses */
-#define CPI_BASE_ADDRS                           { CPI_BASE }
-/** Array initializer of CPI peripheral base pointers */
-#define CPI_BASE_PTRS                            { CPI }
-/** Interrupt vectors for the CPI peripheral type */
-#define CPI_RX_IRQS                              { CPI_RX_IRQn }
-
-/*!
- * @}
- */ /* end of group CPI_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- SOC_CTRL  Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup SOC_CTRL_Peripheral_Access_Layer SOC_CTRL Peripheral Access Layer
- * @{
- */
 
 /** SOC_CTRL - Registers Layout Typedef */
 typedef struct {
-  __IO  uint32_t INFO;                /**< SOC_CTRL INFO register, offset: 0x00 */
-  __IO  uint32_t _reserved0[2];       /**< reserved, offset: 0x04 */
-  __IO  uint32_t CLUSTER_ISO;         /**< SOC_CTRL Cluster Isolate register, offset: 0x0C */
-  __IO  uint32_t _reserved1[23];      /**< reserved, offset: 0x10 */
-  __IO  uint32_t CLUSTER_BUSY;        /**< SOC_CTRL Busy register, offset: 0x6C */
-  __IO  uint32_t CLUSTER_BYPASS;      /**< SOC_CTRL Cluster PMU bypass register, offset: 0x70 */
-  __IO  uint32_t JTAG_REG;            /**< SOC_CTRL Jtag register, offset: 0x74 */
-  __IO  uint32_t L2_SLEEP;            /**< SOC_CTRL L2 memory sleep register, offset: 0x78 */
-  __IO  uint32_t SLEEP_CTRL;          /**< SOC_CTRL Slepp control register, offset: 0x7C */
-  __IO  uint32_t CLKDIV0;             /**< SOC_CTRL Slepp control register, offset: 0x80 */
-  __IO  uint32_t CLKDIV1;             /**< SOC_CTRL Slepp control register, offset: 0x84 */
-  __IO  uint32_t CLKDIV2;             /**< SOC_CTRL Slepp control register, offset: 0x88 */
-  __IO  uint32_t CLKDIV3;             /**< SOC_CTRL Slepp control register, offset: 0x8C */
-  __IO  uint32_t CLKDIV4;             /**< SOC_CTRL Slepp control register, offset: 0x90 */
-  __IO  uint32_t _reserved2[3];      /**< reserved, offset: 0x94 */
-
-  __IO  uint32_t CORE_STATUS;         /**< SOC_CTRL Slepp control register, offset: 0xA0 */
-  __IO  uint32_t CORE_STATUS_EOC;     /**< SOC_CTRL Slepp control register, offset: 0xC0 */
+  volatile  uint32_t INFO;                /* SOC_CTRL INFO register */
+  volatile  uint32_t _reserved0[2];       /* reserved */
+  volatile  uint32_t CLUSTER_ISO;         /* SOC_CTRL Cluster Isolate register */
+  volatile  uint32_t _reserved1[23];      /* reserved */
+  volatile  uint32_t CLUSTER_BUSY;        /* SOC_CTRL Busy register */
+  volatile  uint32_t CLUSTER_BYPASS;      /* SOC_CTRL Cluster PMU bypass register */
+  volatile  uint32_t JTAG_REG;            /* SOC_CTRL Jtag register */
+  volatile  uint32_t L2_SLEEP;            /* SOC_CTRL L2 memory sleep register */
+  volatile  uint32_t SLEEP_CTRL;          /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CLKDIV0;             /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CLKDIV1;             /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CLKDIV2;             /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CLKDIV3;             /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CLKDIV4;             /* SOC_CTRL Slepp control register */
+  volatile  uint32_t _reserved2[3];       /* reserved */
+  volatile  uint32_t CORE_STATUS;         /* SOC_CTRL Slepp control register */
+  volatile  uint32_t CORE_STATUS_EOC;     /* SOC_CTRL Slepp control register */
 
 } SOC_CTRL_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- SOC_CTRL Register Masks
-   ---------------------------------------------------------------------------- */
+#define SOC_CTRL_BASE                                (0x1A104000)
+#define SOC_CTRL                                     ((SOC_CTRL_reg_t *)SOC_CTRL_BASE)
 
-/*!
- * @addtogroup SOC_CTRL_Register_Masks SOC_CTRL Register Masks
- * @{
- */
-/*! @name CLUSTER_BYPASS - SOC_CTRL information register */
+/* CLUSTER_BYPASS - SOC_CTRL information register */
 #define SOC_CTRL_CLUSTER_BYPASS_BYP_POW_MASK          (0x1U)
 #define SOC_CTRL_CLUSTER_BYPASS_BYP_POW_SHIFT         (0U)
 #define SOC_CTRL_CLUSTER_BYPASS_BYP_POW(x)            (((uint32_t)(((uint32_t)(x)) /* << SOC_CTRL_CLUSTER_BYPASS_BYP_POW_SHIFT*/)) & SOC_CTRL_CLUSTER_BYPASS_BYP_POW_MASK)
@@ -1736,59 +1111,24 @@ typedef struct {
 #define SOC_CTRL_CLUSTER_BYPASS_PW_ISO(x)             (((uint32_t)(((uint32_t)(x)) << SOC_CTRL_CLUSTER_BYPASS_PW_ISO_SHIFT)) & SOC_CTRL_CLUSTER_BYPASS_PW_ISO_MASK)
 #define READ_SOC_CTRL_CLUSTER_BYPASS_PW_ISO(x)        (((uint32_t)(((uint32_t)(x)) & SOC_CTRL_CLUSTER_BYPASS_PW_ISO_MASK)) >> SOC_CTRL_CLUSTER_BYPASS_PW_ISO_SHIFT)
 
-/*! @name STATUS - SOC_CTRL status register */
+/* STATUS - SOC_CTRL status register */
 #define SOC_CTRL_CORE_STATUS_EOC_MASK                 (0x80000000U)
 #define SOC_CTRL_CORE_STATUS_EOC_SHIFT                (31U)
 #define SOC_CTRL_CORE_STATUS_EOC(x)                   (((uint32_t)(((uint32_t)(x)) << SOC_CTRL_CORE_STATUS_EOC_SHIFT)) & SOC_CTRL_CORE_STATUS_EOC_MASK)
 
-/*!
- * @}
- */ /* end of group SOC_CTRL_Register_Masks */
-
-
-/* SOC_CTRL - Peripheral instance base addresses */
-/** Peripheral SOC_CTRL base address */
-#define SOC_CTRL_BASE                                (SOC_PERI_BASE + 0x4000u)
-/** Peripheral SOC_CTRL base pointer */
-#define SOC_CTRL                                     ((SOC_CTRL_reg_t *)SOC_CTRL_BASE)
-/** Array initializer of SOC_CTRL base addresses */
-#define SOC_CTRL_BASE_ADDRS                          { SOC_CTRL_BASE }
-/** Array initializer of SOC_CTRL base pointers */
-#define SOC_CTRL_BASE_PTRS                           { SOC_CTRL }
-
-/*!
- * @}
- */ /* end of group SOC_CTRL_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- PMU CTRL Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PMU_CTRL_Peripheral_Access_Layer PMU_CTRL Peripheral Access Layer
- * @{
- */
 
 /** PMU - General Register Layout Typedef */
 typedef struct {
-  __IO uint32_t RAR_DCDC;                     /**< PMU CTRL control register, offset: 0x000 */
-  __IO uint32_t SLEEP_CTRL;                   /**< PMU CTRL sleep control register, offset: 0x004 */
-  __IO uint32_t FORCE;                        /**< PMU CTRL register, offset: 0x008 */
+  volatile uint32_t RAR_DCDC;        /* CTRL control register */
+  volatile uint32_t SLEEP_CTRL;      /* CTRL sleep control register */
+  volatile uint32_t FORCE;           /* CTRL register */
 
 } PMU_CTRL_reg_t;
 
+#define PMU_CTRL_BASE                               (SOC_CTRL_BASE + 0x0100u)
+#define PMU_CTRL                                    ((PMU_CTRL_reg_t *)PMU_CTRL_BASE)
 
-/* ----------------------------------------------------------------------------
-   -- PMU_CTRL Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PMU_CTRL_Register_Masks PMU_CTRL Register Masks
- * @{
- */
-/*! @name RAR_DCDC - PMU control register */
+/* RAR_DCDC - PMU control register */
 #define PMU_CTRL_RAR_DCDC_NV_MASK         (0x1FU)
 #define PMU_CTRL_RAR_DCDC_NV_SHIFT        (0U)
 #define PMU_CTRL_RAR_DCDC_NV(x)           (((uint32_t)(((uint32_t)(x)) /* << PMU_CTRL_RAR_DCDC_NV_SHIFT*/)) & PMU_CTRL_RAR_DCDC_NV_MASK)
@@ -1806,7 +1146,7 @@ typedef struct {
 #define PMU_CTRL_RAR_DCDC_RV(x)           (((uint32_t)(((uint32_t)(x)) << PMU_CTRL_RAR_DCDC_RV_SHIFT)) & PMU_CTRL_RAR_DCDC_RV_MASK)
 #define READ_PMU_CTRL_RAR_DCDC_RV(x)      (((uint32_t)(((uint32_t)(x)) & PMU_CTRL_RAR_DCDC_RV_MASK)) >> PMU_CTRL_RAR_DCDC_RV_SHIFT)
 
-/*! @name SLEEP_CTRL - PMU control register */
+/* SLEEP_CTRL - PMU control register */
 #define PMU_CTRL_SLEEP_CTRL_CFG_MEM_RET_MASK         (0xFU)
 #define PMU_CTRL_SLEEP_CTRL_CFG_MEM_RET_SHIFT        (0U)
 #define PMU_CTRL_SLEEP_CTRL_CFG_MEM_RET(x)           (((uint32_t)(((uint32_t)(x)) /* << PMU_CTRL_SLEEP_CTRL_CFG_MEM_RET_SHIFT*/)) & PMU_CTRL_SLEEP_CTRL_CFG_MEM_RET_MASK)
@@ -1857,7 +1197,7 @@ typedef struct {
 #define PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP(x)        (((uint32_t)(((uint32_t)(x)) << PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP_SHIFT)) & PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP_MASK)
 #define READ_PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP(x)   (((uint32_t)(((uint32_t)(x)) & PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP_MASK)) >> PMU_CTRL_SLEEP_CTRL_CLUSTER_WAKEUP_SHIFT)
 
-/*! @name FORCE - PMU control register */
+/* FORCE - PMU control register */
 #define PMU_CTRL_FORCE_MEM_RET_MASK                (0xFU)
 #define PMU_CTRL_FORCE_MEM_RET_SHIFT               (0U)
 #define PMU_CTRL_FORCE_MEM_RET(x)                  (((uint32_t)(((uint32_t)(x)) /* << PMU_CTRL_FORCE_MEM_RET_SHIFT*/)) & PMU_CTRL_FORCE_MEM_RET_MASK)
@@ -1874,54 +1214,19 @@ typedef struct {
 #define PMU_CTRL_FORCE_FLL_CLUSTER_PWD_SHIFT       (9U)
 #define PMU_CTRL_FORCE_FLL_CLUSTER_PWD(x)          (((uint32_t)(((uint32_t)(x)) << PMU_CTRL_FORCE_FLL_CLUSTER_PWD_SHIFT)) & PMU_CTRL_FORCE_FLL_CLUSTER_PWD_MASK)
 
-/*!
- * @}
- */ /* end of group PMU_CTRL_Register_Masks */
-
-
-/* PMU CTRL- Peripheral instance base addresses */
-/** Peripheral PMU CTRL base address */
-#define PMU_CTRL_BASE                               (SOC_CTRL_BASE + 0x0100u)
-/** Peripheral PMU_CTRL0 base pointer */
-#define PMU_CTRL                                    ((PMU_CTRL_reg_t *)PMU_CTRL_BASE)
-/** Array initializer of PMU_CTRL base addresses */
-#define PMU_CTRL_BASE_ADDRS                         { PMU_CTRL_BASE }
-/** Array initializer of PMU_CTRL base pointers */
-#define PMU_CTRL_BASE_PTRS                          { PMU_CTRL }
-
-/*!
- * @}
- */ /* end of group PMU_CTRL_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- PORT Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PORT_Peripheral_Access_Layer PORT Peripheral Access Layer
- * @{
- */
 
 /** PORT - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t PADFUN[4];                       /**< PORT pad function register 0, offset: 0x000 */
-  __IO  uint32_t SLEEP_PADCFG[4];                 /**< PORT sleep pad configuration register 0, offset: 0x010 */
-  __IO  uint32_t PAD_SLEEP;                       /**< PORT pad sleep register, offset: 0x020 */
-  __IO  uint32_t _reserved0[7];                   /**< reserved, offset: 0x010 */
-  __IO  uint32_t PADCFG[16];                      /**< PORT pad configuration register 0, offset: 0x040 */
-
+  volatile  uint32_t PADFUN[4];          /* PORT pad function register 0 */
+  volatile  uint32_t SLEEP_PADCFG[4];    /* PORT sleep pad configuration register 0 */
+  volatile  uint32_t PAD_SLEEP;          /* PORT pad sleep register */
+  volatile  uint32_t _reserved0[7];      /* reserved */
+  volatile  uint32_t PADCFG[16];         /* PORT pad configuration register 0 */
 } PORT_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- PORT Register Masks
-   ---------------------------------------------------------------------------- */
+#define PORTA_BASE                              (SOC_CTRL_BASE + 0x0140u)
+#define PORTA                                   ((PORT_reg_t *)PORTA_BASE)
 
-/*!
- * @addtogroup PORT_Register_Masks GPIO Register Masks
- * @{
- */
 #define GPIO_NUM                                 32
 
 #define PORT_PADCFG_PULL_EN_MASK                 (0x1U)
@@ -1936,52 +1241,17 @@ typedef struct {
 #define PORT_PADFUN_MUX_SHIFT                    (0U)
 #define PORT_PADFUN_MUX(x)                       (((uint32_t)(((uint32_t)(x)) << PORT_PADFUN_MUX_SHIFT)) & PORT_PADFUN_MUX_MASK)
 
-/*!
- * @}
- */ /* end of group PORT_Register_Masks */
-
-
-/* PORT - Peripheral instance base addresses */
-/** Peripheral PORTA base address */
-#define PORTA_BASE                              (SOC_CTRL_BASE + 0x0140u)
-/** Peripheral PORTA base pointer */
-#define PORTA                                   ((PORT_reg_t *)PORTA_BASE)
-/** Array initializer of PORT base addresses */
-#define PORT_BASE_ADDRS                         { PORTA_BASE }
-/** Array initializer of PORT base pointers */
-#define PORT_BASE_PTRS                          { PORTA }
-
-/*!
- * @}
- */ /* end of group PORT_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- IO POWER DOMAINS ISOLATION Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup IO_ISO_Peripheral_Access_Layer IO_ISO Peripheral Access Layer
- * @{
- */
 
 /** IO_ISO - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t GPIO_ISO;                       /**< IO_ISO GPIO power domains isolation, offset: 0x000 */
-  __IO  uint32_t CAM_ISO;                        /**< IO_ISO Cemera power domains isolation, offset: 0x004 */
-  __IO  uint32_t LVDS_ISO;                       /**< IO_ISO LVDS power domains isolation, offset: 0x008 */
-
+  volatile  uint32_t GPIO_ISO;       /* GPIO power domains isolation */
+  volatile  uint32_t CAM_ISO;        /* Cemera power domains isolation */
+  volatile  uint32_t LVDS_ISO;       /* LVDS power domains isolation */
 } IO_ISO_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- IO_ISO Register Masks
-   ---------------------------------------------------------------------------- */
+#define IO_ISO_BASE                               (SOC_CTRL_BASE + 0x01C0u)
+#define IO_ISO                                    ((IO_ISO_reg_t *)IO_ISO_BASE)
 
-/*!
- * @addtogroup IO_ISO_Register_Masks GPIO Register Masks
- * @{
- */
 #define IO_ISO_GPIO_ISO_MASK                 (0x1U)
 #define IO_ISO_GPIO_ISO_SHIFT                (0U)
 #define IO_ISO_GPIO_ISO(x)                   (((uint32_t)(((uint32_t)(x)) /* << IO_ISO_GPIO_ISO_SHIFT */)) & IO_ISO_GPIO_ISO_MASK)
@@ -1995,51 +1265,15 @@ typedef struct {
 #define IO_ISO_LVDS_ISO(x)                   (((uint32_t)(((uint32_t)(x)) /* << IO_ISO_LVDS_ISO_SHIFT */)) & IO_ISO_LVDS_ISO_MASK)
 
 
-/*!
- * @}
- */ /* end of group IO_ISO_Register_Masks */
-
-
-/* IO_ISO - Peripheral instance base addresses */
-/** Peripheral IO_ISO base address */
-#define IO_ISO_BASE                               (SOC_CTRL_BASE + 0x01C0u)
-/** Peripheral IO_ISO base pointer */
-#define IO_ISO                                    ((IO_ISO_reg_t *)IO_ISO_BASE)
-/** Array initializer of IO_ISO base addresses */
-#define IO_ISO_BASE_ADDRS                         { IO_ISO_BASE }
-/** Array initializer of IO_ISO base pointers */
-#define IO_ISO_BASE_PTRS                          { IO_ISO }
-
-/*!
- * @}
- */ /* end of group IO_ISO_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- PWM CTRL Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PWM_CTRL_Peripheral_Access_Layer PWM_CTRL Peripheral Access Layer
- * @{
- */
-
 /** PWM - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t EVENT_CFG;       /**< PWM event configuration register, offset: 0x100 */
-  __IO  uint32_t CH_EN;           /**< PWM channel enable register, offset: 0x104 */
+  volatile  uint32_t EVENT_CFG;       /* event configuration register */
+  volatile  uint32_t CH_EN;           /* channel enable register */
 } PWM_CTRL_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- PWM_CTRL Register Masks
-   ---------------------------------------------------------------------------- */
+#define PWM_CTRL_BASE                                (SOC_PERI_BASE + 0x05100u)
+#define PWM_CTRL                                     ((PWM_CTRL_reg_t *)PWM_CTRL_BASE)
 
-/*!
- * @addtogroup PWM_CTRL_Register_Masks PWM_CTRL Register Masks
- * @{
- */
-
-/* Register Access. */
 /* Set Event. */
 #define PWM_CTRL_EVENT_TIMER_CHAN_SET_MASK               ( 0xFFFFU )
 #define PWM_CTRL_EVENT_TIMER_CHAN_SET_SHIFT( x )         ( (uint32_t)(x) )
@@ -2055,54 +1289,26 @@ typedef struct {
 #define PWM_CTRL_CG_ENA_SHIFT                            ( 0 )
 #define PWM_CTRL_CG_ENA( x )                             (((uint32_t)(((uint32_t)(x)) << PWM_CTRL_CG_ENA_SHIFT)) & PWM_CTRL_CG_ENA_MASK)
 
-/*!
- * @}
- */ /* end of group PWM_CTRL_Register_Masks */
-
-/* PWM_CTRL - Peripheral instance base addresses */
-/** Peripheral PWM_CTRL_CTRL base address */
-#define PWM_CTRL_BASE                                (SOC_PERI_BASE + 0x05100u)
-/** Peripheral PWM_CTRL_CTRL base pointer */
-#define PWM_CTRL                                     ((PWM_CTRL_reg_t *)PWM_CTRL_BASE)
-/** Array initializer of PWM_CTRL_CTRL base addresses */
-#define PWM_CTRL_BASE_ADDRS                          { PWM_CTRL_BASE }
-/** Array initializer of PWM_CTRL_CTRL base pointers */
-#define PWM_CTRL_BASE_PTRS                           { PWM_CTRL }
-
-/*!
- * @}
- */ /* end of group PWM_CTRL_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- PWM Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PWM_Peripheral_Access_Layer PWM Peripheral Access Layer
- * @{
- */
 
 /** ADV_TIMER - Register Layout Typedef */
 typedef struct {
-  __O   uint32_t CMD;              /**< TIMER control register, offset: 0x00 */
-  __IO  uint32_t CFG;              /**< TIMER configuration register, offset: 0x04 */
-  __IO  uint32_t TH;               /**< TIMER threshold register, offset: 0x08 */
-  __IO  uint32_t CH_TH[4];         /**< TIMER Channles' threshold register, offset: 0x0c */
-  __IO  uint32_t CH_LUT[4];        /**< TIMER Channles' LUT register, offset: 0x1c */
-  __I   uint32_t COUNTER;          /**< TIMER Counter register, offset: 0x2c */
+  volatile  uint32_t CMD;              /* control register */
+  volatile  uint32_t CFG;              /* configuration register */
+  volatile  uint32_t TH;               /* threshold register */
+  volatile  uint32_t CH_TH[4];         /* Channles' threshold register */
+  volatile  uint32_t CH_LUT[4];        /* Channles' LUT register */
+  volatile  uint32_t COUNTER;          /* Counter register */
 } PWM_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- PWM Register Masks
-   ---------------------------------------------------------------------------- */
+#define PWM0_BASE                               (SOC_PERI_BASE + 0x05000u)
+#define PWM0                                    ((PWM_reg_t *)PWM0_BASE)
+#define PWM1_BASE                               (PWM0_BASE + 0x40u)
+#define PWM1                                    ((PWM_reg_t *)PWM1_BASE)
+#define PWM2_BASE                               (PWM1_BASE + 0x40u)
+#define PWM2                                    ((PWM_reg_t *)PWM2_BASE)
+#define PWM3_BASE                               (PWM2_BASE + 0x40u)
+#define PWM3                                    ((PWM_reg_t *)PWM3_BASE)
 
-/*!
- * @addtogroup PWM_Register_Masks PWM Register Masks
- * @{
- */
-
-/* Register Access. */
 /* Send command. */
 #define PWM_CMD_MASK                                ( 0x1FU )
 #define PWM_CMD_SHIFT                               ( 0 )
@@ -2147,134 +1353,46 @@ typedef struct {
 #define PWM_CHANNEL_CONFIG_MODE_SHIFT               ( 16 )
 #define PWM_CHANNEL_CONFIG_MODE( x )                (((uint32_t)(((uint32_t)(x)) << PWM_CHANNEL_CONFIG_MODE_SHIFT)) & PWM_CHANNEL_CONFIG_MODE_MASK)
 
-/*!
- * @}
- */ /* end of group PWM_Register_Masks */
-
-
-/* PWM - Peripheral instance base addresses */
-/** Peripheral PWM base address */
-#define PWM0_BASE                               (SOC_PERI_BASE + 0x05000u)
-/** Peripheral PWM base pointer */
-#define PWM0                                    ((PWM_reg_t *)PWM0_BASE)
-/** Peripheral PWM base address */
-#define PWM1_BASE                               (PWM0_BASE + 0x40u)
-/** Peripheral PWM base pointer */
-#define PWM1                                    ((PWM_reg_t *)PWM1_BASE)
-/** Peripheral PWM base address */
-#define PWM2_BASE                               (PWM1_BASE + 0x40u)
-/** Peripheral PWM base pointer */
-#define PWM2                                    ((PWM_reg_t *)PWM2_BASE)
-/** Peripheral PWM base address */
-#define PWM3_BASE                               (PWM2_BASE + 0x40u)
-/** Peripheral PWM base pointer */
-#define PWM3                                    ((PWM_reg_t *)PWM3_BASE)
-/** Array initializer of PWM base addresses */
-#define PWM_BASE_ADDRS                          { PWM0_BASE, PWM1_BASE, PWM2_BASE, PWM3_BASE }
-/** Array initializer of PWM base pointers */
-#define PWM_BASE_PTRS                           { PWM0, PWM1, PWM2, PWM3 }
-
-/*!
- * @}
- */ /* end of group PWM_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- SOCEU (SOC EVENT UNIT) Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup SOCEU_Peripheral_Access_Layer SOCEU Peripheral Access Layer
- * @{
- */
 
 /** SOCEU - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t EVENT;                          /**< SOCEU event register, offset: 0x00 */
-  __IO  uint32_t FC_MASK_MSB;                    /**< SOCEU fc mask MSB register, offset: 0x04 */
-  __IO  uint32_t FC_MASK_LSB;                    /**< SOCEU fc mask LSB register, offset: 0x08 */
-  __IO  uint32_t CL_MASK_MSB;                    /**< SOCEU cluster mask MSB register, offset: 0x0C */
-  __IO  uint32_t CL_MASK_LSB;                    /**< SOCEU cluster mask LSB register, offset: 0x10 */
-  __IO  uint32_t PR_MASK_MSB;                    /**< SOCEU propagate mask MSB register, offset: 0x14 */
-  __IO  uint32_t PR_MASK_LSB;                    /**< SOCEU propagate mask LSB register, offset: 0x18 */
-  __IO  uint32_t ERR_MASK_MSB;                   /**< SOCEU error mask MSB register, offset: 0x1C */
-  __IO  uint32_t ERR_MASK_LSB;                   /**< SOCEU error mask LSB register, offset: 0x20 */
-  __IO  uint32_t TIMER_SEL_HI;                   /**< SOCEU timer high register, offset: 0x24 */
-  __IO  uint32_t TIMER_SEL_LO;                   /**< SOCEU timer low register, offset: 0x28 */
+  volatile  uint32_t EVENT;           /* event register */
+  volatile  uint32_t FC_MASK_MSB;     /* fc mask MSB register */
+  volatile  uint32_t FC_MASK_LSB;     /* fc mask LSB register */
+  volatile  uint32_t CL_MASK_MSB;     /* cluster mask MSB register */
+  volatile  uint32_t CL_MASK_LSB;     /* cluster mask LSB register */
+  volatile  uint32_t PR_MASK_MSB;     /* propagate mask MSB register */
+  volatile  uint32_t PR_MASK_LSB;     /* propagate mask LSB register */
+  volatile  uint32_t ERR_MASK_MSB;    /* error mask MSB register */
+  volatile  uint32_t ERR_MASK_LSB;    /* error mask LSB register */
+  volatile  uint32_t TIMER_SEL_HI;    /* timer high register */
+  volatile  uint32_t TIMER_SEL_LO;    /* timer low register */
 } SOCEU_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- SOCEU Register Masks
-   ---------------------------------------------------------------------------- */
+#define SOCEU_BASE                               (SOC_PERI_BASE + 0x06000u)
+#define SOCEU                                    ((SOCEU_reg_t *)SOCEU_BASE)
 
-/*!
- * @addtogroup SOCEU_Register_Masks SOCEU Register Masks
- * @{
- */
 /* The SOC events number */
 #define SOC_EVENTS_NUM              0x08
-/*!
- * @}
- */ /* end of group SOCEU_Register_Masks */
-
-
-/* SOCEU - Peripheral instance base addresses */
-/** Peripheral SOCEU base address */
-#define SOCEU_BASE                               (SOC_PERI_BASE + 0x06000u)
-/** Peripheral SOCEU base pointer */
-#define SOCEU                                    ((SOCEU_reg_t *)SOCEU_BASE)
-/** Array initializer of SOCEU base addresses */
-#define SOCEU_BASE_ADDRS                         { SOCEU_BASE }
-/** Array initializer of SOCEU base pointers */
-#define SOCEU_BASE_PTRS                          { SOCEU }
-
-/*!
- * @}
- */ /* end of group SOCEU_Peripheral_Access_Layer */
-
-
-
-
-
-/* ----------------------------------------------------------------------------
-   -- SW EVENT TRIGGER Register Address
-   ---------------------------------------------------------------------------- */
-
 #define EU_EVT_GETCLUSTERBASE(coreId)     (0x00200800u + (coreId << 6))
 
 
-/* ----------------------------------------------------------------------------
-   -- PMU DLC Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup PMU_DLC_Peripheral_Access_Layer PMU_DLC Peripheral Access_Layer
- * @{
- */
-
 /** PMU - General Register Layout Typedef */
 typedef struct {
-  __IO uint32_t PCTRL;                          /**< PMU DLC control register, offset: 0x00 */
-  __IO uint32_t PRDATA;                         /**< PMU DLC data register, offset: 0x04 */
-  __IO uint32_t DLC_SR;                         /**< PMU DLC register, offset: 0x08 */
-  __IO uint32_t DLC_IMR;                        /**< PMU DLC register, offset: 0x0C */
-  __IO uint32_t DLC_IFR;                        /**< PMU DLC register, offset: 0x10 */
-  __IO uint32_t DLC_IOIFR;                      /**< PMU DLC register, offset: 0x14 */
-  __IO uint32_t DLC_IDIFR;                      /**< PMU DLC register, offset: 0x18 */
-  __IO uint32_t DLC_IMCIFR;                     /**< PMU DLC register, offset: 0x1C */
-
+  volatile uint32_t PCTRL;           /* PMU DLC control register */
+  volatile uint32_t PRDATA;          /* PMU DLC data register */
+  volatile uint32_t DLC_SR;          /* PMU DLC register */
+  volatile uint32_t DLC_IMR;         /* PMU DLC register */
+  volatile uint32_t DLC_IFR;         /* PMU DLC register */
+  volatile uint32_t DLC_IOIFR;       /* PMU DLC register */
+  volatile uint32_t DLC_IDIFR;       /* PMU DLC register */
+  volatile uint32_t DLC_IMCIFR;      /* PMU DLC register */
 } PMU_DLC_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- SOCEU Register Masks
-   ---------------------------------------------------------------------------- */
-/*!
- * @addtogroup PMU_DLC_Register_Masks PMU_DLC Register Masks
- * @{
- */
+#define PMU_DLC_BASE                                (SOC_PERI_BASE + 0x7000u)
+#define PMU_DLC                                     ((PMU_DLC_reg_t *)PMU_DLC_BASE)
 
-/*! @name PCTRL - PMU DLC PICL control register */
+/* PCTRL - PMU DLC PICL control register */
 #define PMU_DLC_PCTRL_START_MASK              (0x1U)
 #define PMU_DLC_PCTRL_START_SHIFT             (0U)
 #define PMU_DLC_PCTRL_START(x)                (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_PCTRL_START_SHIFT */)) & PMU_DLC_PCTRL_START_MASK)
@@ -2288,12 +1406,12 @@ typedef struct {
 #define PMU_DLC_PCTRL_PWDATA_SHIFT            (16U)
 #define PMU_DLC_PCTRL_PWDATA(x)               (((uint32_t)(((uint32_t)(x)) << PMU_DLC_PCTRL_PWDATA_SHIFT)) & PMU_DLC_PCTRL_PWDATA_MASK)
 
-/*! @name PRDATA - PMU DLC PICL data read register */
+/* PRDATA - PMU DLC PICL data read register */
 #define PMU_DLC_PRDATA_PRDATA_MASK            (0xFFU)
 #define PMU_DLC_PRDATA_PRDATA_SHIFT           (0U)
 #define PMU_DLC_PRDATA_PRDATA(x)              (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_PRDATA_PRDATA_SHIFT */)) & PMU_DLC_PRDATA_PRDATA_MASK)
 
-/*! @name SR - PMU DLC DLC Status register */
+/* SR - PMU DLC DLC Status register */
 #define PMU_DLC_SR_PICL_BUSY_MASK             (0x1U)
 #define PMU_DLC_SR_PICL_BUSY_SHIFT            (0U)
 #define PMU_DLC_SR_PICL_BUSY(x)               (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_SR_PICL_BUSY_SHIFT */)) & PMU_DLC_SR_PICL_BUSY_MASK)
@@ -2301,7 +1419,7 @@ typedef struct {
 #define PMU_DLC_SR_SCU_BUSY_SHIFT             (1U)
 #define PMU_DLC_SR_SCU_BUSY(x)                (((uint32_t)(((uint32_t)(x)) << PMU_DLC_SR_SCU_BUSY_SHIFT)) & PMU_DLC_SR_SCU_BUSY_MASK)
 
-/*! @name IMR - PMU DLC Interrupt mask register */
+/* IMR - PMU DLC Interrupt mask register */
 #define PMU_DLC_IMR_ICU_OK_MASK_MASK          (0x1U)
 #define PMU_DLC_IMR_ICU_OK_MASK_SHIFT         (0U)
 #define PMU_DLC_IMR_ICU_OK_MASK(x)            (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_IMR_ICU_OK_MASK_SHIFT */)) & PMU_DLC_IMR_ICU_OK_MASK_MASK)
@@ -2318,7 +1436,7 @@ typedef struct {
 #define PMU_DLC_IMR_SCU_OK_MASK_SHIFT         (4U)
 #define PMU_DLC_IMR_SCU_OK_MASK(x)            (((uint32_t)(((uint32_t)(x)) << PMU_DLC_IMR_SCU_OK_MASK_SHIFT)) & PMU_DLC_IMR_SCU_OK_MASK_MASK)
 
-/*! @name IFR - PMU DLC Interrupt flag register */
+/* IFR - PMU DLC Interrupt flag register */
 #define PMU_DLC_IFR_ICU_OK_FLAG_MASK          (0x1U)
 #define PMU_DLC_IFR_ICU_OK_FLAG_SHIFT         (0U)
 #define PMU_DLC_IFR_ICU_OK_FLAG(x)            (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_IFR_ICU_OK_FLAG_SHIFT */)) & PMU_DLC_IFR_ICU_OK_FLAG_MASK)
@@ -2335,22 +1453,22 @@ typedef struct {
 #define PMU_DLC_IFR_SCU_OK_FLAG_SHIFT         (4U)
 #define PMU_DLC_IFR_SCU_OK_FLAG(x)            (((uint32_t)(((uint32_t)(x)) << PMU_DLC_IFR_SCU_OK_FLAG_SHIFT)) & PMU_DLC_IFR_SCU_OK_FLAG_MASK)
 
-/*! @name IOIFR - PMU DLC icu_ok interrupt flag register */
+/* IOIFR - PMU DLC icu_ok interrupt flag register */
 #define PMU_DLC_IOIFR_ICU_OK_FLAG_MASK          (0xFFFFFFFEU)
 #define PMU_DLC_IOIFR_ICU_OK_FLAG_SHIFT         (1U)
 #define PMU_DLC_IOIFR_ICU_OK_FLAG(x)            (((uint32_t)(((uint32_t)(x)) << PMU_DLC_IOIFR_ICU_OK_FLAG_SHIFT)) & PMU_DLC_IOIFR_ICU_OK_FLAG_MASK)
 
-/*! @name IDIFR - PMU DLC icu_delayed interrupt flag register */
+/* IDIFR - PMU DLC icu_delayed interrupt flag register */
 #define PMU_DLC_IDIFR_ICU_DELAYED_FLAG_MASK     (0xFFFFFFFEU)
 #define PMU_DLC_IDIFR_ICU_DELAYED_FLAG_SHIFT    (1U)
 #define PMU_DLC_IDIFR_ICU_DELAYED_FLAG(x)       (((uint32_t)(((uint32_t)(x)) << PMU_DLC_IDIFR_ICU_DELAYED_FLAG_SHIFT)) & PMU_DLC_IDIFR_ICU_DELAYED_FLAG_MASK)
 
-/*! @name IMCIFR - PMU DLC icu_mode changed interrupt flag register */
+/* IMCIFR - PMU DLC icu_mode changed interrupt flag register */
 #define PMU_DLC_IMCIFR_ICU_MODE_CHANGED_FLAG_MASK     (0xFFFFFFFEU)
 #define PMU_DLC_IMCIFR_ICU_MODE_CHANGED_FLAG_SHIFT    (1U)
 #define PMU_DLC_IMCIFR_ICU_MODE_CHANGED_FLAG(x)       (((uint32_t)(((uint32_t)(x)) << PMU_DLC_IMCIFR_ICU_MODE_CHANGED_FLAG_SHIFT)) & PMU_DLC_IMCIFR_ICU_MODE_CHANGED_FLAG_MASK)
 
-/*! @name PCTRL_PADDR The address to write in the DLC_PADDR register is CHIP_SEL_ADDR[4:0] concatenated with REG_ADDR[4:0]. */
+/* PCTRL_PADDR The address to write in the DLC_PADDR register is CHIP_SEL_ADDR[4:0] concatenated with REG_ADDR[4:0]. */
 #define PMU_DLC_PICL_REG_ADDR_MASK          (0x1FU)
 #define PMU_DLC_PICL_REG_ADDR_SHIFT         (0U)
 #define PMU_DLC_PICL_REG_ADDR(x)            (((uint32_t)(((uint32_t)(x)) /* << PMU_DLC_PICL_REG_ADDR_SHIFT */)) & PMU_DLC_PICL_REG_ADDR_MASK)
@@ -2391,59 +1509,27 @@ typedef struct {
 #define  ICU_DMR_0             (PMU_DLC_PICL_CHIP_SEL_ADDR(PICL_ICU_ADDR) | PMU_DLC_PICL_REG_ADDR(0x03))
 #define  ICU_DMA_1             (PMU_DLC_PICL_CHIP_SEL_ADDR(PICL_ICU_ADDR) | PMU_DLC_PICL_REG_ADDR(0x04))
 
-/*!
- * @}
- */ /* end of group PMU_DLC_Register_Masks */
-
-/* PMU DLC- Peripheral instance base addresses */
-/** Peripheral PMU DLC base address */
-#define PMU_DLC_BASE                                (SOC_PERI_BASE + 0x7000u)
-/** Peripheral PMU_DLC base pointer */
-#define PMU_DLC                                     ((PMU_DLC_reg_t *)PMU_DLC_BASE)
-/** Array initializer of PMU_DLC base addresses */
-#define PMU_DLC_BASE_ADDRS                          { PMU_DLC_BASE }
-/** Array initializer of PMU_DLC base pointers */
-#define PMU_DLC_BASE_PTRS                           { PMU_DLC }
-
-/*!
- * @}
- */ /* end of group PMU_DLC_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- RTC_APB Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup RTC_APB_Peripheral_Access_Layer RTC_APB Peripheral Access Layer
- * @{
- */
 
 /** RTC_APB - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t STATUS;                     /**< RTC_APB_Status register, offset: 0x00 */
-  __IO  uint32_t REQUEST;                    /**< RTC_APB_Request register, offset: 0x04 */
-  __IO  uint32_t DATA;                       /**< RTC_APB_Data register, offset: 0x08 */
-  __IO  uint32_t _reserved;                  /**< reserved, offset: 0x0C */
-  __IO  uint32_t IRQ_CTRL;                   /**< RTC_APB_IRQ_Control register, offset: 0x10 */
-  __IO  uint32_t IRQ_MASK;                   /**< RTC_APB_IRQ_Mask register, offset: 0x14 */
-  __IO  uint32_t IRQ_FLAG;                   /**< RTC_APB_IRQ_Flag register, offset: 0x18 */
+  volatile  uint32_t STATUS;       /* RTC_APB_Status register */
+  volatile  uint32_t REQUEST;      /* RTC_APB_Request register */
+  volatile  uint32_t DATA;         /* RTC_APB_Data register */
+  volatile  uint32_t _reserved;    /* reserved */
+  volatile  uint32_t IRQ_CTRL;     /* RTC_APB_IRQ_Control register */
+  volatile  uint32_t IRQ_MASK;     /* RTC_APB_IRQ_Mask register */
+  volatile  uint32_t IRQ_FLAG;     /* RTC_APB_IRQ_Flag register */
 } RTC_APB_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- RTC_APB Register Masks
-   ---------------------------------------------------------------------------- */
+#define RTC_APB_BASE                               (SOC_PERI_BASE + 0x08000u)
+#define RTC_APB                                    ((RTC_APB_reg_t *)RTC_APB_BASE)
 
-/*!
- * @addtogroup RTC_APB_Register_Masks RTC_APB Register Masks
- * @{
- */
-/*! @name STATUS - RTC_APB STATUS register */
+/* STATUS - RTC_APB STATUS register */
 #define RTC_APB_STATUS_IRQ_EN_MASK                     (0x3FU)
 #define RTC_APB_STATUS_IRQ_EN_SHIFT                    (0U)
 #define RTC_APB_STATUS_IRQ_EN(x)                       (((uint32_t)(((uint32_t)(x))/* << RTC_APB_STATUS_IRQ_EN_SHIFT*/)) & RTC_APB_STATUS_IRQ_EN_MASK)
 
-/*! @name REQUEST - RTC_APB REQUEST Access register */
+/* REQUEST - RTC_APB REQUEST Access register */
 #define RTC_APB_REQUEST_ACCESS_ADDR_MASK               (0x3FU)
 #define RTC_APB_REQUEST_ACCESS_ADDR_SHIFT              (0U)
 #define RTC_APB_REQUEST_ACCESS_ADDR(x)                 (((uint32_t)(((uint32_t)(x))/* << RTC_APB_REQUEST_ACCESS_ADDR_SHIFT*/)) & RTC_APB_REQUEST_ACCESS_ADDR_MASK)
@@ -2451,7 +1537,7 @@ typedef struct {
 #define RTC_APB_REQUEST_ACCESS_RW_SHIFT                (16U)
 #define RTC_APB_REQUEST_ACCESS_RW(x)                   (((uint32_t)(((uint32_t)(x)) << RTC_APB_REQUEST_ACCESS_RW_SHIFT)) & RTC_APB_REQUEST_ACCESS_RW_MASK)
 
-/*! @name IRQ_FLAG - RTC_APB IRQ_FLAG Access register */
+/* IRQ_FLAG - RTC_APB IRQ_FLAG Access register */
 #define RTC_APB_IRQ_FLAG_READ_MASK                     (0x1U)
 #define RTC_APB_IRQ_FLAG_READ_SHIFT                    (0U)
 #define RTC_APB_IRQ_FLAG_READ(x)                       (((uint32_t)(((uint32_t)(x))/* << RTC_APB_IRQ_FLAG_READ_SHIFT*/)) & RTC_APB_IRQ_FLAG_READ_MASK)
@@ -2459,18 +1545,6 @@ typedef struct {
 #define RTC_APB_IRQ_FLAG_WRITE_SHIFT                   (1U)
 #define RTC_APB_IRQ_FLAG_WRITE(x)                      (((uint32_t)(((uint32_t)(x)) << RTC_APB_IRQ_FLAG_WRITE_SHIFT)) & RTC_APB_IRQ_FLAG_WRITE_MASK)
 
-
-
-
-
-/*!
- * @}
- */ /* end of group RTC_APB_Register_Masks */
-
-/*!
- * @addtogroup RTC_Register_Masks RTC Register Masks
- * @{
- */
 /* Bit field of RTC indirect Access Register */
 #define RTC_STATUS_ADDR                     0x00
 #define RTC_CTRL_ADDR                       0x01
@@ -2491,12 +1565,12 @@ typedef struct {
 #define RTC_REF_CLK_CONF_ADDR               0x2A
 #define RTC_TEST_ADDR                       0x30
 
-/*! @name SR - RTC Status register */
+/* SR - RTC Status register */
 #define RTC_SR_INT_RTC_MASK                 (0x1U)
 #define RTC_SR_INT_RTC_SHIFT                (0U)
 #define RTC_SR_INT_RTC(x)                   (((uint32_t)(((uint32_t)(x))/* << RTC_SR_INT_RTC_SHIFT*/)) & RTC_SR_INT_RTC_MASK)
 
-/*! @name CR - RTC Control register */
+/* CR - RTC Control register */
 #define RTC_CR_STANDBY_MASK                  (0x1U)
 #define RTC_CR_STANDBY_SHIFT                 (0U)
 #define RTC_CR_STANDBY(x)                    (((uint32_t)(((uint32_t)(x))/* << RTC_CR_STANDBY_SHIFT*/)) & RTC_CR_STANDBY_MASK)
@@ -2507,7 +1581,7 @@ typedef struct {
 #define RTC_CR_SOFT_RST_SHIFT                (8U)
 #define RTC_CR_SOFT_RST(x)                   (((uint32_t)(((uint32_t)(x)) << RTC_CR_SOFT_RST_SHIFT)) & RTC_CR_SOFT_RST_MASK)
 
-/*! @name CCR - RTC Clock Control register */
+/* CCR - RTC Clock Control register */
 #define RTC_CCR_CKOUT_STANDBY_MASK           (0x1U)
 #define RTC_CCR_CKOUT_STANDBY_SHIFT          (0U)
 #define RTC_CCR_CKOUT_STANDBY(x)             (((uint32_t)(((uint32_t)(x))/* << RTC_CCR_CKOUT_STANDBY_SHIFT*/)) & RTC_CCR_CKOUT_STANDBY_MASK)
@@ -2518,7 +1592,7 @@ typedef struct {
 #define RTC_CCR_DIV_COMP_SHIFT               (16U)
 #define RTC_CCR_DIV_COMP(x)                  (((uint32_t)(((uint32_t)(x)) << RTC_CCR_DIV_COMP_SHIFT)) & RTC_CCR_DIV_COMP_MASK)
 
-/*! @name ICR - RTC IRQ Control register */
+/* ICR - RTC IRQ Control register */
 /*
   00  INT_RTC high;
   01  INT_RTC low;
@@ -2529,7 +1603,7 @@ typedef struct {
 #define RTC_ICR_FORM_SHIFT                   (0U)
 #define RTC_ICR_FORM(x)                      (((uint32_t)(((uint32_t)(x))/* << RTC_ICR_FORM_SHIFT*/)) & RTC_ICR_FORM_MASK)
 
-/*! @name IMR - RTC IRQ MASK register */
+/* IMR - RTC IRQ MASK register */
 #define RTC_IMR_ALARM_MASK                   (0x1U)
 #define RTC_IMR_ALARM_SHIFT                  (0U)
 #define RTC_IMR_ALARM(x)                     (((uint32_t)(((uint32_t)(x))/* << RTC_IMR_ALARM_SHIFT*/)) & RTC_IMR_ALARM_MASK)
@@ -2540,7 +1614,7 @@ typedef struct {
 #define RTC_IMR_CALIBRATION_SHIFT            (12U)
 #define RTC_IMR_CALIBRATION(x)               (((uint32_t)(((uint32_t)(x)) << RTC_IMR_CALIBRATION_SHIFT)) & RTC_IMR_CALIBRATION_MASK)
 
-/*! @name IFR - RTC IRQ Flag register */
+/* IFR - RTC IRQ Flag register */
 #define RTC_IFR_ALARM_MASK                   (0x1U)
 #define RTC_IFR_ALARM_SHIFT                  (0U)
 #define RTC_IFR_ALARM(x)                     (((uint32_t)(((uint32_t)(x))/* << RTC_IFR_ALARM_SHIFT*/)) & RTC_IFR_ALARM_MASK)
@@ -2551,12 +1625,12 @@ typedef struct {
 #define RTC_IFR_CALIBRATION_SHIFT            (12U)
 #define RTC_IFR_CALIBRATION(x)               (((uint32_t)(((uint32_t)(x)) << RTC_IFR_CALIBRATION_SHIFT)) & RTC_IFR_CALIBRATION_MASK)
 
-/*! @name CALENDAR CTRL - RTC CALENDAR Control register */
+/* CALENDAR CTRL - RTC CALENDAR Control register */
 #define RTC_CALENDAR_CTRL_STANDBY_MASK       (0x1U)
 #define RTC_CALENDAR_CTRL_STANDBY_SHIFT      (0U)
 #define RTC_CALENDAR_CTRL_STANDBY(x)         (((uint32_t)(((uint32_t)(x))/* << RTC_CALENDAR_CTRL_STANDBY_SHIFT*/)) & RTC_CALENDAR_CTRL_STANDBY_MASK)
 
-/*! @name ALARM_CTRL - RTC Alarm control register */
+/* ALARM_CTRL - RTC Alarm control register */
 #define RTC_ALARM_CTRL_STANDBY_MASK           (0x1U)
 #define RTC_ALARM_CTRL_STANDBY_SHIFT          (0U)
 #define RTC_ALARM_CTRL_STANDBY(x)             (((uint32_t)(((uint32_t)(x))/* << RTC_ALARM_CTRL_STANDBY_SHIFT*/)) & RTC_ALARM_CTRL_STANDBY_MASK)
@@ -2567,7 +1641,7 @@ typedef struct {
 #define RTC_ALARM_CTRL_CONFIG_SHIFT           (16U)
 #define RTC_ALARM_CTRL_CONFIG(x)              (((uint32_t)(((uint32_t)(x)) << RTC_ALARM_CTRL_CONFIG_SHIFT)) & RTC_ALARM_CTRL_CONFIG_MASK)
 
-/*! @name TIMER - RTC Count down register */
+/* TIMER - RTC Count down register */
 #define RTC_TIMER_STANDBY_MASK                (0x1U)
 #define RTC_TIMER_STANDBY_SHIFT               (0U)
 #define RTC_TIMER_STANDBY(x)                  (((uint32_t)(((uint32_t)(x))/* << RTC_TIMER_STANDBY_SHIFT*/)) & RTC_TIMER_STANDBY_MASK)
@@ -2575,115 +1649,47 @@ typedef struct {
 #define RTC_TIMER_MODE_SHIFT                  (4U)
 #define RTC_TIMER_MODE(x)                     (((uint32_t)(((uint32_t)(x)) << RTC_TIMER_MODE_SHIFT)) & RTC_TIMER_MODE_MASK)
 
-/*! @name CLKIN_DIV - RTC Clock in divider register */
+/* CLKIN_DIV - RTC Clock in divider register */
 #define RTC_CLKIN_DIV_VAL_MASK                (0xFFFFU)
 #define RTC_CLKIN_DIV_VAL_SHIFT               (0U)
 #define RTC_CLKIN_DIV_VAL(x)                  (((uint32_t)(((uint32_t)(x))/* << RTC_CLKIN_DIV_VAL_SHIFT*/)) & RTC_CLKIN_DIV_VAL_MASK)
 
-/*! @name CKREF_CONF - RTC Reference Clock configuration */
+/* CKREF_CONF - RTC Reference Clock configuration */
 #define RTC_CKREF_CONF_VAL_MASK               (0x3FFFFFU)
 #define RTC_CKREF_CONF_VAL_SHIFT              (0U)
 #define RTC_CKREF_CONF_VAL(x)                 (((uint32_t)(((uint32_t)(x))/* << RTC_CKREF_CONF_VAL_SHIFT*/)) & RTC_CKREF_CONF_VAL_MASK)
 
 
-/*!
- * @}
- */ /* end of group RTC_Register_Masks */
-
-
-
-/* RTC_APB - Peripheral instance base addresses */
-/** Peripheral RTC_APB base address */
-#define RTC_APB_BASE                               (SOC_PERI_BASE + 0x08000u)
-/** Peripheral RTC_APB base pointer */
-#define RTC_APB                                    ((RTC_APB_reg_t *)RTC_APB_BASE)
-/** Array initializer of RTC_APB base addresses */
-#define RTC_APB_BASE_ADDRS                         { RTC_APB_BASE }
-/** Array initializer of RTC_APB base pointers */
-#define RTC_APB_BASE_PTRS                          { RTC_APB }
-
-/*!
- * @}
- */ /* end of group RTC_APB_Peripheral_Access_Layer */
-
-
-/* ----------------------------------------------------------------------------
-   -- EFUSE CTRL Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup EFUSE_CTRL_Peripheral_Access_Layer EFUSE_CTRL Peripheral Access Layer
- * @{
- */
-
 /** EFUSE_CTRL - Register Layout Typedef */
 typedef struct {
-  __IO  uint32_t CMD;                       /**< EFUSE_Control register, offset: 0x00 */
-  __IO  uint32_t CFG;                       /**< EFUSE_Control register, offset: 0x04 */
+  volatile  uint32_t CMD;       /* EFUSE_Control register */
+  volatile  uint32_t CFG;       /* EFUSE_Control register */
 } EFUSE_CTRL_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- EFUSE_CTRL Register Masks
-   ---------------------------------------------------------------------------- */
+#define EFUSE_CTRL_BASE                               (SOC_PERI_BASE + 0x09000u)
+#define EFUSE_CTRL                                    ((EFUSE_CTRL_reg_t *)EFUSE_CTRL_BASE)
 
-/*!
- * @addtogroup EFUSE_CTRL_Register_Masks EFUSE_CTRL Register Masks
- * @{
- */
 #define    EFUSE_CTRL_CMD_READ       0x1
 #define    EFUSE_CTRL_CMD_WRITE      0x2
 #define    EFUSE_CTRL_CMD_SLEEP      0x4
-/*!
- * @}
- */ /* end of group EFUSE_CTRL_Register_Masks */
 
-
-/* EFUSE_CTRL - Peripheral instance base addresses */
-/** Peripheral EFUSE_CTRL base address */
-#define EFUSE_CTRL_BASE                               (SOC_PERI_BASE + 0x09000u)
-/** Peripheral EFUSE_CTRL base pointer */
-#define EFUSE_CTRL                                    ((EFUSE_CTRL_reg_t *)EFUSE_CTRL_BASE)
-/** Array initializer of EFUSE_CTRL base addresses */
-#define EFUSE_CTRL_BASE_ADDRS                         { EFUSE_CTRL_BASE }
-/** Array initializer of EFUSE_CTRL base pointers */
-#define EFUSE_CTRL_BASE_PTRS                          { EFUSE_CTRL }
-
-/*!
- * @}
- */ /* end of group EFUSE_CTRL_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- EFUSE REG Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup EFUSE_REGS_Peripheral_Access_Layer EFUSE_REGS Peripheral Access Layer
- * @{
- */
 
 /** EFUSE_REGS - Registers Layout Typedef */
 typedef struct {
-  __IO  uint32_t INFO;                    /**< EFUSE INFO register, offset: 0x000 */
-  __IO  uint32_t INFO2;                   /**< EFUSE_INFO2 register, offset: 0x004 */
-  __IO  uint32_t AES_KEY[16];             /**< EFUSE_AES_KEY registers, offset: 0x008 */
-  __IO  uint32_t AES_IV[8];               /**< EFUSE_AES_IV registers, offset: 0x048 */
-  __IO  uint32_t WAIT_XTAL_DELTA_LSB;     /**< EFUSE_WAIT_XTAL_DELTA_LSB register, offset: 0x068 */
-  __IO  uint32_t WAIT_XTAL_DELTA_MSB;     /**< EFUSE_WAIT_XTAL_DELTA_MSB register, offset: 0x06C */
-  __IO  uint32_t WAIT_XTAL_MIN;           /**< EFUSE_WAIT_XTAL_MIN registers, offset: 0x070 */
-  __IO  uint32_t WAIT_XTAL_MAX;           /**< EFUSE_WAIT_XTAL_MAX registers, offset: 0x074 */
+  volatile  uint32_t INFO;                    /**< EFUSE INFO register, offset: 0x000 */
+  volatile  uint32_t INFO2;                   /**< EFUSE_INFO2 register, offset: 0x004 */
+  volatile  uint32_t AES_KEY[16];             /**< EFUSE_AES_KEY registers, offset: 0x008 */
+  volatile  uint32_t AES_IV[8];               /**< EFUSE_AES_IV registers, offset: 0x048 */
+  volatile  uint32_t WAIT_XTAL_DELTA_LSB;     /**< EFUSE_WAIT_XTAL_DELTA_LSB register, offset: 0x068 */
+  volatile  uint32_t WAIT_XTAL_DELTA_MSB;     /**< EFUSE_WAIT_XTAL_DELTA_MSB register, offset: 0x06C */
+  volatile  uint32_t WAIT_XTAL_MIN;           /**< EFUSE_WAIT_XTAL_MIN registers, offset: 0x070 */
+  volatile  uint32_t WAIT_XTAL_MAX;           /**< EFUSE_WAIT_XTAL_MAX registers, offset: 0x074 */
 } EFUSE_REGS_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- EFUSE_REGS Register Masks
-   ---------------------------------------------------------------------------- */
+#define EFUSE_REGS_BASE                                (SOC_PERI_BASE + 0x09200u)
+#define EFUSE_REGS                                     ((EFUSE_REGS_reg_t *)EFUSE_REGS_BASE)
 
-/*!
- * @addtogroup EFUSE_REGS_Register_Masks EFUSE_REGS Register Masks
- * @{
- */
-/*! @name INFO - EFUSE information register */
+/* INFO - EFUSE information register */
 #define EFUSE_INFO_PLT_MASK                           (0x07U)
 #define EFUSE_INFO_PLT_SHIFT                          (0U)
 #define EFUSE_INFO_PLT(x)                             (((uint32_t)(((uint32_t)(x)) << EFUSE_INFO_PLT_SHIFT)) & EFUSE_INFO_PLT_MASK)
@@ -2701,169 +1707,59 @@ typedef struct {
 #define EFUSE_INFO_WAIT_XTAL(x)                       (((uint32_t)(((uint32_t)(x)) << EFUSE_INFO_WAIT_XTAL_SHIFT)) & EFUSE_INFO_WAIT_XTAL_MASK)
 
 
-/*!
- * @}
- */ /* end of group EFUSE_REGS_Register_Masks */
-
-
-/* EFUSE_REGS - Peripheral instance base addresses */
-/** Peripheral EFUSE_REGS base address */
-#define EFUSE_REGS_BASE                                (SOC_PERI_BASE + 0x09200u)
-/** Peripheral EFUSE_REGS base pointer */
-#define EFUSE_REGS                                     ((EFUSE_REGS_reg_t *)EFUSE_REGS_BASE)
-/** Array initializer of EFUSE_REGS base addresses */
-#define EFUSE_REGS_BASE_ADDRS                          { EFUSE_REGS_BASE }
-/** Array initializer of EFUSE_REGS base pointers */
-#define EFUSE_REGS_BASE_PTRS                           { EFUSE_REGS }
-
-/*!
- * @}
- */ /* end of group EFUSE_REGS_Peripheral_Access_Layer */
-
-
-
-/* ----------------------------------------------------------------------------
-   -- FC_STDOUT Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup FC_STDOUT_Peripheral_Access_Layer FC_STDOUT Peripheral Access Layer
- * @{
- */
-
 /** FC_STDOUT - Registers Layout Typedef */
 typedef struct {
-  __IO  uint32_t PUTC[16];                    /**< FC_STDOUT INFO register, offset: 0x000 */
+  volatile  uint32_t PUTC[16];      /* FC_STDOUT INFO register, offset: 0x000 */
 } FC_STDOUT_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- FC_STDOUT Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup FC_STDOUT_Register_Masks FC_STDOUT Register Masks
- * @{
- */
-/*! @name INFO - FC_STDOUT information register */
-
-/*!
- * @}
- */ /* end of group FC_STDOUT_Register_Masks */
-
-
-/* FC_STDOUT - Peripheral instance base addresses */
-/** Peripheral FC_STDOUT base address */
-#define FC_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u + (FC_CLUSTER_ID << 7))
-/** Peripheral FC_STDOUT base pointer */
+#define FC_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u + (32 << 7))
 #define FC_STDOUT                                     ((FC_STDOUT_reg_t *)FC_STDOUT_BASE)
-/** Array initializer of FC_STDOUT base addresses */
-#define FC_STDOUT_BASE_ADDRS                          { FC_STDOUT_BASE }
-/** Array initializer of FC_STDOUT base pointers */
-#define FC_STDOUT_BASE_PTRS                           { FC_STDOUT }
-
-/*!
- * @}
- */ /* end of group FC_STDOUT_Peripheral_Access_Layer */
 
 
 #ifdef FEATURE_CLUSTER
-/* ----------------------------------------------------------------------------
-   -- CLUSTER_STDOUT Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup CLUSTER_STDOUT_Peripheral_Access_Layer CLUSTER_STDOUT Peripheral Access Layer
- * @{
- */
-
 /** CLUSTER_STDOUT - Registers Layout Typedef */
 typedef struct {
-  __IO  uint32_t PUTC[16];                    /**< CLUSTER_STDOUT INFO register, offset: 0x000 */
+  volatile  uint32_t PUTC[16];       /* CLUSTER_STDOUT INFO register, offset: 0x000 */
 } CLUSTER_STDOUT_reg_t;
 
-/* ----------------------------------------------------------------------------
-   -- CLUSTER_STDOUT Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup CLUSTER_STDOUT_Register_Masks CLUSTER_STDOUT Register Masks
- * @{
- */
-/*! @name INFO - CLUSTER_STDOUT information register */
-
-/*!
- * @}
- */ /* end of group CLUSTER_STDOUT_Register_Masks */
-
-
-/* CLUSTER_STDOUT - Peripheral instance base addresses */
-/** Peripheral CLUSTER_STDOUT base address */
 #define CLUSTER_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u)
-/** Peripheral CLUSTER_STDOUT base pointer */
 #define CLUSTER_STDOUT                                     ((CLUSTER_STDOUT_reg_t *)CLUSTER_STDOUT_BASE)
-/** Array initializer of CLUSTER_STDOUT base addresses */
-#define CLUSTER_STDOUT_BASE_ADDRS                          { CLUSTER_STDOUT_BASE }
-/** Array initializer of CLUSTER_STDOUT base pointers */
-#define CLUSTER_STDOUT_BASE_PTRS                           { CLUSTER_STDOUT }
-
-/*!
- * @}
- */ /* end of group CLUSTER_STDOUT_Peripheral_Access_Layer */
-
-
-
-
-/* ----------------------------------------------------------------------------
-   -- HWCE Peripheral Access Layer
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup HWCE Peripheral_Access_Layer HWCE Peripheral Access Layer
- * @{
- */
 
 /** HWCE - Registers Layout Typedef */
 typedef struct {
-    __IO  uint32_t HWCE_TRIGGER_REG;              /**< HWCE Trigger register, offset: 0x00 */
-    __IO  uint32_t HWCE_ACQUIRE_REG;              /**< HWCE Acquire register, offset: 0x04 */
-    __IO  uint32_t HWCE_FINISHED_REG;             /**< HWCE Finished register, offset: 0x08 */
-    __IO  uint32_t HWCE_STATUS_REG;               /**< HWCE Status register, offset: 0x0C */
-    __IO  uint32_t HWCE_RUNNING_JOB_REG;          /**< HWCE Running Job register, offset: 0x10 */
-    __IO  uint32_t HWCE_SOFT_CLEAR_REG;           /**< HWCE Soft_Clear register, offset: 0x14 */
-    __IO  uint32_t _reserved0[2];                 /**< HWCE Non used registers, offser: 0x18 */
-    __IO  uint32_t HWCE_GEN_CONFIG0_REG;          /**< HWCE Gen_Config0 register, offset: 0x20 */
-    __IO  uint32_t HWCE_GEN_CONFIG1_REG;          /**< HWCE Gen_Config1 register, offset: 0x24 */
-    __IO  uint32_t _reserved1[6];                 /**< HWCE unused registers, offset: 0x28 */
-    __IO  uint32_t HWCE_Y_TRANS_SIZE_REG;         /**< HWCE Y_Trans_Size register, offset: 0x40 */
-    __IO  uint32_t HWCE_Y_LINE_STRIDE_LENGTH_REG; /**< HWCE Y_Line_Stride_Length register, offset: 0x44 */
-    __IO  uint32_t HWCE_Y_FEAT_STRIDE_LENGTH_REG; /**< HWCE Y_Feat_Stride_Length register, offset: 0x48 */
-    __IO  uint32_t HWCE_Y_OUT_3_REG;              /**< HWCE Y_Out_3 register, offset: 0x4C */
-    __IO  uint32_t HWCE_Y_OUT_2_REG;              /**< HWCE Y_Out_2 register, offset: 0x50 */
-    __IO  uint32_t HWCE_Y_OUT_1_REG;              /**< HWCE Y_Out_1 register, offset: 0x54 */
-    __IO  uint32_t HWCE_Y_OUT_0_REG;              /**< HWCE Y_Out_0 register, offset: 0x58 */
-    __IO  uint32_t HWCE_Y_IN_3_REG;               /**< HWCE Y_In_3 register, offset: 0x5C */
-    __IO  uint32_t HWCE_Y_IN_2_REG;               /**< HWCE Y_In_2 register, offset: 0x60 */
-    __IO  uint32_t HWCE_Y_IN_1_REG;               /**< HWCE Y_In_1 register, offset: 0x64 */
-    __IO  uint32_t HWCE_Y_IN_0_REG;               /**< HWCE Y_In_0 register, offset: 0x68 */
-    __IO  uint32_t HWCE_X_TRANS_SIZE_REG;         /**< HWCE X_Trans_Size register, offset: 0x6C */
-    __IO  uint32_t HWCE_X_LINE_STRIDE_LENGTH_REG; /**< HWCE X_Line_Stride_Length register, offset: 0x70 */
-    __IO  uint32_t HWCE_X_FEAT_STRIDE_LENGTH_REG; /**< HWCE X_Feat_Stride_Length register, offset: 0x74 */
-    __IO  uint32_t HWCE_X_IN_REG;                 /**< HWCE X_In register, offset: 0x78 */
-    __IO  uint32_t HWCE_W_REG;                    /**< HWCE W register, offset: 0x7C */
-    __IO  uint32_t HWCE_JOB_CONFIG0_REG;          /**< HWCE Job_Config0 register, offset: 0x80 */
-    __IO  uint32_t HWCE_JOB_CONFIG1_REG;          /**< HWCE Job_Config1 register, offset: 0x84 */
+    volatile  uint32_t HWCE_TRIGGER_REG;              /* Trigger register */
+    volatile  uint32_t HWCE_ACQUIRE_REG;              /* Acquire register */
+    volatile  uint32_t HWCE_FINISHED_REG;             /* Finished register */
+    volatile  uint32_t HWCE_STATUS_REG;               /* Status register */
+    volatile  uint32_t HWCE_RUNNING_JOB_REG;          /* Running Job register */
+    volatile  uint32_t HWCE_SOFT_CLEAR_REG;           /* Soft_Clear register */
+    volatile  uint32_t _reserved0[2];                 /* Non used registers */
+    volatile  uint32_t HWCE_GEN_CONFIG0_REG;          /* Gen_Config0 register */
+    volatile  uint32_t HWCE_GEN_CONFIG1_REG;          /* Gen_Config1 register */
+    volatile  uint32_t _reserved1[6];                 /* unused registers */
+    volatile  uint32_t HWCE_Y_TRANS_SIZE_REG;         /* Y_Trans_Size register */
+    volatile  uint32_t HWCE_Y_LINE_STRIDE_LENGTH_REG; /* Y_Line_Stride_Length register */
+    volatile  uint32_t HWCE_Y_FEAT_STRIDE_LENGTH_REG; /* Y_Feat_Stride_Length register */
+    volatile  uint32_t HWCE_Y_OUT_3_REG;              /* Y_Out_3 register */
+    volatile  uint32_t HWCE_Y_OUT_2_REG;              /* Y_Out_2 register */
+    volatile  uint32_t HWCE_Y_OUT_1_REG;              /* Y_Out_1 register */
+    volatile  uint32_t HWCE_Y_OUT_0_REG;              /* Y_Out_0 register */
+    volatile  uint32_t HWCE_Y_IN_3_REG;               /* Y_In_3 register */
+    volatile  uint32_t HWCE_Y_IN_2_REG;               /* Y_In_2 register */
+    volatile  uint32_t HWCE_Y_IN_1_REG;               /* Y_In_1 register */
+    volatile  uint32_t HWCE_Y_IN_0_REG;               /* Y_In_0 register */
+    volatile  uint32_t HWCE_X_TRANS_SIZE_REG;         /* X_Trans_Size register */
+    volatile  uint32_t HWCE_X_LINE_STRIDE_LENGTH_REG; /* X_Line_Stride_Length register */
+    volatile  uint32_t HWCE_X_FEAT_STRIDE_LENGTH_REG; /* X_Feat_Stride_Length register */
+    volatile  uint32_t HWCE_X_IN_REG;                 /* X_In register */
+    volatile  uint32_t HWCE_W_REG;                    /* W register */
+    volatile  uint32_t HWCE_JOB_CONFIG0_REG;          /* Job_Config0 register */
+    volatile  uint32_t HWCE_JOB_CONFIG1_REG;          /* Job_Config1 register */
 } HWCE_reg_t;
 
+#define HWCE_BASE                                (CORE_PERI_BASE + 0x00001000)
+#define HWCE                                     ((HWCE_reg_t *) HWCE_BASE)
 
-/* ----------------------------------------------------------------------------
-   -- HWCE Register Masks
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup HWCE_Register_Masks HWCE Register Masks
- * @{
- */
-/*! @name INFO - HWCE information register */
 /* Internal registers */
 #define HWCE_TRIGGER              ( 0x00 )
 #define HWCE_ACQUIRE              ( 0x04 )
@@ -2933,61 +1829,6 @@ typedef struct {
 #define HWCE_JOB_STRIDE(x)                    ((x) >> 16)
 #define HWCE_JOB_LENGTH(x)                    ((x) & 0xffff)
 
-  /*!
-   * @}
-   */ /* end of group HWCE_Register_Masks */
-
-
-/* HWCE - Peripheral instance base addresses */
-/** Peripheral HWCE base address */
-#define HWCE_BASE                                (CORE_PERI_BASE + 0x00001000)
-/** Peripheral HWCE base pointer */
-#define HWCE                                     ((HWCE_reg_t *) HWCE_BASE)
-/** Array initializer of HWCE base addresses */
-#define HWCE_BASE_ADDRS                          { HWCE_BASE }
-/** Array initializer of HWCE base pointers */
-#define HWCE_BASE_PTRS                           { HWCE }
-
-/*!
- * @}
- */ /* end of group HWCE_Peripheral_Access_Layer */
-
-
 #endif
-
-
-/*
-** End of section using anonymous unions
-*/
-
-#if defined(__ARMCC_VERSION)
-  #pragma pop
-#elif defined(__CWCC__)
-  #pragma pop
-#elif defined(__GNUC__)
-  /* leave anonymous unions enabled */
-#elif defined(__IAR_SYSTEMS_ICC__)
-  #pragma language=default
-#else
-  #error Not supported compiler type
-#endif
-
-/*!
- * @}
- */ /* end of group Peripheral_access_layer */
-
-/* ----------------------------------------------------------------------------
-   -- SDK Compatibility
-   ---------------------------------------------------------------------------- */
-
-/*!
- * @addtogroup SDK_Compatibility_Symbols SDK Compatibility
- * @{
- */
-
-/*!
- * @}
- */ /* end of group SDK_Compatibility_Symbols */
-
 
 #endif  /* _GAP8_H_ */
