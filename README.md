@@ -1,6 +1,6 @@
 ## Baremetel for GAP8
 
-A UART example for gapuino. Send the corresponding byte received.
+A clean, clear, simple implementation of UART typer example for gapuino. Send the corresponding byte received.
 
 ### Build
 
@@ -12,7 +12,7 @@ A UART example for gapuino. Send the corresponding byte received.
 
 Use `plpbridge` from `gap_sdk`
 
-    ....../gap_sdk/install/workstation/bin/plpbridge \
+    $GAP_SDK_HOME/install/workstation/bin/plpbridge \
     --cable=ftdi@digilent --boot-mode=jtag --chip=gap \
     --binary=test \
     load ioloop reqloop start wait
