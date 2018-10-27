@@ -35,14 +35,14 @@
 void gap8_timer_initialize(uint32_t source_clock, uint32_t tick_per_second);
 
 /****************************************************************************
- * Name: gap8_register_callback
+ * Name: gap8_register_timercallback
  *
  * Description:
  *   Register a callback function called on timer IRQ
  *
  ****************************************************************************/
 
-void gap8_register_callback(void (*on_timer)(void*arg), void *arg);
+void gap8_register_timercallback(void (*on_timer)(void*arg), void *arg);
 
 /****************************************************************************
  * Name: gap8_timer_isr

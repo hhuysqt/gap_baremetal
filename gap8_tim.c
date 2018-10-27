@@ -76,7 +76,7 @@ void gap8_timer_initialize(uint32_t source_clock, uint32_t tick_per_second)
  *
  ****************************************************************************/
 
-void gap8_register_callback(void (*on_timer)(void*arg), void *arg)
+void gap8_register_timercallback(void (*on_timer)(void*arg), void *arg)
 {
   fc_basic_timer.on_timer = on_timer;
   fc_basic_timer.arg = arg;
