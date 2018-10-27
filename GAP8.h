@@ -26,6 +26,37 @@
  ************************************************************************************/
 
 #define SOC_PERI_BASE       (0x1A100000UL)     /* SOC Peripherals Base Address */
+#define CORE_PERI_BASE      (0x00200000UL)     /* RISC Core Peripheral Base Address */
+
+/* 2 basic timer */
+typedef struct
+{
+  volatile uint32_t CFG_REG_LO;   /* Configuration Register for lower 32-bits */
+  volatile uint32_t CFG_REG_HI;   /* Configuration Register for high 32-bits */
+  volatile uint32_t VALUE_LO;     /* Timer Value Register for low 32-bits */
+  volatile uint32_t VALUE_HI;     /* Timer Value Register for high 32-bits */
+  volatile uint32_t CMP_LO;       /* Timer comparator Register for low 32-bits */
+  volatile uint32_t CMP_HI;       /* Timer comparator Register for high 32-bits */
+  volatile uint32_t START_LO;     /* Timer start Register for low 32-bits */
+  volatile uint32_t START_HI;     /* Timer start Register for high 32-bits */
+  volatile uint32_t RESET_LO;     /* Timer reset Register for low 32-bits */
+  volatile uint32_t RESET_HI;     /* Timer reset Register for high 32-bits */
+} BASIC_TIM_reg_t;
+#define BASIC_TIM   ((BASIC_TIM_reg_t*)(CORE_PERI_BASE + 0x0400UL))
+
+#define BASIC_TIM_CASC_ENABLE   (1L << 31)
+#define BASIC_TIM_CASC_DISABLE  (0L << 31)
+#define BASIC_TIM_CLKSRC_FLL    (0L << 7)
+#define BASIC_TIM_CLKSRC_32K    (1L << 7)
+#define BASIC_TIM_PRESC_ENABLE  (1L << 6)
+#define BASIC_TIM_PRESC_DISABLE (0L << 6)
+#define BASIC_TIM_ONE_SHOT      (1L << 5)
+#define BASIC_TIM_MODE_CONT     (0L << 4)
+#define BASIC_TIM_MODE_CYCL     (1L << 4)
+#define BASIC_TIM_IRQ_ENABLE    (1L << 2)
+#define BASIC_TIM_IRQ_DISABLE   (0L << 2)
+#define BASIC_TIM_RESET         (1L << 1)
+#define BASIC_TIM_ENABLE        (1L << 0)
 
 typedef struct
 {
@@ -35,9 +66,8 @@ typedef struct
   volatile uint32_t ICACHE_SEL_FLUSH_STATUS;  /* Cluster Icache Flush Selected Address Register or FC ICACHE status */
   volatile uint32_t ICACHE_IS_PRI;            /* Cluster Icache is private Icache */
 } SCBC_reg_t;
-#define CORE_PERI_BASE      (0x00200000UL)                             /*!< RISC Core Peripheral Base Address */
-#define CORE_SCBC_BASE      (CORE_PERI_BASE +  0x1400UL)               /*!< RISC Core System Control Block Cache Base Address */
-#define SCBC                ((SCBC_reg_t*)CORE_SCBC_BASE )           /*!< Icache SCBC configuration struct */
+#define CORE_SCBC_BASE      (CORE_PERI_BASE +  0x1400UL)   /* RISC Core System Control Block Cache Base Address */
+#define SCBC                ((SCBC_reg_t*)CORE_SCBC_BASE)  /* Icache SCBC configuration struct */
 
 /* FLL_CTRL */
 typedef struct {
@@ -52,7 +82,7 @@ typedef struct {
   volatile uint32_t FLL_CONVERGE;              /* Fll Converge register   */
 } FLL_CTRL_reg_t;
 
-#define FLL_CTRL                                     ((FLL_CTRL_reg_t *)0x1A100000)
+#define FLL_CTRL             ((FLL_CTRL_reg_t *)SOC_PERI_BASE)
 
 /* FLL_STATUS - FLL_CTRL status register */
 #define FLL_CTRL_STATUS_MULTI_FACTOR_MASK              (0xFFFFU)
@@ -170,7 +200,7 @@ typedef struct {
 #define GPIO_INTCFG_TYPE_BITS_WIDTH_MASK          (0x3U)
 
 /** Peripheral GPIOA base pointer */
-#define GPIOA                                   ((GPIO_reg_t *)0x1A101000)
+#define GPIOA                                   ((GPIO_reg_t *)(SOC_PERI_BASE + 0x1000u))
 
 /** UDMA - General Register Layout Typedef */
 typedef struct {

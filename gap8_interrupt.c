@@ -17,6 +17,7 @@
 
 #include "gap8_interrupt.h"
 #include "gap8_udma.h"
+#include "gap8_tim.h"
 
 /************************************************************************************
  * Public Function
@@ -53,6 +54,8 @@ void up_irqinitialize(void)
 
 void* gap8_dispatch_irq(uint32_t vector, void *current_regs)
 {
+  FCEU->BUFFER_CLEAR = (1 << GAP8_IRQ_FC_UDMA);
+  EU_SW_EVNT_TRIG->TRIGGER_SET[3] = 0;
   // TODO: call nuttx core functions
   if (vector == GAP8_IRQ_FC_UDMA)
     {
@@ -61,15 +64,20 @@ void* gap8_dispatch_irq(uint32_t vector, void *current_regs)
       /* Get current event */
       uint32_t event = SOC_EVENTS->CURRENT_EVENT & 0xff;
 
-      EU_SW_EVNT_TRIG->TRIGGER_SET[3] = 0;
+      //EU_SW_EVNT_TRIG->TRIGGER_SET[3] = 0;
       
       /* Clear IRQ pending */
-      FCEU->BUFFER_CLEAR = (1 << GAP8_IRQ_FC_UDMA);
+      //FCEU->BUFFER_CLEAR = (1 << GAP8_IRQ_FC_UDMA);
 
       if (event < GAP8_UDMA_MAX_EVENT)
         {
           gap8_udma_doirq(event);
         }
+    }
+  else if (vector == GAP8_IRQ_FC_TIMER_LO)
+    {
+      //FCEU->BUFFER_CLEAR = (1 << GAP8_IRQ_FC_TIMER_LO);
+      gap8_timer_isr();
     }
     
   return current_regs;

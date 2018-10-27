@@ -5,10 +5,12 @@
 
 /* Demo utlities includes. */
 #include "GAP8.h"
+#include <stdio.h>
 
 #include "gap8_gpio.h"
 #include "gap8_uart.h"
 #include "gap8_interrupt.h"
+#include "gap8_tim.h"
 
 /* Place a dummy debug_struct for plpbridge tool */
 typedef struct _debug_struct {
@@ -50,12 +52,18 @@ void vTestUART( void *parameters );
 /* Variables used. */
 
 struct gap8_uart_t *uart0;
+int cnt = 0;
 
 /****************************************************************************/
 
+static void on_timer(void *arg)
+{
+    cnt++;
+}
 
 uint8_t buf[] = "hello world\r\n";
 uint8_t getbuf[10];
+uint8_t cntbuf[20];
 int main(void)
 {
     uint32_t baudrate = 115200;
@@ -70,14 +78,15 @@ int main(void)
 
     //UART_TransferSendBlocking(uart_addrs[0], buf, strlen(buf));
     gap8_uart_sendbytes(uart0, buf, strlen(buf));
+    gap8_timer_initialize(50000000, 1);
+    gap8_register_callback(on_timer, 0);
     while (1)
     {
         gap8_uart_recvbytes(uart0, getbuf, 1);
-        gap8_uart_sendbytes(uart0, getbuf, 1);
+        sprintf(cntbuf, "%02d\r\n", cnt);
+        gap8_uart_sendbytes(uart0, cntbuf, 4);
     }
 
-    /* Free serial. */
-    //UART_Deinit( uart_addrs[0] );
 
     return 0;
 }
