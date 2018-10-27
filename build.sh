@@ -1,6 +1,6 @@
 riscv32-unknown-elf-gcc -o test \
 startup_gapuino.S \
-gap8_interrupt.c gap8_uart.c gap8_udma.c gap8_gpio.c gap8_tim.c \
+gap8_interrupt.c gap8_uart.c gap8_udma.c gap8_gpio.c gap8_tim.c gap8_fll.c \
 main_UART.c \
 -g -fno-jump-tables -fno-tree-loop-distribute-patterns \
 -fdata-sections -ffunction-sections \

@@ -1,7 +1,9 @@
-/****************************************************************************/
-// no printf support
-#define printf(...)
-
+/***************************************************************************
+ * Basic driver tests: FLL, FC TIMER, uDMA, UART
+ * 
+ * Author: hhuysqt <1020988872@qq.com>
+ * 
+ ***************************************************************************/
 
 /* Demo utlities includes. */
 #include "GAP8.h"
@@ -11,9 +13,10 @@
 #include "gap8_uart.h"
 #include "gap8_interrupt.h"
 #include "gap8_tim.h"
+#include "gap8_fll.h"
 
 /* Place a dummy debug_struct for plpbridge tool */
-typedef struct _debug_struct {
+struct _debug_struct {
     /* Used by external debug bridge to get exit status when using the board */
     uint32_t exitStatus;
 
@@ -36,58 +39,49 @@ typedef struct _debug_struct {
     uint32_t notifReqValue;
 
     uint32_t bridgeConnected;
+} Debug_Struct = {
+  .useInternalPrintf = 1,
+};
 
-} debug_struct_t;
-#define GAP_DEBUG_STRUCT_INIT {0, 1, 0 ,0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, 0, 0, 0, 0, 0, 0, 0}
-debug_struct_t Debug_Struct = GAP_DEBUG_STRUCT_INIT;
-
-/****************************************************************************/
-
-/* Test task to test FreeRTOS port. */
-void vTestUART( void *parameters );
-
-
-/****************************************************************************/
-
-/* Variables used. */
 
 struct gap8_uart_t *uart0;
 int cnt = 0;
 
-/****************************************************************************/
-
-static void on_timer(void *arg)
-{
-    cnt++;
-}
-
+/* IO buffer at L2 RAM */
 uint8_t buf[] = "hello world\r\n";
 uint8_t getbuf[10];
 uint8_t cntbuf[20];
+
+static void on_timer(void *arg)
+{
+  cnt++;
+}
+
+/* FC core clock */
+#define TARGET_CLK_HZ 200000000
+
 int main(void)
 {
-    uint32_t baudrate = 115200;
-    uint8_t get = 'a';
-
   SCBC->ICACHE_ENABLE = 0xFFFFFFFF;
-    up_irqinitialize();
+  up_irqinitialize();
+  gap8_setfreq(TARGET_CLK_HZ);
 
-    /* Serial pins init */
-    uart0 = gap8_uart_initialize(0);
-    gap8_uart_setbaud(uart0, 115200, 50000000);
+  /* Serial pins init */
+  uart0 = gap8_uart_initialize(0);
+  gap8_uart_setbaud(uart0, 115200, TARGET_CLK_HZ);
 
-    //UART_TransferSendBlocking(uart_addrs[0], buf, strlen(buf));
-    gap8_uart_sendbytes(uart0, buf, strlen(buf));
-    gap8_timer_initialize(50000000, 1);
-    gap8_register_callback(on_timer, 0);
-    while (1)
-    {
-        gap8_uart_recvbytes(uart0, getbuf, 1);
-        sprintf(cntbuf, "%02d\r\n", cnt);
-        gap8_uart_sendbytes(uart0, cntbuf, 4);
-    }
+  gap8_uart_sendbytes(uart0, buf, strlen(buf));
+  sprintf(cntbuf, "%dHz\r\n", gap8_getfreq());
+  gap8_uart_sendbytes(uart0, cntbuf, strlen(cntbuf));
 
+  gap8_timer_initialize(TARGET_CLK_HZ, 1);
+  gap8_register_timercallback(on_timer, 0);
+  while (1)
+  {
+      gap8_uart_recvbytes(uart0, getbuf, 1);
+      sprintf(cntbuf, "%02d\r\n", cnt);
+      gap8_uart_sendbytes(uart0, cntbuf, strlen(cntbuf));
+  }
 
-    return 0;
+  return 0;
 }
-/*-----------------------------------------------------------*/
