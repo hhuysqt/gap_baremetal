@@ -36,19 +36,6 @@
  **/
 static struct gap8_udma_peripheral *_peripherals[GAP8_UDMA_NR_CHANNELS] = { 0 };
 
-/* Statically allocated request channels */
-
-static struct __udma_queue _requests[8] = {
-  { .next = &_requests[1], },
-  { .next = &_requests[2], },
-  { .next = &_requests[3], },
-  { .next = &_requests[4], },
-  { .next = &_requests[5], },
-  { .next = &_requests[6], },
-  { .next = &_requests[7], },
-  { .next = NULL }
-};
-static struct __udma_queue *aval_req = &_requests[0];
 
 /****************************************************************************
  * Private Functions
@@ -56,15 +43,15 @@ static struct __udma_queue *aval_req = &_requests[0];
 
 static void _dma_txstart(struct gap8_udma_peripheral *the_peri)
 {
-  the_peri->regs->TX_SADDR = (uint32_t)the_peri->tx->buff;
-  the_peri->regs->TX_SIZE  = (uint32_t)the_peri->tx->block_size;
+  the_peri->regs->TX_SADDR = (uint32_t)the_peri->tx.buff;
+  the_peri->regs->TX_SIZE  = (uint32_t)the_peri->tx.block_size;
   the_peri->regs->TX_CFG   = UDMA_CFG_EN(1);
 }
 
 static void _dma_rxstart(struct gap8_udma_peripheral *the_peri)
 {
-  the_peri->regs->RX_SADDR = (uint32_t)the_peri->rx->buff;
-  the_peri->regs->RX_SIZE  = (uint32_t)the_peri->rx->block_size;
+  the_peri->regs->RX_SADDR = (uint32_t)the_peri->rx.buff;
+  the_peri->regs->RX_SIZE  = (uint32_t)the_peri->rx.block_size;
   the_peri->regs->RX_CFG   = UDMA_CFG_EN(1);
 }
 
@@ -177,60 +164,19 @@ int gap8_udma_rx_setirq(struct gap8_udma_peripheral *instance, bool enable)
  * Description:
  *   Send size * count bytes non-blocking.
  * 
- * Return ERROR if unable to send. The caller should poll on execution, or register
- * a on_tx to get the signal.
+ * This function may be called on ISR, so it cannot be blocked. The caller should
+ * manage the muxing.
  * 
  ************************************************************************************/
 
 int gap8_udma_tx_start(struct gap8_udma_peripheral *instance, 
-                   uint8_t *buff, uint32_t size, uint32_t count)
+                   uint8_t *buff, uint32_t size, int count)
 {
-  struct __udma_queue *thisreq;
-
   CHECK_CHANNEL_ID(instance)
   
-  // TODO: lock the aval_req
-
-  if (aval_req == NULL)
-    {
-      /* Cannot allocate __udma_queue. The caller should try again later */
-
-      // TODO: unlock the aval_req
-      return ERROR;
-    }
-
-  thisreq = aval_req;
-  aval_req = aval_req->next;
-
-  // TODO: unlock the aval_req
-
-  thisreq->buff = buff;
-  thisreq->block_size = size;
-  thisreq->block_count = count;
-  thisreq->next = NULL;
-
-  /* Enqueue */
-
-  // TODO: lock the tx queue
-
-  if (instance->txtail == NULL)
-    {
-      instance->txtail = thisreq;
-    }
-  else
-    {
-      instance->txtail->next = thisreq;
-    }
-
-  if (instance->tx == NULL)
-    {
-      /* It's the first transmittion, or the ISR routine has just
-       * finished the whole queue, making it the first enqueued element
-       **/
-      instance->tx = instance->txtail = thisreq;
-    }
-
-  // TODO: unlock the tx queue
+  instance->tx.buff = buff;
+  instance->tx.block_size = size;
+  instance->tx.block_count = count;
 
   _dma_txstart(instance);
 
@@ -243,60 +189,21 @@ int gap8_udma_tx_start(struct gap8_udma_peripheral *instance,
  * Description:
  *   Receive size * count bytes
  * 
- * Return ERROR if unable to send. The caller should poll on execution, or register
- * a on_rx to get the signal.
+ * This function may be called on ISR, so it cannot be blocked. The caller should
+ * manage the muxing.
  * 
  ************************************************************************************/
 
 int gap8_udma_rx_start(struct gap8_udma_peripheral *instance,
-                   uint8_t *buff, uint32_t size, uint32_t count)
+                   uint8_t *buff, uint32_t size, int count)
 {
   struct __udma_queue *thisreq;
 
   CHECK_CHANNEL_ID(instance)
   
-  // TODO: lock the aval_req
-
-  if (aval_req == NULL)
-    {
-      /* Cannot allocate __udma_queue. The caller should try again later */
-
-      // TODO: unlock the aval_req
-      return ERROR;
-    }
-
-  thisreq = aval_req;
-  aval_req = aval_req->next;
-
-  // TODO: unlock the aval_req
-
-  thisreq->buff = buff;
-  thisreq->block_size = size;
-  thisreq->block_count = count;
-  thisreq->next = NULL;
-
-  /* Enqueue */
-
-  // TODO: lock the rx queue
-
-  if (instance->rxtail == NULL)
-    {
-      instance->rxtail = thisreq;
-    }
-  else
-    {
-      instance->rxtail->next = thisreq;
-    }
-
-  if (instance->rx == NULL)
-    {
-      /* It's the first transmittion, or the ISR routine has just
-       * finished the whole queue, making it the first enqueued element
-       **/
-      instance->rx = instance->rxtail = thisreq;
-    }
-
-  // TODO: unlock the rx queue
+  instance->rx.buff = buff;
+  instance->rx.block_size = size;
+  instance->rx.block_count = count;
 
   _dma_rxstart(instance);
 
@@ -311,20 +218,11 @@ int gap8_udma_rx_start(struct gap8_udma_peripheral *instance,
  * 
  ************************************************************************************/
 
-int gap8_udma_tx_poll(struct gap8_udma_peripheral *instance, 
-                    uint8_t *buff)
+int gap8_udma_tx_poll(struct gap8_udma_peripheral *instance)
 {
-  struct __udma_queue *reqlist;
-
   CHECK_CHANNEL_ID(instance)
 
-  /* Iterate through the linked list */
-
-  for (reqlist = instance->tx; 
-       reqlist != NULL && reqlist->buff != buff; 
-       reqlist = reqlist->next);
-
-  return reqlist == NULL ? OK : ERROR;
+  return instance->tx.block_count <= 0 ? OK : ERROR;
 }
 
 /************************************************************************************
@@ -335,20 +233,11 @@ int gap8_udma_tx_poll(struct gap8_udma_peripheral *instance,
  * 
  ************************************************************************************/
 
-int gap8_udma_rx_poll(struct gap8_udma_peripheral *instance, 
-                    uint8_t *buff)
+int gap8_udma_rx_poll(struct gap8_udma_peripheral *instance)
 {
-  struct __udma_queue *reqlist;
-
   CHECK_CHANNEL_ID(instance)
 
-  /* Iterate through the linked list */
-
-  for (reqlist = instance->rx; 
-       reqlist != NULL && reqlist->buff != buff; 
-       reqlist = reqlist->next);
-
-  return reqlist == NULL ? OK : ERROR;
+  return instance->rx.block_count <= 0 ? OK : ERROR;
 }
 
 /************************************************************************************
@@ -379,82 +268,42 @@ void gap8_udma_doirq(uint32_t irqn)
 
   if (irqn & 0x1)
     {
-      struct __udma_queue *thisqueue = the_peripheral->tx;
-
-      /* tx channel */
-
-      if (thisqueue == NULL)
+      if (the_peripheral->tx.block_count == 1)
         {
-          /* Invalid use case */
+          /* The buffer is exhausted. Forward to peripheral's driver*/
 
-          the_peripheral->txtail = NULL;
-          return;
+          the_peripheral->regs->TX_CFG = UDMA_CFG_CLR(1);
+          the_peripheral->tx.block_count = 0;
+          if (the_peripheral->on_tx)
+            {
+              the_peripheral->on_tx(the_peripheral);
+            }
         }
-      
-      thisqueue->block_count--;
-      thisqueue->buff += thisqueue->block_size;
-      if (thisqueue->block_count <= 0)
+      else if (the_peripheral->tx.block_count > 1)
         {
-          /* Next node */
-
-          the_peripheral->tx = thisqueue->next;
-          thisqueue->next = aval_req;
-          aval_req = thisqueue;
-        }
-
-      if (the_peripheral->tx != NULL)
-        {
+          the_peripheral->tx.block_count--;
+          the_peripheral->tx.buff += the_peripheral->tx.block_size;
           _dma_txstart(the_peripheral);
         }
-      else
-        {
-          /* The queue is exhausted */
-
-          the_peripheral->txtail = NULL;
-        }
-
-      /* Forward to peripheral's driver */
-
-      if (the_peripheral->on_tx)
-        the_peripheral->on_tx(the_peripheral);
     }
   else
     {
-      struct __udma_queue *thisqueue = the_peripheral->rx;
-
-      /* rx channel */
-
-      if (thisqueue == NULL)
+      if (the_peripheral->rx.block_count == 1)
         {
-          the_peripheral->rxtail = NULL;
-          return;
+          /* The buffer is exhausted. Forward to peripheral's driver*/
+
+          the_peripheral->regs->RX_CFG = UDMA_CFG_CLR(1);
+          the_peripheral->rx.block_count = 0;
+          if (the_peripheral->on_rx)
+            {
+              the_peripheral->on_rx(the_peripheral);
+            }
         }
-
-      thisqueue->block_count--;
-      thisqueue->buff += thisqueue->block_size;
-      if (thisqueue->block_count <= 0)
+      else if (the_peripheral->rx.block_count > 1)
         {
-          /* Next node */
-
-          the_peripheral->rx = thisqueue->next;
-          thisqueue->next = aval_req;
-          aval_req = thisqueue;
-        }
-
-      if (the_peripheral->rx != NULL)
-        {
+          the_peripheral->rx.block_count--;
+          the_peripheral->rx.buff += the_peripheral->rx.block_size;
           _dma_rxstart(the_peripheral);
         }
-      else
-        {
-          /* The queue is exhausted */
-
-          the_peripheral->rxtail = NULL;
-        }
-
-      /* Forward to peripheral's driver */
-      
-      if (the_peripheral->on_rx)
-        the_peripheral->on_rx(the_peripheral);
     }
 }

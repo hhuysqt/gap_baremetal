@@ -46,12 +46,36 @@
     sw x29, 29*4(sp)  // t4
     sw x30, 30*4(sp)  // t5
     sw x31, 31*4(sp)  // t6
+    csrr x28, 0x7B0
+    csrr x29, 0x7B1
+    csrr x30, 0x7B2
+    sw x28, 32*4(sp)  // lpstart[0]
+    sw x29, 33*4(sp)  // lpend[0]
+    sw x30, 34*4(sp)  // lpcount[0]
+    csrr x28, 0x7B4
+    csrr x29, 0x7B5
+    csrr x30, 0x7B6
+    sw x28, 35*4(sp)  // lpstart[1]
+    sw x29, 36*4(sp)  // lpend[1]
+    sw x30, 37*4(sp)  // lpcount[1]
     addi s0, sp, EXCEPTION_STACK_SIZE
     sw  s0,  2*4(sp)   // original SP
   .endm
 
 /* restore regs */
   .macro RESTORE_REGS
+    lw x28, 35*4(sp)  // lpstart[1]
+    lw x29, 36*4(sp)  // lpend[1]
+    lw x30, 37*4(sp)  // lpcount[1]
+    csrrw x0, 0x7B4, x28
+    csrrw x0, 0x7B5, x29
+    csrrw x0, 0x7B6, x30
+    lw x28, 32*4(sp)  // lpstart[0]
+    lw x29, 33*4(sp)  // lpend[0]
+    lw x30, 34*4(sp)  // lpcount[0]
+    csrrw x0, 0x7B0, x28
+    csrrw x0, 0x7B1, x29
+    csrrw x0, 0x7B2, x30
     lw  x3,  3*4(sp)  // gp
     lw  x4,  4*4(sp)  // tp
     lw  x5,  5*4(sp)  // t0

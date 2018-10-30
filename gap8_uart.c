@@ -52,12 +52,13 @@ static struct gap8_uart_t uarts[GAP8_NR_UART] = {
   }
 };
 
+int uarttxcnt = 0;
 /****************************************************************************
  * Private Function prototype
  ****************************************************************************/
 static void uart_tx_isr(struct gap8_udma_peripheral *arg)
 {
-
+  uarttxcnt++;
 }
 
 static void uart_rx_isr(struct gap8_udma_peripheral *arg)
@@ -118,7 +119,7 @@ void gap8_uart_sendbytes(struct gap8_uart_t *uart, uint8_t *buff, uint32_t nbyte
   struct gap8_udma_peripheral *theudma = &uart->udma;
 
   gap8_udma_tx_start(theudma, buff, nbytes, 1);
-  while (gap8_udma_tx_poll(theudma, buff) != OK)
+  while (gap8_udma_tx_poll(theudma) != OK)
     {
       gap8_sleep_wait_sw_evnt(1 << 3);
     }
@@ -129,7 +130,7 @@ void gap8_uart_recvbytes(struct gap8_uart_t *uart, uint8_t *buff, uint32_t nbyte
   struct gap8_udma_peripheral *theudma = &uart->udma;
 
   gap8_udma_rx_start(theudma, buff, nbytes, 1);
-  while (gap8_udma_rx_poll(theudma, buff) != OK)
+  while (gap8_udma_rx_poll(theudma) != OK)
     {
       gap8_sleep_wait_sw_evnt(1 << 3);
     }

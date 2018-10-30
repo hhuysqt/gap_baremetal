@@ -59,9 +59,7 @@
 struct __udma_queue {
   uint8_t   *buff;        /* Memory address. either TX or RX  */
   uint32_t  block_size;   /* Size of a data block in bytes    */
-  uint32_t  block_count;  /* Number of blocks to send or recv */
-
-  struct __udma_queue *next;
+  int  block_count;  /* Number of blocks to send or recv */
 };
 
 /*
@@ -78,10 +76,8 @@ struct gap8_udma_peripheral {
 
   /* private */
 
-  struct __udma_queue *tx;        /* TX queue head   */
-  struct __udma_queue *rx;        /* RX queue head   */
-  struct __udma_queue *txtail;    /* TX queue tail   */
-  struct __udma_queue *rxtail;    /* RX queue tail   */
+  struct __udma_queue tx;        /* TX queue */
+  struct __udma_queue rx;        /* RX queue */
 
   // TODO: semaphores
 };
@@ -146,7 +142,7 @@ int gap8_udma_rx_setirq(struct gap8_udma_peripheral *instance, bool enable);
  ************************************************************************************/
 
 int gap8_udma_tx_start(struct gap8_udma_peripheral *instance, 
-                   uint8_t *buff, uint32_t size, uint32_t count);
+                   uint8_t *buff, uint32_t size, int count);
 
 /************************************************************************************
  * Name: gap8_udma_rx_start
@@ -160,29 +156,27 @@ int gap8_udma_tx_start(struct gap8_udma_peripheral *instance,
  ************************************************************************************/
 
 int gap8_udma_rx_start(struct gap8_udma_peripheral *instance,
-                   uint8_t *buff, uint32_t size, uint32_t count);
+                   uint8_t *buff, uint32_t size, int count);
 
 /************************************************************************************
  * Name: gap8_udma_tx_poll
  * 
  * Description:
- *   Return OK if the buffer is not in the tx pending list.
+ *   Return OK if tx finished.
  * 
  ************************************************************************************/
 
-int gap8_udma_tx_poll(struct gap8_udma_peripheral *instance, 
-                    uint8_t *buff);
+int gap8_udma_tx_poll(struct gap8_udma_peripheral *instance);
 
 /************************************************************************************
  * Name: gap8_udma_rx_poll
  * 
  * Description:
- *   Return OK if the buffer is not in the rx pending list.
+ *   Return OK if rx finished.
  * 
  ************************************************************************************/
 
-int gap8_udma_rx_poll(struct gap8_udma_peripheral *instance, 
-                    uint8_t *buff);
+int gap8_udma_rx_poll(struct gap8_udma_peripheral *instance);
 
 /************************************************************************************
  * Name: gap8_udma_doirq

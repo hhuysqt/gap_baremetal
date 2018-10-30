@@ -46,6 +46,7 @@ struct _debug_struct {
 
 struct gap8_uart_t *uart0;
 int cnt = 0;
+extern uarttxcnt;
 
 /* IO buffer at L2 RAM */
 uint8_t buf[] = "hello world\r\n";
@@ -79,7 +80,7 @@ int main(void)
   while (1)
   {
       gap8_uart_recvbytes(uart0, getbuf, 1);
-      sprintf(cntbuf, "%02d\r\n", cnt);
+      sprintf(cntbuf, "%02d %d\r", cnt, uarttxcnt);
       gap8_uart_sendbytes(uart0, cntbuf, strlen(cntbuf));
   }
 
